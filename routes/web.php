@@ -30,6 +30,13 @@ Route::get('/terimakasih', function () {
     return view('terimakasih');
 });
 
+// Route::get('word', function () {
+//     return view('word');
+// });
+
+Route::get('export', [WordController::class,'export'])->name('export');
+// Route::get('exportword', 'exportword')->name('exportword');
+
 
 Route::resource('dashboard', DashboardController::class);
 Route::resource('dashboardAdmin', DashboardController::class);
@@ -45,7 +52,7 @@ Route::resource('pengaturanAdmin', PengaturanController::class);
 
 Route::controller(ExportController::class)->group(function(){
     Route::get('exportJenkel', 'exportJenkel')->name('exportJenkel');
-    Route::get('exportUsia', 'export    Usia')->name('exportUsia');
+    Route::get('exportUsia', 'exportUsia')->name('exportUsia');
     Route::get('exportPekerjaan', 'exportPekerjaan')->name('exportPekerjaan');
     Route::get('exportPendidikan', 'exportPendidikan')->name('exportPendidikan');
     Route::get('exportSaranMasukan', 'exportSaranMasukan')->name('exportSaranMasukan');

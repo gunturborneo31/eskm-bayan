@@ -154,7 +154,7 @@ $pekerjaan_6 = DB::table('2024')
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
@@ -167,7 +167,7 @@ $pekerjaan_6 = DB::table('2024')
     <div class="h-screen lg:px-20 px-3 flex flex-col ">
         <div class="flex justify-between py-[20px] lg:py-1 items-center">
             <div class="flex items-center gap-3 justify-between w-full lg:justify-normal">
-                <img src="/assets/bapendasmd.png" class="h-[100px] lg:h-[48px] p-0.5 rounded-xl bg-white"
+                <img src="/assets/logo_kutai_timur.png" class="h-[100px] lg:h-[48px] p-0.5 rounded-xl bg-white"
                     alt="">
                 <div
                     class="rounded-full lg:whitespace-nowrap text-4xl lg:text-2xl font-bold text-white lg:text-left text-right drop-shadow-[0_3px_3px_rgba(0,0,0,0.3)]">

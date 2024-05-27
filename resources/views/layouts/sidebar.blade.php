@@ -23,7 +23,7 @@
         radial-gradient(at 130% 150%, #02A859, transparent 80%);">
 
     <div class="flex flex-col gap-2 items-start h-1/6 -mt-2">
-        <img src="/assets/bapendasmd.png" class="h-[50px] p-1 rounded-xl bg-white" alt="">
+        <img src="/assets/logo_kutai_timur.png" class="h-[50px] p-1 rounded-xl bg-white" alt="">
         <div class="text-white">
             <p class="text-[40px] mt-2 drop-shadow-[0_3px_3px_rgba(0,0,0,0.9)]  mb-2 ml-1 font-black">E - SKM</p>
         </div>

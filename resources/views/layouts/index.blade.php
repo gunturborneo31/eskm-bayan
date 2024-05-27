@@ -21,7 +21,7 @@
     <script data-hid="gpr-kominfo" src="https://widget.kominfo.go.id/gpr-widget-kominfo.min.js" async
         onload="this.__vm_l=1"></script>
     {{-- <script src="https://cdn.tailwindcss.com"></script> --}}
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
