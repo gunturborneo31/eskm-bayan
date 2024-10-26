@@ -50,10 +50,10 @@
                 class="{{ str_contains($i, 'dashboard') ? $navFocus : $nav }} -ml-3" style="font-family:'Roboto'">
                 DASHBOARD
             </a>
-            <a href="/pengaturanAdmin/" class="{{ str_contains($i, 'pengaturan') ? $navFocus : $nav }} -ml-3"
+            {{-- <a href="/pengaturanAdmin/" class="{{ str_contains($i, 'pengaturan') ? $navFocus : $nav }} -ml-3"
                 style="font-family:'Roboto'">
                 PENGATURAN
-            </a>
+            </a> --}}
         </div>
 
         <a href="/" class="py-3   bg-red-700 rounded-lg font-bold text-sm pl-3  w-full flex text-white"

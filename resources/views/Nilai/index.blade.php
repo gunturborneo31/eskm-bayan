@@ -161,13 +161,13 @@ if ($n == 0) {
                         <label class="text-white font-bold text-xl"> </label>
                     </div>
                     <?php
-
+                    
                     error_reporting(0);
                     if ($_GET['triwulan'] == '') {
                     } else {
                         $_SESSION['triwulan'] = $_GET['triwulan'];
                     }
-
+                    
                     if ($_GET['tw'] == '') {
                     } else {
                         $_SESSION['tw'] = $_GET['tw'];
@@ -334,10 +334,10 @@ if ($n == 0) {
                         </div>
 
                         {{-- download --}}
-                        <a href="/exportResume?jenkel={{ $_GET['jenkel'] }}&usia={{ $_GET['usia'] }}&pekerjaan={{ $_GET['pekerjaan'] }}&pendidikan={{ $_GET['pendidikan'] }}&tahun={{ $_GET['tahun'] }}"
+                        <a href="/export?tw={{ $_GET['tw'] }}&Tahun={{ $_GET['Tahun'] }}"
                             class="py-1 text-center items-center  bg-[#155748] rounded-full font-bold text-sm px-3  w-full  text-white"
                             style="font-family:'Roboto'">
-                            <p>DOWNLOAD</p>
+                            <p>DOWNLOAD LAPORAN SKM</p>
                         </a>
                     </div>
                 </div>
