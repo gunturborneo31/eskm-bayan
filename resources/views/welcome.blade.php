@@ -574,7 +574,7 @@ $jmlResponden = DB::table('2024')
                         </a>
                     </div>
                     <div class="w-full bottom-0">
-                        <a href="/skm">
+                        <a href="/skm#pertama">
                             <button type="button"
                                 class="bg-white w-full b-0 p-4 shadow-2xl text-xl font-black  rounded-2xl  text-[#02A859] ">
                                 KLIK UNTUK

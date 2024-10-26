@@ -71,8 +71,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
         <form action="{{ route('nilaiUnsur.store') }}" method="POST" enctype="multipart/form-data"
             class="h-screen flex">
             @csrf
-            <div id="pelayanan"
-                class="items-center relative isolate overflow-hidden min-w-full h-screen h-screen px-6 shadow-2xl sm:px-16 lg:flex lg:px-24  bg-[#2b885b] "
+            <div id=""
+                class="hidden items-center relative isolate overflow-hidden min-w-full h-screen h-screen px-6 shadow-2xl sm:px-16 lg:flex lg:px-24  bg-[#2b885b] "
                 style="background-color: #51a592;
     background-image:
         radial-gradient(at -30% -30%, #02A859, transparent 80%),
@@ -325,7 +325,7 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                         <textarea type="text" id="alamat" name="alamat" rows="5"
                             class="block w-full p-4  text-xl text-[#1e6653] border border-2 border-white rounded-lg bg-white focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-900 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-6"></textarea>
                         <li class="flex justify-between mt-5">
-                            <a type="button" onclick="window.location='#pelayanan'"
+                            <a type="button" onclick="window.location=''"
                                 class="flex items-center gap-2 cursor-pointer ">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                     class="w-8 h-8 text-white">
