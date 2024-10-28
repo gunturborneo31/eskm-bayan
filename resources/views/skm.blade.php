@@ -72,13 +72,13 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
             class="h-screen flex">
             @csrf
             <div id=""
-                class="hidden items-center relative isolate overflow-hidden min-w-full h-screen h-screen px-6 shadow-2xl sm:px-16 lg:flex lg:px-24  bg-[#2b885b] "
+                class="hidden items-center relative isolate  min-w-full h-screen h-screen px-6 shadow-2xl sm:px-16 lg:hidden lg:px-24  bg-[#2b885b] "
                 style="background-color: #51a592;
     background-image:
         radial-gradient(at -30% -30%, #02A859, transparent 80%),
         radial-gradient(at 130% 150%, #02A859, transparent 80%);">
 
-                <div class=" text-center   lg:py-32 lg:text-left  w-full justify-between">
+                <div class=" hidden text-center   lg:py-32 lg:text-left  w-full justify-between">
                     <h1
                         class=" max-w-md  font-bold tracking-tight mb-2 whitespace-nowrap mb-3 text-white text-2xl drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)]">
                         Jenis pelayanan yang akan anda berikan penilaian
@@ -325,17 +325,7 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                         <textarea type="text" id="alamat" name="alamat" rows="5"
                             class="block w-full p-4  text-xl text-[#1e6653] border border-2 border-white rounded-lg bg-white focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-900 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-6"></textarea>
                         <li class="flex justify-between mt-5">
-                            <a type="button" onclick="window.location=''"
-                                class="flex items-center gap-2 cursor-pointer ">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                                    class="w-8 h-8 text-white">
-                                    <path fill-rule="evenodd"
-                                        d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-4.28 9.22a.75.75 0 000 1.06l3 3a.75.75 0 101.06-1.06l-1.72-1.72h5.69a.75.75 0 000-1.5h-5.69l1.72-1.72a.75.75 0 00-1.06-1.06l-3 3z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                                <label class="text-white font-medium text-xl cursor-pointer ">KEMBALI</label>
-
-                            </a>
+                            <div></div>
                             <a type="submit" id="btn1" class="flex items-center gap-2 cursor-pointer ">
                                 <label class="text-white font-medium text-xl cursor-pointer ">LANJUT</label>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
