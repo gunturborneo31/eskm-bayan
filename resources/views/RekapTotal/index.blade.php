@@ -424,9 +424,9 @@ if ($n == 0) {
                                         <th scope="col" rowspan="2"
                                             class="px-6 py-3 w-[50px] text-center text-xs font-medium text-white uppercase">
                                             NAMA</th>
-                                        <th scope="col" rowspan="2"
+                                        {{-- <th scope="col" rowspan="2"
                                             class="px-6 py-3 w-[50px] text-center text-xs font-medium text-white uppercase">
-                                            JENIS<br>Pelayanan</th>
+                                            JENIS<br>Pelayanan</th> --}}
                                         <th scope="col" rowspan="2"
                                             class="px-6 py-3 w-[50px] text-center text-xs font-medium text-white uppercase {{ $_GET['jenkel'] == 0 ? 'hidden' : '' }}">
                                             JENIS<br>KELAMIN</th>
@@ -491,9 +491,9 @@ if ($n == 0) {
                                                 <td class="text-center px-2 font-normal text-xs">
                                                     {{ $data->nama }}
                                                 </td>
-                                                <td class="text-center px-2 font-normal text-xs">
+                                                {{-- <td class="text-center px-2 font-normal text-xs">
                                                     {{ $data->jenisPelayanan }}
-                                                </td>
+                                                </td> --}}
                                                 <td
                                                     class="text-center px-2 font-normal text-xs {{ $_GET['jenkel'] == 0 ? 'hidden' : '' }}">
                                                     {{ $data->jenkel }}

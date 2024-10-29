@@ -492,7 +492,7 @@ $jmlResponden = DB::table('2024')
                 </div>
                 <div class="flex grid grid-cols-3 gap-4 lg:gap-2 lg:h-full lg:mb-0 mb-3">
                     <div
-                        class="col-span-2 rounded-xl items-center flex flex-col w-1/2 overflow-hidden w-full h-full p-1 bg-white">
+                        class="col-span-2 rounded-xl items-center flex flex-col overflow-hidden w-full h-full p-1 bg-white">
                         <table class="w-full rounded-xl h-fit ">
                             <thead
                                 class="bg-gradient-to-br from-[#02A859]  to-[#008952] font-normal border text-sm text-white">
@@ -529,8 +529,7 @@ $jmlResponden = DB::table('2024')
                             </label>
                         </h1>
                     </div>
-                    <div
-                        class="col-span-1 rounded-xl items-center flex flex-col w-1/2 w-full overflow-hidden h-full p-1 bg-white">
+                    <div class="col-span-1 rounded-xl items-center flex flex-col overflow-hidden h-full p-1 bg-white">
                         <table class="w-full rounded-xl h-fit ">
                             <thead
                                 class="bg-gradient-to-br from-[#02A859]  to-[#008952] font-normal border text-sm text-white">
