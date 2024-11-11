@@ -298,7 +298,7 @@ $jmlResponden = DB::table('2024')
                     alt="">
                 <div
                     class="rounded-full lg:whitespace-nowrap text-4xl lg:text-2xl font-bold text-white lg:text-left text-right drop-shadow-[0_3px_3px_rgba(0,0,0,0.3)]">
-                    E-SKM <br class="lg:hidden"> DISPERINDAG Kab. KUTAI TIMUR
+                    E-SKM <br class="lg:hidden"> DISPERINDAG <br class="lg:hidden"> Kab. KUTAI TIMUR
                 </div>
             </div>
             <div class="hidden lg:block">
