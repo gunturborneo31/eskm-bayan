@@ -13,60 +13,68 @@
 </head>
 
 <?php
-$error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shadow-[0_5px_5px_rgba(0,0,0,0.2)]';
+$error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 lg:text-sm text-xl drop-shadow-[0_5px_5px_rgba(0,0,0,0.2)]';
 ?>
 
 <body class="items-center">
-    <div id="popup" class="fixed z-50 bg-black bg-opacity-30 w-full flex items-center h-full">
-        <div class="fixed z-30 bg-opacity-50 overflow-y-auto w-full" id="modal">
-            <div class="relative mx-auto p-5 border w-1/2 shadow-lg rounded-md bg-white">
-                <div class="mt-3 text-center">
-                    <h3 class="text-lg leading-6 font-medium mb-4 text-gray-900 ">SELAMAT DATANG DI SURVEY KEPUASAN
-                        MASYARAKAT
-                    </h3>
-                    <label class="text-black font-black ">PERHATIAN :</label>
-                    <div class="px-7 items-start mt-4 text-left justify-start">
-                        <table class="border-separate border-spacing-y-3 text-sm">
-                            <tr>
-                                <td class="items-start flex">1. </td>
-                                <td class="text-justify">Tujuan survei ini adalah untuk memperoleh gambaran secara
-                                    obyektif mengenai kepuasan
-                                    masyarakat terhadap pelayanan publik</td>
-                            </tr>
-                            <tr>
-                                <td class="items-start flex">2. </td>
-                                <td class="text-justify">Pilihan jawaban yang Anda berikan diharapkan sebagai pilihan
-                                    yang dapat dipertanggungjawabkan</td>
-                            </tr>
-                            <tr>
-                                <td class="items-start flex">3. </td>
-                                <td class="text-justify">Hasil survei ini akan digunakan untuk bahan penyusunan Laporan
-                                    Survei Kepuasan
-                                    Masyarakat terhadap pelayanan publik yang sangat bermanfaat bagi pemerintah maupun
-                                    masyarakat</td>
-                            </tr>
-                            <tr>
-                                <td class="items-start flex">4. </td>
-                                <td class="text-justify">Keterangan nilai survei bersifat terbuka dan tidak dirahasiakan
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                    <div class="items-center px-4 py-3">
-                        <button onclick="closePopup()" id="ok-btn"
-                            class="px-4 py-2 bg-[#02A859] text-white
-                            text-base font-medium rounded-md w-full
-                            shadow-sm hover:bg-[#308a5e] focus:outline-none focus:ring-2 focus:ring-purple-300">
-                            OK
-                        </button>
-                    </div>
-                </div>
 
+    <div class="overflow-x-hidden">
+
+        <div id="popup" class="fixed z-50 bg-black bg-opacity-30 w-full flex items-center h-full">
+            <div class="fixed z-30 bg-opacity-50 overflow-y-auto w-full" id="modal">
+                <div class="relative mx-auto p-5 border lg:w-1/2 w-5/6 shadow-lg rounded-md bg-white">
+                    <div class="mt-3 text-center">
+                        <h3 class="lg:text-lg lg:text-2xl  text-4xl  lg:leading-6 font-medium mb-4 text-gray-900 ">
+                            SELAMAT
+                            DATANG DI
+                            SURVEY KEPUASAN
+                            MASYARAKAT
+                        </h3>
+                        <label class="text-black font-black lg:text-sm text-4xl">PERHATIAN :</label>
+                        <div class="px-7 items-start mt-4 text-left justify-start">
+                            <table class="border-separate border-spacing-y-3 lg:text-sm text-4xl">
+                                <tr>
+                                    <td class="items-start flex">1. </td>
+                                    <td class="text-justify">Tujuan survei ini adalah untuk memperoleh gambaran secara
+                                        obyektif mengenai kepuasan
+                                        masyarakat terhadap pelayanan publik</td>
+                                </tr>
+                                <tr>
+                                    <td class="items-start flex">2. </td>
+                                    <td class="text-justify">Pilihan jawaban yang Anda berikan diharapkan sebagai
+                                        pilihan
+                                        yang dapat dipertanggungjawabkan</td>
+                                </tr>
+                                <tr>
+                                    <td class="items-start flex">3. </td>
+                                    <td class="text-justify">Hasil survei ini akan digunakan untuk bahan penyusunan
+                                        Laporan
+                                        Survei Kepuasan
+                                        Masyarakat terhadap pelayanan publik yang sangat bermanfaat bagi pemerintah
+                                        maupun
+                                        masyarakat</td>
+                                </tr>
+                                <tr>
+                                    <td class="items-start flex">4. </td>
+                                    <td class="text-justify">Keterangan nilai survei bersifat terbuka dan tidak
+                                        dirahasiakan
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="items-center px-4 py-3">
+                            <button onclick="closePopup()" id="ok-btn"
+                                class="px-4 py-2 bg-[#02A859] text-white
+                            lg:text-base font-medium rounded-md w-full text-4xl
+                            shadow-sm hover:bg-[#308a5e] focus:outline-none focus:ring-2 focus:ring-purple-300">
+                                OK
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
             </div>
         </div>
-    </div>
-
-    <div class="h-screen">
 
         <form action="{{ route('nilaiUnsur.store') }}" method="POST" enctype="multipart/form-data"
             class="h-screen flex">
@@ -80,7 +88,7 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
 
                 <div class=" hidden text-center   lg:py-32 lg:text-left  w-full justify-between">
                     <h1
-                        class=" max-w-md  font-bold tracking-tight mb-2 whitespace-nowrap mb-3 text-white text-2xl drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)]">
+                        class=" max-w-md  font-bold tracking-tight mb-2 whitespace-nowrap mb-3 text-white lg:text-2xl  text-4xl  drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)]">
                         Jenis pelayanan yang akan anda berikan penilaian
                     </h1>
                     <div class="lg:flex w-full justify-between gap-4">
@@ -91,7 +99,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                                 <label for="pajak_1"
                                     class="inline-flex items-center justify-between w-full p-3 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653]  peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                     <div class="block">
-                                        <div class="w-full text-lg font-semibold">Pajak 1 Tahunan</div>
+                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Pajak 1
+                                            Tahunan</div>
                                     </div>
                                 </label>
                             </li>
@@ -101,7 +110,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                                 <label for="pajak_5"
                                     class="inline-flex items-center justify-between w-full p-3 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653]  peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                     <div class="block">
-                                        <div class="w-full text-lg font-semibold">Pajak 5 Tahunan</div>
+                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Pajak 5
+                                            Tahunan</div>
                                     </div>
                                 </label>
                             </li>
@@ -111,7 +121,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                                 <label for="e_samsat"
                                     class="inline-flex items-center justify-between w-full p-3 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653]  peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                     <div class="block">
-                                        <div class="w-full text-lg font-semibold">E-SAMSAT</div>
+                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">E-SAMSAT
+                                        </div>
                                     </div>
                                 </label>
                             </li>
@@ -123,7 +134,9 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                                 <label for="bbnkb_1"
                                     class="inline-flex items-center justify-between w-full p-3 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653]  peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                     <div class="block">
-                                        <div class="w-full text-lg font-semibold">Proses BBNKB I (Daftar Kendaraan
+                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Proses BBNKB
+                                            I (Daftar
+                                            Kendaraan
                                             Pertama)</div>
                                     </div>
                                 </label>
@@ -134,7 +147,9 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                                 <label for="bbnkb_2"
                                     class="inline-flex items-center justify-between w-full p-3 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653]  peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                     <div class="block">
-                                        <div class="w-full text-lg font-semibold">Proses BBNKB II (Balik Nama)</div>
+                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Proses BBNKB
+                                            II (Balik
+                                            Nama)</div>
                                     </div>
                                 </label>
                             </li>
@@ -146,7 +161,9 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                                 <label for="hilang"
                                     class="inline-flex items-center justify-between w-full p-3 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653]  peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                     <div class="block">
-                                        <div class="w-full text-lg font-semibold">Proses STNK & SKPD Hilang/Rusak</div>
+                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Proses STNK
+                                            & SKPD
+                                            Hilang/Rusak</div>
                                     </div>
                                 </label>
                             </li>
@@ -158,7 +175,9 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                                 <label for="rubah_bentuk"
                                     class="inline-flex items-center justify-between w-full p-3 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653]  peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                     <div class="block">
-                                        <div class="w-full text-lg font-semibold">Rubah Bentuk / Warna / Mesin / Ganti
+                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Rubah
+                                            Bentuk / Warna /
+                                            Mesin / Ganti
                                             Nopol</div>
                                     </div>
                                 </label>
@@ -169,7 +188,9 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                                 <label for="mutasi_keluar"
                                     class="inline-flex items-center justify-between w-full p-3 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653]  peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                     <div class="block">
-                                        <div class="w-full text-lg font-semibold">Proses Mutasi Keluar </div>
+                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Proses
+                                            Mutasi Keluar
+                                        </div>
                                     </div>
                                 </label>
                             </li>
@@ -179,7 +200,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                                 <label for="mutasi_masuk"
                                     class="inline-flex items-center justify-between w-full p-3 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653]  peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                     <div class="block">
-                                        <div class="w-full text-lg font-semibold">Proses Mutasi Masuk</div>
+                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Proses
+                                            Mutasi Masuk</div>
                                     </div>
                                 </label>
                             </li>
@@ -189,7 +211,9 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                                 <label for="loket_khusus"
                                     class="inline-flex items-center justify-between w-full p-3 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653]  peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                     <div class="block">
-                                        <div class="w-full text-lg font-semibold">Loket Khusus Disabilitas</div>
+                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Loket
+                                            Khusus Disabilitas
+                                        </div>
                                     </div>
                                 </label>
                             </li>
@@ -203,12 +227,12 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                                     d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-4.28 9.22a.75.75 0 000 1.06l3 3a.75.75 0 101.06-1.06l-1.72-1.72h5.69a.75.75 0 000-1.5h-5.69l1.72-1.72a.75.75 0 00-1.06-1.06l-3 3z"
                                     clip-rule="evenodd" />
                             </svg>
-                            <label class="text-white font-medium text-xl cursor-pointer"></label>
+                            <label class="text-white font-medium lg:text-xl text-4xl cursor-pointer"></label>
 
                         </a>
                         <a type="button" onclick="window.location='#pertama'"
                             class="flex items-center gap-2 cursor-pointer drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)]">
-                            <label class="text-white font-medium text-xl cursor-pointer ">LANJUT</label>
+                            <label class="text-white font-medium lg:text-xl text-4xl cursor-pointer ">LANJUT</label>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                 class="w-8 h-8 text-white">
                                 <path fill-rule="evenodd"
@@ -220,7 +244,7 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                 </div>
             </div>
             <div id="pertama"
-                class="items-center relative isolate overflow-hidden min-w-full h-screen h-screen px-6 shadow-2xl sm:px-16 lg:flex lg:px-24  bg-[#2b885b] "
+                class="lg:pt-0 pt-16 items-center relative isolate overflow-hidden min-w-full h-screen h-screen px-6 shadow-2xl sm:px-16 lg:flex lg:px-24  bg-[#2b885b] "
                 style="background-color: #51a592;
     background-image:
         radial-gradient(at -30% -30%, #02A859, transparent 80%),
@@ -229,7 +253,7 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                     <div class="gap-4 w-full">
                         <div class="flex justify-between">
                             <h1
-                                class=" max-w-md  font-bold tracking-tight mb-2 text-white text-2xl drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)]">
+                                class=" max-w-md  font-bold tracking-tight mb-2 text-white lg:text-2xl  text-4xl  drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)]">
                                 NIK
                             </h1>
                             <h1 id="errornik" class="{{ $error }}">
@@ -240,10 +264,10 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                         </div>
                         <input type="text" id="nik" name="nik" onkeypress="return hanyaAngka(event)"
                             min="16" max="16" value="{{ old('nik') }}"
-                            class="block w-full p-3 text-xl text-[#1e6653] border border-2 border-white rounded-lg bg-white focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-900 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-6"></input>
+                            class="block w-full p-3 lg:text-xl text-4xl text-[#1e6653] border border-2 border-white rounded-lg bg-white focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-900 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-6"></input>
                         <div class="flex justify-between w-full ">
                             <h1
-                                class=" max-w-md  font-bold tracking-tight mb-2 text-white text-2xl drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)]">
+                                class=" max-w-md  font-bold tracking-tight mb-2 text-white lg:text-2xl  text-4xl  drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)]">
                                 Nama
                             </h1>
                             <h1 id="errornama" class="{{ $error }}">
@@ -253,10 +277,10 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             @enderror
                         </div>
                         <input type="text" id="nama" name="nama" value="{{ old('nama') }}"
-                            class="block w-full p-3 text-xl text-[#1e6653] border border-2 border-white rounded-lg bg-white focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-900 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-6"></input>
+                            class="block w-full p-3 lg:text-xl text-4xl text-[#1e6653] border border-2 border-white rounded-lg bg-white focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-900 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-6"></input>
                         <div class="flex justify-between">
                             <h1
-                                class=" max-w-md  font-bold tracking-tight mb-2 text-white text-2xl drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)]">
+                                class=" max-w-md  font-bold tracking-tight mb-2 text-white lg:text-2xl  text-4xl  drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)]">
                                 Nomor Telpon HP
                             </h1>
                             <h1 id="errornohp" class="{{ $error }}">
@@ -267,14 +291,14 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                         </div>
                         <input type="text" id="nohp" name="nohp" onkeypress="return hanyaAngka(event)"
                             value="{{ old('nohp') }}"
-                            class="block w-full p-3 text-xl text-[#1e6653] border border-2 border-white rounded-lg bg-white focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-900 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-6"></input>
+                            class="block w-full p-3 lg:text-xl text-4xl text-[#1e6653] border border-2 border-white rounded-lg bg-white focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-900 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-6"></input>
 
                     </div>
                     <div class="w-1/6"></div>
                     <div class="gap-4 w-full">
                         <div class="flex justify-between">
                             <h1
-                                class=" max-w-md  font-bold tracking-tight mb-2 text-white text-2xl drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)]">
+                                class=" max-w-md  font-bold tracking-tight mb-2 text-white lg:text-2xl  text-4xl  drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)]">
                                 Jenis Kelamin
                             </h1>
                             <h1 id="errorjenkel" class="{{ $error }}">
@@ -292,7 +316,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                                 <label for="laki"
                                     class="inline-flex items-center justify-between w-full p-3 text-white bg-transparent border-2 drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)] border-white rounded-lg cursor-pointer  peer-checked:border-white peer-checked:bg-white peer-checked:text-[#1e6653] hover:text-[#1e6653] hover:bg-white ">
                                     <div class="block">
-                                        <div class="w-full text-lg font-semibold">Laki - Laki ( L )</div>
+                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Laki - Laki
+                                            ( L )</div>
                                     </div>
                                 </label>
                                 </input>
@@ -304,7 +329,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                                 <label for="perempuan"
                                     class="inline-flex items-center justify-between w-full p-3 text-white bg-transparent border-2 drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)] border-white rounded-lg cursor-pointer  peer-checked:border-white peer-checked:bg-white peer-checked:text-[#1e6653] hover:text-[#1e6653] hover:bg-white ">
                                     <div class="block">
-                                        <div class="w-full text-lg font-semibold">Perempuan ( P )</div>
+                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Perempuan (
+                                            P )</div>
                                     </div>
                                 </label>
                                 </input>
@@ -313,7 +339,7 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                         </ul>
                         <div class="flex justify-between">
                             <h1
-                                class=" max-w-md  font-bold tracking-tight mb-2 text-white text-2xl drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)]">
+                                class=" max-w-md  font-bold tracking-tight mb-2 text-white lg:text-2xl  text-4xl  drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)]">
                                 Alamat
                             </h1>
                             <h1 id="erroralamat" class="{{ $error }}">
@@ -323,11 +349,12 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             @enderror
                         </div>
                         <textarea type="text" id="alamat" name="alamat" rows="5"
-                            class="block w-full p-4  text-xl text-[#1e6653] border border-2 border-white rounded-lg bg-white focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-900 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-6"></textarea>
+                            class="block w-full p-4  lg:text-xl text-4xl text-[#1e6653] border border-2 border-white rounded-lg bg-white focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-900 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-6"></textarea>
                         <li class="flex justify-between mt-5">
                             <div></div>
                             <a type="submit" id="btn1" class="flex items-center gap-2 cursor-pointer ">
-                                <label class="text-white font-medium text-xl cursor-pointer ">LANJUT</label>
+                                <label
+                                    class="text-white font-medium lg:text-xl text-4xl cursor-pointer ">LANJUT</label>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                     class="w-8 h-8 text-white">
                                     <path fill-rule="evenodd"
@@ -340,7 +367,7 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                 </div>
             </div>
             <div id="kedua"
-                class="items-center relative isolate overflow-hidden min-w-full h-screen h-screen
+                class="lg:pt-0 pt-16 items-center relative isolate overflow-hidden min-w-full h-screen h-screen
                 px-6 shadow-2xl sm:px-16 lg:flex lg:px-24 bg-[#87e6c1] "
                 style="background-color: #51a592;
     background-image:
@@ -350,7 +377,7 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                     <div class="gap-4 w-full">
                         <div class="flex justify-between">
                             <h1
-                                class=" max-w-md  font-bold tracking-tight mb-2 text-white text-2xl drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)]">
+                                class=" max-w-md  font-bold tracking-tight mb-2 text-white lg:text-2xl  text-4xl  drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)]">
                                 Usia (Tahun)
                             </h1>
                             <h1 id="errorusia" class="{{ $error }}">
@@ -366,7 +393,9 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                                 <label for="29"
                                     class="inline-flex items-center justify-between w-full p-3 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653]  peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                     <div class="block">
-                                        <div class="w-full text-lg font-semibold">Kurang dari 30 Tahun</div>
+                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Kurang dari
+                                            30 Tahun
+                                        </div>
                                     </div>
                                 </label>
                             </li>
@@ -376,7 +405,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                                 <label for="30"
                                     class="inline-flex items-center justify-between w-full p-3 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653]  peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                     <div class="block">
-                                        <div class="w-full text-lg font-semibold">30 s/d 40 Tahun</div>
+                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">30 s/d 40
+                                            Tahun</div>
                                     </div>
                                 </label>
                             </li>
@@ -386,7 +416,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                                 <label for="41"
                                     class="inline-flex items-center justify-between w-full p-3 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653]  peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                     <div class="block">
-                                        <div class="w-full text-lg font-semibold">41 s/d 50 Tahun</div>
+                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">41 s/d 50
+                                            Tahun</div>
                                     </div>
                                 </label>
                             </li>
@@ -396,14 +427,15 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                                 <label for="51"
                                     class="inline-flex items-center justify-between w-full p-3 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653]  peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                     <div class="block">
-                                        <div class="w-full text-lg font-semibold">Lebih dari 50 Tahun</div>
+                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Lebih dari
+                                            50 Tahun</div>
                                     </div>
                                 </label>
                             </li>
                         </ul>
                         <div class="flex justify-between mt-6">
                             <h1
-                                class=" max-w-md  font-bold tracking-tight mb-2 text-white text-2xl drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)]">
+                                class=" max-w-md  font-bold tracking-tight mb-2 text-white lg:text-2xl  text-4xl  drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)]">
                                 Pendidikan
                             </h1>
                             </h1>
@@ -418,7 +450,7 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                                 <label for="sd"
                                     class="inline-flex items-center justify-between w-full p-3 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653]  peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                     <div class="block">
-                                        <div class="w-full text-lg font-semibold">SD</div>
+                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">SD</div>
                                     </div>
                                 </label>
                             </li>
@@ -428,7 +460,7 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                                 <label for="smp"
                                     class="inline-flex items-center justify-between w-full p-3 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653]  peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                     <div class="block">
-                                        <div class="w-full text-lg font-semibold">SMP</div>
+                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">SMP</div>
                                     </div>
                                 </label>
                             </li>
@@ -438,7 +470,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                                 <label for="sma/smk"
                                     class="inline-flex items-center justify-between w-full p-3 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653]  peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                     <div class="block">
-                                        <div class="w-full text-lg font-semibold">SMA / SMK</div>
+                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">SMA / SMK
+                                        </div>
                                     </div>
                                 </label>
                             </li>
@@ -448,7 +481,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                                 <label for="d1/d3"
                                     class="inline-flex items-center justify-between w-full p-3 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653]  peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                     <div class="block">
-                                        <div class="w-full text-lg font-semibold">D-I / D-III</div>
+                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">D-I / D-III
+                                        </div>
                                     </div>
                                 </label>
                             </li>
@@ -458,7 +492,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                                 <label for="s1/setara"
                                     class="inline-flex items-center justify-between w-full p-3 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653]  peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                     <div class="block">
-                                        <div class="w-full text-lg font-semibold">S1 / Setara</div>
+                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">S1 / Setara
+                                        </div>
                                     </div>
                                 </label>
                             </li>
@@ -468,7 +503,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                                 <label for="s2/s3"
                                     class="inline-flex items-center justify-between w-full p-3 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653]  peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                     <div class="block">
-                                        <div class="w-full text-lg font-semibold">S2 / S3</div>
+                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">S2 / S3
+                                        </div>
                                     </div>
                                 </label>
                             </li>
@@ -477,10 +513,10 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
 
                     </div>
                     <div class="w-1/6"></div>
-                    <div class="gap-4 w-full">
+                    <div class="gap-4 w-full lg:mt-0 mt-4">
                         <div class="flex justify-between">
                             <h1
-                                class=" max-w-md capitalize  font-bold tracking-tight mb-2 text-white text-2xl drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)]">
+                                class=" max-w-md capitalize  font-bold tracking-tight mb-2 text-white lg:text-2xl  text-4xl  drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)]">
                                 pekerjaan
                             </h1>
                             </h1>
@@ -495,7 +531,7 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                                 <label for="asn"
                                     class="inline-flex items-center justify-between w-full p-3 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653]  peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                     <div class="block">
-                                        <div class="w-full text-lg font-semibold">ASN</div>
+                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">ASN</div>
                                     </div>
                                 </label>
                             </li>
@@ -505,7 +541,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                                 <label for="tni/polri"
                                     class="inline-flex items-center justify-between w-full p-3 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653]  peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                     <div class="block">
-                                        <div class="w-full text-lg font-semibold">TNI / POLRI</div>
+                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">TNI / POLRI
+                                        </div>
                                     </div>
                                 </label>
                             </li>
@@ -515,7 +552,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                                 <label for="swasta"
                                     class="inline-flex items-center justify-between w-full p-3 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653]  peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                     <div class="block">
-                                        <div class="w-full text-lg font-semibold">Swasta</div>
+                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Swasta
+                                        </div>
                                     </div>
                                 </label>
                             </li>
@@ -525,7 +563,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                                 <label for="pengusaha"
                                     class="inline-flex items-center justify-between w-full p-3 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653]  peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                     <div class="block">
-                                        <div class="w-full text-lg font-semibold">Pengusaha</div>
+                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Pengusaha
+                                        </div>
                                     </div>
                                 </label>
                             </li>
@@ -535,7 +574,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                                 <label for="pelajar"
                                     class="inline-flex items-center justify-between w-full p-3 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653]  peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                     <div class="block">
-                                        <div class="w-full text-lg font-semibold">Pelajar</div>
+                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Pelajar
+                                        </div>
                                     </div>
                                 </label>
                             </li>
@@ -545,7 +585,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                                 <label for="lyn"
                                     class="inline-flex items-center justify-between w-full p-3 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653]  peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                     <div class="block">
-                                        <div class="w-full text-lg font-semibold">Lainnya</div>
+                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Lainnya
+                                        </div>
                                     </div>
                                 </label>
                             </li>
@@ -558,12 +599,14 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                                             d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-4.28 9.22a.75.75 0 000 1.06l3 3a.75.75 0 101.06-1.06l-1.72-1.72h5.69a.75.75 0 000-1.5h-5.69l1.72-1.72a.75.75 0 00-1.06-1.06l-3 3z"
                                             clip-rule="evenodd" />
                                     </svg>
-                                    <label class="text-white font-medium text-xl cursor-pointer ">KEMBALI</label>
+                                    <label
+                                        class="text-white font-medium lg:text-xl text-4xl cursor-pointer ">KEMBALI</label>
 
                                 </a>
                                 <a type="button" onclick="window.location='#satu'"
                                     class="flex items-center gap-2 cursor-pointer ">
-                                    <label class="text-white font-medium text-xl cursor-pointer ">LANJUT</label>
+                                    <label
+                                        class="text-white font-medium lg:text-xl text-4xl cursor-pointer ">LANJUT</label>
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                         class="w-8 h-8 text-white">
                                         <path fill-rule="evenodd"
@@ -577,7 +620,7 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                 </div>
             </div>
             <div id="satu"
-                class="items-center relative isolate overflow-hidden min-w-full h-screen h-screen
+                class="lg:pt-0 pt-16 items-center relative isolate overflow-hidden min-w-full h-screen h-screen
                 px-6 shadow-2xl sm:px-16 lg:flex lg:px-24 bg-[#001510]"
                 style="background-color: #51a592;
     background-image:
@@ -585,7 +628,7 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
         radial-gradient(at 130% 150%, #02A859, transparent 80%);">
                 <div class=" text-center  lg:flex lg:py-32 lg:text-left items-center w-full justify-between">
                     <h2
-                        class=" max-w-md  font-bold tracking-tight text-white mb-10 sm:text-xl lg:text-3xl drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)]">
+                        class="text-left text-left lg:max-w-md  font-bold tracking-tight text-white mb-10 text-5xl lg:text-3xl drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)]">
                         1.
                         Bagaimana pendapat Saudara tentang Kesesuaian Persyaratan pelayanan dengan jenis pelayanannya ?
                     </h2>
@@ -603,7 +646,7 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="hosting-small"
                                 class="inline-flex items-center justify-between w-full p-5 text-white bg-transparent border-2 drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)] border-white rounded-lg cursor-pointer  peer-checked:border-white peer-checked:bg-white peer-checked:text-[#1e6653] hover:text-[#1e6653] hover:bg-white ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Sangat Tidak Sesuai</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Sangat Tidak Sesuai</div>
                                 </div>
                             </label>
                         </li> --}}
@@ -613,7 +656,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="hosting-big"
                                 class="inline-flex items-center justify-between w-full p-5 text-white bg-transparent border-2 drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)] border-white rounded-lg cursor-pointer  peer-checked:border-white peer-checked:bg-white peer-checked:text-[#1e6653] hover:text-[#1e6653] hover:bg-white ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Tidak Sesuai</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Tidak Sesuai
+                                    </div>
                                 </div>
                             </label>
                         </li>
@@ -623,7 +667,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="hosting-medium"
                                 class="inline-flex items-center justify-between w-full p-5 text-white bg-transparent border-2 drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)] border-white rounded-lg cursor-pointer  peer-checked:border-white peer-checked:bg-white peer-checked:text-[#1e6653] hover:text-[#1e6653] hover:bg-white ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Kurang Sesuai</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Kurang Sesuai
+                                    </div>
                                 </div>
                             </label>
                         </li>
@@ -633,7 +678,7 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="hosting-aja"
                                 class="inline-flex items-center justify-between w-full p-5 text-white bg-transparent border-2 drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)] border-white rounded-lg cursor-pointer  peer-checked:border-white peer-checked:bg-white peer-checked:text-[#1e6653] hover:text-[#1e6653] hover:bg-white ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Sesuai</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Sesuai</div>
                                 </div>
                             </label>
                         </li>
@@ -643,7 +688,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="hosting-ad"
                                 class="inline-flex items-center justify-between w-full p-5 text-white bg-transparent border-2 drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)] border-white rounded-lg cursor-pointer  peer-checked:border-white peer-checked:bg-white peer-checked:text-[#1e6653] hover:text-[#1e6653] hover:bg-white ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Sangat Sesuai</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Sangat Sesuai
+                                    </div>
                                 </div>
                             </label>
                         </li>
@@ -657,12 +703,14 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                                         d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-4.28 9.22a.75.75 0 000 1.06l3 3a.75.75 0 101.06-1.06l-1.72-1.72h5.69a.75.75 0 000-1.5h-5.69l1.72-1.72a.75.75 0 00-1.06-1.06l-3 3z"
                                         clip-rule="evenodd" />
                                 </svg>
-                                <label class="text-white font-medium text-xl cursor-pointer">KEMBALI</label>
+                                <label
+                                    class="text-white font-medium lg:text-xl text-4xl cursor-pointer">KEMBALI</label>
 
                             </a>
                             <a type="button" onclick="window.location='#dua'"
                                 class="flex items-center gap-2 cursor-pointer drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)]">
-                                <label class="text-white font-medium text-xl cursor-pointer ">LANJUT</label>
+                                <label
+                                    class="text-white font-medium lg:text-xl text-4xl cursor-pointer ">LANJUT</label>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                     class="w-8 h-8 text-white">
                                     <path fill-rule="evenodd"
@@ -675,16 +723,16 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                 </div>
             </div>
             <div id="dua"
-                class="items-center relative isolate overflow-hidden min-w-full h-screen h-screen
+                class="lg:pt-0 pt-16 items-center relative isolate overflow-hidden min-w-full h-screen h-screen
                 px-6 shadow-2xl sm:px-16 lg:flex lg:px-24 bg-[#54d9a6] "
                 style="background-image:
                     radial-gradient(at -5% -5%, #ffffff, transparent 30%),
                     radial-gradient(at 110% 110%, #ffffff, transparent 30%);">
                 <div class=" text-center  lg:flex lg:py-32 lg:text-left items-center  w-full justify-between">
                     <h2
-                        class=" max-w-md  font-bold tracking-tight text-[#144235] mb-10 sm:text-xl lg:text-3xl drop-shadow-[0_7px_7px_rgba(0,0,0,0.5)]">
+                        class=" text-left lg:max-w-md  font-bold tracking-tight text-[#144235] mb-10 text-5xl lg:text-3xl drop-shadow-[0_7px_7px_rgba(0,0,0,0.5)]">
                         2.
-                        Bagaimana pemahaman Saudara tentang Kemudahan Prosedur Pelayanan di unit ini ?</h2>
+                        Bagaimana pemahaman Saudara tentang Kemudahan Prosedur Pelayanan di DISPERINDAG KUTIM ?</h2>
                     <div class="w-1/6"></div>
                     <ul class="grid w-full gap-2 md:grid-cols-1">
                         <div class="flex justify-between">
@@ -699,7 +747,7 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="hosting-a"
                                 class="inline-flex items-center justify-between w-full p-5 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653]  peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Sangat Tidak Mudah</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Sangat Tidak Mudah</div>
                                 </div>
                             </label>
                         </li> --}}
@@ -709,7 +757,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="hosting-b"
                                 class="inline-flex items-center justify-between w-full p-5 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653]  peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Tidak Mudah</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Tidak Mudah
+                                    </div>
                                 </div>
                             </label>
                         </li>
@@ -719,7 +768,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="hosting-c"
                                 class="inline-flex items-center justify-between w-full p-5 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653]  peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Kurang Mudah</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Kurang Mudah
+                                    </div>
                                 </div>
                             </label>
                         </li>
@@ -729,7 +779,7 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="hosting-d"
                                 class="inline-flex items-center justify-between w-full p-5 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653]  peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Mudah</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Mudah</div>
                                 </div>
                             </label>
                         </li>
@@ -739,7 +789,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="hosting-e"
                                 class="inline-flex items-center justify-between w-full p-5 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653]  peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Sangat Mudah</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Sangat Mudah
+                                    </div>
                                 </div>
                             </label>
                         </li>
@@ -752,12 +803,14 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                                         d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-4.28 9.22a.75.75 0 000 1.06l3 3a.75.75 0 101.06-1.06l-1.72-1.72h5.69a.75.75 0 000-1.5h-5.69l1.72-1.72a.75.75 0 00-1.06-1.06l-3 3z"
                                         clip-rule="evenodd" />
                                 </svg>
-                                <label class="text-[#1e6653] font-medium text-xl cursor-pointer ">KEMBALI</label>
+                                <label
+                                    class="text-[#1e6653] font-medium lg:text-xl text-4xl cursor-pointer ">KEMBALI</label>
 
                             </a>
                             <a type="button" onclick="window.location='#tiga'"
                                 class="flex items-center gap-2 cursor-pointer ">
-                                <label class="text-[#1e6653] font-medium text-xl cursor-pointer ">LANJUT</label>
+                                <label
+                                    class="text-[#1e6653] font-medium lg:text-xl text-4xl cursor-pointer ">LANJUT</label>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                     class="w-8 h-8 text-[#1e6653]">
                                     <path fill-rule="evenodd"
@@ -770,7 +823,7 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                 </div>
             </div>
             <div id="tiga"
-                class="items-center relative isolate overflow-hidden min-w-full h-screen h-screen
+                class="lg:pt-0 pt-16 items-center relative isolate overflow-hidden min-w-full h-screen h-screen
                 px-6 shadow-2xl sm:px-16 lg:flex lg:px-24 bg-[#001510]"
                 style="background-color: #51a592;
     background-image:
@@ -778,9 +831,9 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
         radial-gradient(at 130% 150%, #02A859, transparent 80%);">
                 <div class=" text-center  lg:flex lg:py-32 lg:text-left items-center  w-full justify-between">
                     <h2
-                        class=" max-w-md  font-bold tracking-tight text-white mb-10 sm:text-xl lg:text-3xl drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)]">
+                        class=" text-left lg:max-w-md  font-bold tracking-tight text-white mb-10 text-5xl lg:text-3xl drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)]">
                         3.
-                        Bagaimana pendapat Saudara tentang Kecepatan Waktu Pelayanan di unit ini ?</h2>
+                        Bagaimana pendapat Saudara tentang Kecepatan Waktu Pelayanan di DISPERINDAG KUTIM ?</h2>
                     <div class="w-1/6"></div>
                     <ul class="grid w-full gap-2 md:grid-cols-1">
                         <div class="flex justify-between">
@@ -795,7 +848,7 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="prosedur-small"
                                 class="inline-flex items-center justify-between w-full p-5 text-white bg-transparent border-2 drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)] border-white rounded-lg cursor-pointer  peer-checked:border-white peer-checked:bg-white peer-checked:text-[#1e6653] hover:text-[#1e6653] hover:bg-white ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Sangat Tidak Cepat</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Sangat Tidak Cepat</div>
                                 </div>
                             </label>
                         </li> --}}
@@ -805,7 +858,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="prosedur-big"
                                 class="inline-flex items-center justify-between w-full p-5 text-white bg-transparent border-2 drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)] border-white rounded-lg cursor-pointer  peer-checked:border-white peer-checked:bg-white peer-checked:text-[#1e6653] hover:text-[#1e6653] hover:bg-white ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Tidak Cepat</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Tidak Cepat
+                                    </div>
                                 </div>
                             </label>
                         </li>
@@ -815,7 +869,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="prosedur-medium"
                                 class="inline-flex items-center justify-between w-full p-5 text-white bg-transparent border-2 drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)] border-white rounded-lg cursor-pointer  peer-checked:border-white peer-checked:bg-white peer-checked:text-[#1e6653] hover:text-[#1e6653] hover:bg-white ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Kurang Cepat</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Kurang Cepat
+                                    </div>
                                 </div>
                             </label>
                         </li>
@@ -825,7 +880,7 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="prosedur-aja"
                                 class="inline-flex items-center justify-between w-full p-5 text-white bg-transparent border-2 drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)] border-white rounded-lg cursor-pointer  peer-checked:border-white peer-checked:bg-white peer-checked:text-[#1e6653] hover:text-[#1e6653] hover:bg-white ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Cepat</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Cepat</div>
                                 </div>
                             </label>
                         </li>
@@ -835,7 +890,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="prosedur-ad"
                                 class="inline-flex items-center justify-between w-full p-5 text-white bg-transparent border-2 drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)] border-white rounded-lg cursor-pointer  peer-checked:border-white peer-checked:bg-white peer-checked:text-[#1e6653] hover:text-[#1e6653] hover:bg-white ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Sangat Cepat</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Sangat Cepat
+                                    </div>
                                 </div>
                             </label>
                         </li>
@@ -848,12 +904,13 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                                         d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-4.28 9.22a.75.75 0 000 1.06l3 3a.75.75 0 101.06-1.06l-1.72-1.72h5.69a.75.75 0 000-1.5h-5.69l1.72-1.72a.75.75 0 00-1.06-1.06l-3 3z"
                                         clip-rule="evenodd" />
                                 </svg>
-                                <label class="text-white font-medium text-xl cursor-pointer">KEMBALI</label>
+                                <label
+                                    class="text-white font-medium lg:text-xl text-4xl cursor-pointer">KEMBALI</label>
 
                             </a>
                             <a type="button" onclick="window.location='#empat'"
                                 class="flex items-center gap-2 cursor-pointer drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)]">
-                                <label class="text-white font-medium text-xl cursor-pointer">LANJUT</label>
+                                <label class="text-white font-medium lg:text-xl text-4xl cursor-pointer">LANJUT</label>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                     class="w-8 h-8 text-white">
                                     <path fill-rule="evenodd"
@@ -866,14 +923,14 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                 </div>
             </div>
             <div id="empat"
-                class="items-center relative isolate overflow-hidden min-w-full h-screen h-screen
+                class="lg:pt-0 pt-16 items-center relative isolate overflow-hidden min-w-full h-screen h-screen
                 px-6 shadow-2xl sm:px-16 lg:flex lg:px-24 bg-[#87e6c1] "
                 style="background-image:
                     radial-gradient(at -10% -10%, #00633d, transparent 35%),
                     radial-gradient(at 110% 110%, #00633d, transparent 35%);">
                 <div class=" text-center  lg:flex lg:py-32 lg:text-left items-center  w-full justify-between">
                     <h2
-                        class=" max-w-md  font-bold tracking-tight text-[#144235] mb-10 sm:text-xl lg:text-3xl drop-shadow-[0_7px_7px_rgba(0,0,0,0.5)]">
+                        class=" text-left lg:max-w-md  font-bold tracking-tight text-[#144235] mb-10 text-5xl lg:text-3xl drop-shadow-[0_7px_7px_rgba(0,0,0,0.5)]">
                         4. Bagaimana pendapat Saudara tentang Kewajaran Biaya/Tarif untuk Mendapatkan Pelayanan ?</h2>
                     <div class="w-1/6"></div>
                     <ul class="grid w-full gap-2 md:grid-cols-1">
@@ -889,7 +946,7 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="perilaku-a"
                                 class="inline-flex items-center justify-between w-full p-5 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653] peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Sangat Tidak Wajar
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Sangat Tidak Wajar
                                     </div>
                                 </div>
                             </label>
@@ -900,7 +957,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="perilaku-b"
                                 class="inline-flex items-center justify-between w-full p-5 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653] peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Tidak Wajar</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Tidak Wajar
+                                    </div>
                                 </div>
                             </label>
                         </li>
@@ -910,7 +968,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="perilaku-c"
                                 class="inline-flex items-center justify-between w-full p-5 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653] peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Cukup Wajar</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Cukup Wajar
+                                    </div>
                                 </div>
                             </label>
                         </li>
@@ -920,7 +979,7 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="perilaku-d"
                                 class="inline-flex items-center justify-between w-full p-5 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653] peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Wajar</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Wajar</div>
                                 </div>
                             </label>
                         </li>
@@ -930,7 +989,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="perilaku-e"
                                 class="inline-flex items-center justify-between w-full p-5 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653] peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Sangat Wajar</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Sangat Wajar
+                                    </div>
                                 </div>
                             </label>
                         </li>
@@ -943,12 +1003,14 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                                         d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-4.28 9.22a.75.75 0 000 1.06l3 3a.75.75 0 101.06-1.06l-1.72-1.72h5.69a.75.75 0 000-1.5h-5.69l1.72-1.72a.75.75 0 00-1.06-1.06l-3 3z"
                                         clip-rule="evenodd" />
                                 </svg>
-                                <label class="text-[#1e6653] font-medium text-xl cursor-pointer">KEMBALI</label>
+                                <label
+                                    class="text-[#1e6653] font-medium lg:text-xl text-4xl cursor-pointer">KEMBALI</label>
 
                             </a>
                             <a type="button" onclick="window.location='#lima'"
                                 class="flex items-center gap-2 cursor-pointer">
-                                <label class="text-[#1e6653] font-medium text-xl cursor-pointer">LANJUT</label>
+                                <label
+                                    class="text-[#1e6653] font-medium lg:text-xl text-4xl cursor-pointer">LANJUT</label>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                     class="w-8 h-8 text-[#1e6653]">
                                     <path fill-rule="evenodd"
@@ -961,7 +1023,7 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                 </div>
             </div>
             <div id="lima"
-                class="items-center relative isolate overflow-hidden min-w-full h-screen h-screen
+                class="lg:pt-0 pt-16 items-center relative isolate overflow-hidden min-w-full h-screen h-screen
                 px-6 shadow-2xl sm:px-16 lg:flex lg:px-24 bg-[#001510]"
                 style="background-color: #51a592;
     background-image:
@@ -969,7 +1031,7 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
         radial-gradient(at 130% 150%, #02A859, transparent 80%);">
                 <div class=" text-center  lg:flex lg:py-32 lg:text-left items-center  w-full justify-between">
                     <h2
-                        class=" max-w-md  font-bold tracking-tight text-white mb-10 sm:text-xl lg:text-3xl drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)]">
+                        class=" text-left lg:max-w-md  font-bold tracking-tight text-white mb-10 text-5xl lg:text-3xl drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)]">
                         5.
                         Bagaimana pendapat Saudara tentang Kesesuaian Produk Pelayanan antara yang tercantum dalam
                         standar pelayanan dengan hasil yang diberikan ?</h2>
@@ -987,7 +1049,7 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="kecepatan-small"
                                 class="inline-flex items-center justify-between w-full p-5 text-white bg-transparent border-2 drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)] border-white rounded-lg cursor-pointer  peer-checked:border-white peer-checked:bg-white peer-checked:text-[#1e6653] hover:text-[#1e6653] hover:bg-white ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Sangat Tidak Sesuai</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Sangat Tidak Sesuai</div>
                                 </div>
                             </label>
                         </li> --}}
@@ -997,7 +1059,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="kecepatan-big"
                                 class="inline-flex items-center justify-between w-full p-5 text-white bg-transparent border-2 drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)] border-white rounded-lg cursor-pointer  peer-checked:border-white peer-checked:bg-white peer-checked:text-[#1e6653] hover:text-[#1e6653] hover:bg-white ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Tidak Sesuai</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Tidak Sesuai
+                                    </div>
                                 </div>
                             </label>
                         </li>
@@ -1007,7 +1070,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="kecepatan-medium"
                                 class="inline-flex items-center justify-between w-full p-5 text-white bg-transparent border-2 drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)] border-white rounded-lg cursor-pointer  peer-checked:border-white peer-checked:bg-white peer-checked:text-[#1e6653] hover:text-[#1e6653] hover:bg-white ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Kurang Sesuai</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Kurang Sesuai
+                                    </div>
                                 </div>
                             </label>
                         </li>
@@ -1017,7 +1081,7 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="kecepatan-aja"
                                 class="inline-flex items-center justify-between w-full p-5 text-white bg-transparent border-2 drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)] border-white rounded-lg cursor-pointer  peer-checked:border-white peer-checked:bg-white peer-checked:text-[#1e6653] hover:text-[#1e6653] hover:bg-white ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Sesuai</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Sesuai</div>
                                 </div>
                             </label>
                         </li>
@@ -1027,7 +1091,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="kecepatan-ad"
                                 class="inline-flex items-center justify-between w-full p-5 text-white bg-transparent border-2 drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)] border-white rounded-lg cursor-pointer  peer-checked:border-white peer-checked:bg-white peer-checked:text-[#1e6653] hover:text-[#1e6653] hover:bg-white ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Sangat Sesuai</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Sangat Sesuai
+                                    </div>
                                 </div>
                             </label>
                         </li>
@@ -1040,12 +1105,13 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                                         d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-4.28 9.22a.75.75 0 000 1.06l3 3a.75.75 0 101.06-1.06l-1.72-1.72h5.69a.75.75 0 000-1.5h-5.69l1.72-1.72a.75.75 0 00-1.06-1.06l-3 3z"
                                         clip-rule="evenodd" />
                                 </svg>
-                                <label class="text-white font-medium text-xl cursor-pointer">KEMBALI</label>
+                                <label
+                                    class="text-white font-medium lg:text-xl text-4xl cursor-pointer">KEMBALI</label>
 
                             </a>
                             <a type="button" onclick="window.location='#enam'"
                                 class="flex items-center gap-2 cursor-pointer drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)]">
-                                <label class="text-white font-medium text-xl cursor-pointer">LANJUT</label>
+                                <label class="text-white font-medium lg:text-xl text-4xl cursor-pointer">LANJUT</label>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                     class="w-8 h-8 text-white">
                                     <path fill-rule="evenodd"
@@ -1058,14 +1124,14 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                 </div>
             </div>
             <div id="enam"
-                class="items-center relative isolate overflow-hidden min-w-full h-screen h-screen
+                class="lg:pt-0 pt-16 items-center relative isolate overflow-hidden min-w-full h-screen h-screen
                 px-6 shadow-2xl sm:px-16 lg:flex lg:px-24 bg-[#87e6c1] "
                 style="background-image:
                     radial-gradient(at -10% -10%, #00633d, transparent 35%),
                     radial-gradient(at 110% 110%, #00633d, transparent 35%);">
                 <div class=" text-center  lg:flex lg:py-32 lg:text-left items-center  w-full justify-between">
                     <h2
-                        class=" max-w-md  font-bold tracking-tight text-[#144235] mb-10 sm:text-xl lg:text-3xl drop-shadow-[0_7px_7px_rgba(0,0,0,0.5)]">
+                        class=" text-left lg:max-w-md  font-bold tracking-tight text-[#144235] mb-10 text-5xl lg:text-3xl drop-shadow-[0_7px_7px_rgba(0,0,0,0.5)]">
                         6. Bagaimana pendapat Saudara tentang Kompetensi/Kemampuan Petugas dalam pelayanan ?</h2>
                     <div class="w-1/6"></div>
                     <ul class="grid w-full gap-2 md:grid-cols-1">
@@ -1081,7 +1147,7 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="sarana-a"
                                 class="inline-flex items-center justify-between w-full p-5 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653] peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Sangat Tidak Kompeten</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Sangat Tidak Kompeten</div>
                                 </div>
                             </label>
                         </li> --}}
@@ -1091,7 +1157,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="sarana-b"
                                 class="inline-flex items-center justify-between w-full p-5 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653] peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Tidak Kompeten</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Tidak Kompeten
+                                    </div>
                                 </div>
                             </label>
                         </li>
@@ -1101,7 +1168,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="sarana-c"
                                 class="inline-flex items-center justify-between w-full p-5 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653] peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Kurang Kompeten</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Kurang Kompeten
+                                    </div>
                                 </div>
                             </label>
                         </li>
@@ -1111,7 +1179,7 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="sarana-d"
                                 class="inline-flex items-center justify-between w-full p-5 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653] peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Kompeten</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Kompeten</div>
                                 </div>
                             </label>
                         </li>
@@ -1121,7 +1189,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="sarana-e"
                                 class="inline-flex items-center justify-between w-full p-5 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653] peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Sangat Kompeten</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Sangat Kompeten
+                                    </div>
                                 </div>
                             </label>
                         </li>
@@ -1134,12 +1203,14 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                                         d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-4.28 9.22a.75.75 0 000 1.06l3 3a.75.75 0 101.06-1.06l-1.72-1.72h5.69a.75.75 0 000-1.5h-5.69l1.72-1.72a.75.75 0 00-1.06-1.06l-3 3z"
                                         clip-rule="evenodd" />
                                 </svg>
-                                <label class="text-[#1e6653] font-medium text-xl cursor-pointer">KEMBALI</label>
+                                <label
+                                    class="text-[#1e6653] font-medium lg:text-xl text-4xl cursor-pointer">KEMBALI</label>
 
                             </a>
                             <a type="button" onclick="window.location='#tujuh'"
                                 class="flex items-center gap-2 cursor-pointer">
-                                <label class="text-[#1e6653] font-medium text-xl cursor-pointer">LANJUT</label>
+                                <label
+                                    class="text-[#1e6653] font-medium lg:text-xl text-4xl cursor-pointer">LANJUT</label>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                     class="w-8 h-8 text-[#1e6653]">
                                     <path fill-rule="evenodd"
@@ -1152,7 +1223,7 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                 </div>
             </div>
             <div id="tujuh"
-                class="items-center relative isolate overflow-hidden min-w-full h-screen h-screen
+                class="lg:pt-0 pt-16 items-center relative isolate overflow-hidden min-w-full h-screen h-screen
                 px-6 shadow-2xl sm:px-16 lg:flex lg:px-24 bg-[#001510]"
                 style="background-color: #51a592;
     background-image:
@@ -1160,7 +1231,7 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
         radial-gradient(at 130% 150%, #02A859, transparent 80%);">
                 <div class=" text-center  lg:flex lg:py-32 lg:text-left items-center  w-full justify-between">
                     <h2
-                        class=" max-w-md  font-bold tracking-tight text-white mb-10 sm:text-xl lg:text-3xl drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)]">
+                        class=" text-left lg:max-w-md  font-bold tracking-tight text-white mb-10 text-5xl lg:text-3xl drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)]">
                         7.
                         Bagaimana pemahaman Saudara tentang Perilaku Petugas dalam pelayanan terkait kesopanan dan
                         keramahan ?</h2>
@@ -1178,7 +1249,7 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="biaya-aja"
                                 class="inline-flex items-center justify-between w-full p-5 text-white bg-transparent border-2 drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)] border-white rounded-lg cursor-pointer  peer-checked:border-white peer-checked:bg-white peer-checked:text-[#1e6653] hover:text-[#1e6653] hover:bg-white ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Sangat Tidak Sopan dan Ramah</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Sangat Tidak Sopan dan Ramah</div>
                                 </div>
                             </label>
                         </li> --}}
@@ -1188,7 +1259,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="biaya-medium"
                                 class="inline-flex items-center justify-between w-full p-5 text-white bg-transparent border-2 drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)] border-white rounded-lg cursor-pointer  peer-checked:border-white peer-checked:bg-white peer-checked:text-[#1e6653] hover:text-[#1e6653] hover:bg-white ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Tidak Sopan dan Ramah</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Tidak Sopan dan
+                                        Ramah</div>
                                 </div>
                             </label>
                         </li>
@@ -1198,7 +1270,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="biaya-big"
                                 class="inline-flex items-center justify-between w-full p-5 text-white bg-transparent border-2 drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)] border-white rounded-lg cursor-pointer  peer-checked:border-white peer-checked:bg-white peer-checked:text-[#1e6653] hover:text-[#1e6653] hover:bg-white ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Cukup Sopan dan Ramah</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Cukup Sopan dan
+                                        Ramah</div>
                                 </div>
                             </label>
                         </li>
@@ -1208,7 +1281,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="biaya-cbig"
                                 class="inline-flex items-center justify-between w-full p-5 text-white bg-transparent border-2 drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)] border-white rounded-lg cursor-pointer  peer-checked:border-white peer-checked:bg-white peer-checked:text-[#1e6653] hover:text-[#1e6653] hover:bg-white ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Sopan dan Ramah</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Sopan dan Ramah
+                                    </div>
                                 </div>
                             </label>
                         </li>
@@ -1218,7 +1292,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="biaya-small"
                                 class="inline-flex items-center justify-between w-full p-5 text-white bg-transparent border-2 drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)] border-white rounded-lg cursor-pointer  peer-checked:border-white peer-checked:bg-white peer-checked:text-[#1e6653] hover:text-[#1e6653] hover:bg-white ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Sangat Sopan dan Ramah</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Sangat Sopan
+                                        dan Ramah</div>
                                 </div>
                             </label>
                         </li>
@@ -1231,12 +1306,13 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                                         d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-4.28 9.22a.75.75 0 000 1.06l3 3a.75.75 0 101.06-1.06l-1.72-1.72h5.69a.75.75 0 000-1.5h-5.69l1.72-1.72a.75.75 0 00-1.06-1.06l-3 3z"
                                         clip-rule="evenodd" />
                                 </svg>
-                                <label class="text-white font-medium text-xl cursor-pointer">KEMBALI</label>
+                                <label
+                                    class="text-white font-medium lg:text-xl text-4xl cursor-pointer">KEMBALI</label>
 
                             </a>
                             <a type="button" onclick="window.location='#delapan'"
                                 class="flex items-center gap-2 cursor-pointer drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)]">
-                                <label class="text-white font-medium text-xl cursor-pointer">LANJUT</label>
+                                <label class="text-white font-medium lg:text-xl text-4xl cursor-pointer">LANJUT</label>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                     class="w-8 h-8 text-white">
                                     <path fill-rule="evenodd"
@@ -1249,14 +1325,14 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                 </div>
             </div>
             <div id="delapan"
-                class="items-center relative isolate overflow-hidden min-w-full h-screen h-screen
+                class="lg:pt-0 pt-16 items-center relative isolate overflow-hidden min-w-full h-screen h-screen
                 px-6 shadow-2xl sm:px-16 lg:flex lg:px-24 bg-[#87e6c1] "
                 style="background-image:
                     radial-gradient(at -10% -10%, #00633d, transparent 35%),
                     radial-gradient(at 110% 110%, #00633d, transparent 35%);">
                 <div class=" text-center  lg:flex lg:py-32 lg:text-left items-center  w-full justify-between">
                     <h2
-                        class=" max-w-md  font-bold tracking-tight text-[#144235] mb-10 sm:text-xl lg:text-3xl drop-shadow-[0_7px_7px_rgba(0,0,0,0.5)]">
+                        class=" text-left lg:max-w-md  font-bold tracking-tight text-[#144235] mb-10 text-5xl lg:text-3xl drop-shadow-[0_7px_7px_rgba(0,0,0,0.5)]">
                         8. Bagaimana pendapat Saudara tentang Kualitas sarana dan prasarana
                         ?</h2>
                     <div class="w-1/6"></div>
@@ -1273,7 +1349,7 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="penanganan-a"
                                 class="inline-flex items-center justify-between w-full p-5 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653] peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Sangat Buruk</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Sangat Buruk</div>
                                 </div>
                             </label>
                         </li> --}}
@@ -1283,7 +1359,7 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="penanganan-b"
                                 class="inline-flex items-center justify-between w-full p-5 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653] peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Buruk</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Buruk</div>
                                 </div>
                             </label>
                         </li>
@@ -1293,7 +1369,7 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="penanganan-c"
                                 class="inline-flex items-center justify-between w-full p-5 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653] peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Cukup</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Cukup</div>
                                 </div>
                             </label>
                         </li>
@@ -1303,7 +1379,7 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="penanganan-d"
                                 class="inline-flex items-center justify-between w-full p-5 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653] peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Baik</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Baik</div>
                                 </div>
                             </label>
                         </li>
@@ -1313,7 +1389,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="penanganan-e"
                                 class="inline-flex items-center justify-between w-full p-5 text-[#1e6653] bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-[#1e6653] peer-checked:text-white hover:text-white hover:bg-[#1e6653] ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Sangat Baik</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Sangat Baik
+                                    </div>
                                 </div>
                             </label>
                         </li>
@@ -1326,12 +1403,14 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                                         d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-4.28 9.22a.75.75 0 000 1.06l3 3a.75.75 0 101.06-1.06l-1.72-1.72h5.69a.75.75 0 000-1.5h-5.69l1.72-1.72a.75.75 0 00-1.06-1.06l-3 3z"
                                         clip-rule="evenodd" />
                                 </svg>
-                                <label class="text-[#1e6653]  font-medium text-xl cursor-pointer">KEMBALI</label>
+                                <label
+                                    class="text-[#1e6653]  font-medium lg:text-xl text-4xl cursor-pointer">KEMBALI</label>
 
                             </a>
                             <a type="button" onclick="window.location='#sembilan'"
                                 class="flex items-center gap-2 cursor-pointer ">
-                                <label class="text-[#1e6653]  font-medium text-xl cursor-pointer">LANJUT</label>
+                                <label
+                                    class="text-[#1e6653]  font-medium lg:text-xl text-4xl cursor-pointer">LANJUT</label>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                     class="w-8 h-8 text-[#1e6653]    ">
                                     <path fill-rule="evenodd"
@@ -1344,7 +1423,7 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                 </div>
             </div>
             <div id="sembilan"
-                class="items-center relative isolate overflow-hidden min-w-full h-screen h-screen
+                class="lg:pt-0 pt-16 items-center relative isolate overflow-hidden min-w-full h-screen h-screen
                 px-6 shadow-2xl sm:px-16 lg:flex lg:px-24 bg-[#001510]"
                 style="background-color: #51a592;
     background-image:
@@ -1352,7 +1431,7 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
         radial-gradient(at 130% 150%, #02A859, transparent 80%);">
                 <div class=" text-center  lg:flex lg:py-32 lg:text-left items-center  w-full justify-between">
                     <h2
-                        class=" max-w-md  font-bold tracking-tight text-white mb-10 sm:text-xl lg:text-3xl drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)]">
+                        class=" text-left lg:max-w-md  font-bold tracking-tight text-white mb-10 text-5xl lg:text-3xl drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)]">
                         9.
                         Bagaimana pendapat Saudara tentang Penanganan Pengaduan pengguna layanan ?</h2>
                     <div class="w-1/6"></div>
@@ -1369,7 +1448,7 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="kesesuaian-small"
                                 class="inline-flex items-center justify-between w-full p-5 text-white bg-transparent border-2 drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)] border-white rounded-lg cursor-pointer  peer-checked:border-white peer-checked:bg-white peer-checked:text-[#1e6653] hover:text-[#1e6653] hover:bg-white ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Tidak Ada</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Tidak Ada</div>
                                 </div>
                             </label>
                         </li> --}}
@@ -1379,7 +1458,9 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="kesesuaian-big"
                                 class="inline-flex items-center justify-between w-full p-5 text-white bg-transparent border-2 drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)] border-white rounded-lg cursor-pointer  peer-checked:border-white peer-checked:bg-white peer-checked:text-[#1e6653] hover:text-[#1e6653] hover:bg-white ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Ada Tetapi Tidak Berfungsi</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Ada Tetapi
+                                        Tidak Berfungsi
+                                    </div>
                                 </div>
                             </label>
                         </li>
@@ -1389,7 +1470,9 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="kesesuaian-medium"
                                 class="inline-flex items-center justify-between w-full p-5 text-white bg-transparent border-2 drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)] border-white rounded-lg cursor-pointer  peer-checked:border-white peer-checked:bg-white peer-checked:text-[#1e6653] hover:text-[#1e6653] hover:bg-white ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Berfungsi Kurang Maksimal, Lambat
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Berfungsi
+                                        Kurang Maksimal,
+                                        Lambat
                                         Ditindaklanjuti</div>
                                 </div>
                             </label>
@@ -1400,7 +1483,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="kesesuaian-aja"
                                 class="inline-flex items-center justify-between w-full p-5 text-white bg-transparent border-2 drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)] border-white rounded-lg cursor-pointer  peer-checked:border-white peer-checked:bg-white peer-checked:text-[#1e6653] hover:text-[#1e6653] hover:bg-white ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Dikelola Dengan Baik</div>
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Dikelola Dengan
+                                        Baik</div>
                                 </div>
                             </label>
                         </li>
@@ -1410,7 +1494,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                             <label for="kesesuaian-ad"
                                 class="inline-flex items-center justify-between w-full p-5 text-white bg-transparent border-2 drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)] border-white rounded-lg cursor-pointer  peer-checked:border-white peer-checked:bg-white peer-checked:text-[#1e6653] hover:text-[#1e6653] hover:bg-white ">
                                 <div class="block">
-                                    <div class="w-full text-lg font-semibold">Sangat Dikelola dan Cepat
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Sangat Dikelola
+                                        dan Cepat
                                         Ditindaklanjuti</div>
                                 </div>
                             </label>
@@ -1424,12 +1509,14 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                                         d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-4.28 9.22a.75.75 0 000 1.06l3 3a.75.75 0 101.06-1.06l-1.72-1.72h5.69a.75.75 0 000-1.5h-5.69l1.72-1.72a.75.75 0 00-1.06-1.06l-3 3z"
                                         clip-rule="evenodd" />
                                 </svg>
-                                <label class="text-white font-medium text-xl cursor-pointer">KEMBALI</label>
+                                <label
+                                    class="text-white font-medium lg:text-xl text-4xl cursor-pointer">KEMBALI</label>
 
                             </a>
                             <a type="button" onclick="window.location='#saran'"
                                 class="flex items-center gap-2 cursor-pointer drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)]">
-                                <label class="text-white font-medium text-xl cursor-pointer">LANJUT</label>
+                                <label
+                                    class="text-white font-medium lg:text-xl text-4xl cursor-pointer">LANJUT</label>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                     class="w-8 h-8 text-white">
                                     <path fill-rule="evenodd"
@@ -1442,13 +1529,13 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                 </div>
             </div>
             <div id="saran"
-                class="items-center relative isolate overflow-hidden min-w-full h-screen h-screen
+                class="lg:pt-0 pt-16 items-center relative isolate overflow-hidden min-w-full h-screen h-screen
                 px-6 shadow-2xl sm:px-16 lg:flex lg:px-24 bg-[#87e6c1] "
                 style="background-image:
                     radial-gradient(at -10% -10%, #00633d, transparent 35%),
                     radial-gradient(at 110% 110%, #00633d, transparent 35%);">
                 <div class=" text-center  lg:py-32 lg:text-left items-center  w-full justify-between">
-                    <h2 class=" font-bold tracking-tight text-[#1e6653] sm:text-xl lg:text-3xl mb-6">Saran
+                    <h2 class=" font-bold tracking-tight text-[#1e6653] text-5xl lg:text-3xl mb-6">Saran
                         perbaikan, masukan dan harapan :</h2>
                     <textarea type="text" id="saran" name="saran"
                         class="block w-full p-4 pl-10 text-xl text-[#1e6653] border border-2 border-white rounded-lg bg-white focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-900 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-6"></textarea>
@@ -1464,15 +1551,15 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 text-sm drop-shad
                                 d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-4.28 9.22a.75.75 0 000 1.06l3 3a.75.75 0 101.06-1.06l-1.72-1.72h5.69a.75.75 0 000-1.5h-5.69l1.72-1.72a.75.75 0 00-1.06-1.06l-3 3z"
                                 clip-rule="evenodd" />
                         </svg>
-                        <label class="text-[#1e6653]  font-medium text-xl cursor-pointer">KEMBALI</label>
+                        <label class="text-[#1e6653]  font-medium lg:text-xl text-4xl cursor-pointer">KEMBALI</label>
 
                     </a>
                 </div>
 
             </div>
         </form>
-
     </div>
+
     <script>
         function hanyaAngka(evt) {
             var charCode = (evt.which) ? evt.which : event.keyCode
