@@ -1470,7 +1470,8 @@ $error = 'max-w-md  font-bold tracking-tight mb-2 text-red-600 lg:text-sm text-x
                             <label for="kesesuaian-medium"
                                 class="inline-flex items-center justify-between w-full p-5 text-white bg-transparent border-2 drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)] border-white rounded-lg cursor-pointer  peer-checked:border-white peer-checked:bg-white peer-checked:text-[#1e6653] hover:text-[#1e6653] hover:bg-white ">
                                 <div class="block">
-                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Berfungsi
+                                    <div class="w-full lg:text-lg lg:text-2xl  text-4xl  text-left font-semibold">
+                                        Berfungsi
                                         Kurang Maksimal,
                                         Lambat
                                         Ditindaklanjuti</div>
