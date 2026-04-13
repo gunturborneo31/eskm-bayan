@@ -453,7 +453,7 @@ final class Style
             }
         }
 
-        $description = preg_replace('/`([^`]+)`/', '<span class="text-white">$1</span>', $result->description);
+        $description = preg_replace('/`([^`]+)`/', '<span class="text-gray-900">$1</span>', $result->description);
 
         renderUsing($this->output);
         render(sprintf(<<<'HTML'

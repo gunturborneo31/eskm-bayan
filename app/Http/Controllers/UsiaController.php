@@ -46,36 +46,23 @@ class UsiaController extends Controller
             $endDate = '2024-12-30';
         }
 
-         if($_GET['filter']==null or $_GET['filter']==1){
-            $selects = DB::table('2024')
+         $baseQuery = DB::table('survey_responses')
             ->whereBetween('created_at', [$startDate, $endDate])
-            ->paginate(10);
-        } else if($_GET['filter']==2) {
-            $selects = DB::table('2024')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->whereBetween('usia', [20, 29])
-            ->paginate(10);
-        }  else if($_GET['filter']==3) {
-            $selects = DB::table('2024')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->whereBetween('usia', [30, 39])
-            ->paginate(10);
-        } else if($_GET['filter']==4) {
-            $selects = DB::table('2024')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->whereBetween('usia', [40, 49])
-            ->paginate(10);
-        } else if($_GET['filter']==5) {
-            $selects = DB::table('2024')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->whereBetween('usia', [50, 100])
-            ->paginate(10);
-        }
+            ->where('tahun', $_GET['Tahun'] ?? date('Y'));
 
-        if($_GET['Tahun']==2023 or $_GET['Tahun']==2025){
-            $selects = DB::table('2023')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->paginate(10);}
+        if($_GET['filter']==null or $_GET['filter']==1){
+            $selects = $baseQuery->paginate(10);
+        } else if($_GET['filter']==2) {
+            $selects = (clone $baseQuery)->whereBetween('usia', [20, 29])->paginate(10);
+        } else if($_GET['filter']==3) {
+            $selects = (clone $baseQuery)->whereBetween('usia', [30, 39])->paginate(10);
+        } else if($_GET['filter']==4) {
+            $selects = (clone $baseQuery)->whereBetween('usia', [40, 49])->paginate(10);
+        } else if($_GET['filter']==5) {
+            $selects = (clone $baseQuery)->whereBetween('usia', [50, 100])->paginate(10);
+        } else {
+            $selects = $baseQuery->paginate(10);
+        }
 
         return view('Usia.index', compact('selects'));
     }
@@ -91,7 +78,7 @@ class UsiaController extends Controller
     /**
      * create
      *
-     * @return void
+     * @return mixed
      */
     public function create()
     {
@@ -101,8 +88,7 @@ class UsiaController extends Controller
     /**
      * store
      *
-     * @param  mixed $request
-     * @return void
+     * @return mixed
      */
     public function store(Request $request)
      {
@@ -148,8 +134,7 @@ class UsiaController extends Controller
     /**
      * edit
      *
-     * @param  mixed $NilaiUnsur
-     * @return void
+     * @return mixed
      */
     public function edit(request $request)
     {
@@ -166,8 +151,7 @@ class UsiaController extends Controller
     /**
      * destroy
      *
-     * @param  mixed $id
-     * @return void
+     * @return mixed
      */
     public function destroy($id)
     {
@@ -186,9 +170,7 @@ class UsiaController extends Controller
     /**
      * update
      *
-     * @param  mixed $request
-     * @param  mixed $NilaiUnsur
-     * @return void
+     * @return mixed
      */
     public function update(Request $request, NilaiUnsur $NilaiUnsur)
     {
@@ -201,3 +183,5 @@ class UsiaController extends Controller
         return redirect()->route('NilaiUnsur.index');
     }
 }
+
+

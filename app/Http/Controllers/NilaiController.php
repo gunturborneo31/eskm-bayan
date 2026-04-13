@@ -44,8 +44,12 @@ if ($_GET['tw'] == null) {
     $endDate = $_GET['Tahun'] . '-12-31';
 }
 
-        $selects = DB::table('nilaiUnsur')
+$terms = array_values(array_unique(array_filter(array_map('trim', explode(',', $_GET['bagian'])))));
+
+        $selects = DB::table('survey_responses')
             ->whereBetween('created_at', [$startDate, $endDate])
+            ->whereIn('jenisPelayanan', $terms)
+            ->where('tahun', $_GET['Tahun'] ?? date('Y'))
             ->paginate(20);
 
         return view('Nilai.index', compact('selects'));
@@ -62,7 +66,7 @@ if ($_GET['tw'] == null) {
     /**
      * create
      *
-     * @return void
+     * @return mixed
      */
     public function create()
     {
@@ -72,8 +76,7 @@ if ($_GET['tw'] == null) {
     /**
      * store
      *
-     * @param  mixed $request
-     * @return void
+     * @return mixed
      */
     public function store(Request $request)
      {
@@ -119,8 +122,7 @@ if ($_GET['tw'] == null) {
     /**
      * edit
      *
-     * @param  mixed $NilaiUnsur
-     * @return void
+     * @return mixed
      */
     public function edit(request $request)
     {
@@ -137,8 +139,7 @@ if ($_GET['tw'] == null) {
     /**
      * destroy
      *
-     * @param  mixed $id
-     * @return void
+     * @return mixed
      */
     public function destroy($id)
     {
@@ -157,9 +158,7 @@ if ($_GET['tw'] == null) {
     /**
      * update
      *
-     * @param  mixed $request
-     * @param  mixed $NilaiUnsur
-     * @return void
+     * @return mixed
      */
     public function update(Request $request, NilaiUnsur $NilaiUnsur)
     {
@@ -172,3 +171,6 @@ if ($_GET['tw'] == null) {
         return redirect()->route('NilaiUnsur.index');
     }
 }
+
+
+

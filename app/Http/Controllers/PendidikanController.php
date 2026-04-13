@@ -46,36 +46,21 @@ class PendidikanController extends Controller
             $endDate = '2024-12-30';
         }
 
-        if($_GET['filter']==null or $_GET['filter']==1){
-            $selects = DB::table('2024')
+        $baseQuery = DB::table('survey_responses')
             ->whereBetween('created_at', [$startDate, $endDate])
-            ->paginate(10);
-        } else if($_GET['filter']==2) {
-            $selects = DB::table('2024')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->where('pendidikan', 'slta')
-            ->paginate(10);
-        }  else if($_GET['filter']==3) {
-            $selects = DB::table('2024')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->where('pendidikan', 'd')
-            ->paginate(10);
-        } else if($_GET['filter']==4) {
-            $selects = DB::table('2024')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->where('pendidikan', 's')
-            ->paginate(10);
-        } else if($_GET['filter']==5) {
-            $selects = DB::table('2024')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->where('pendidikan', 's2')
-            ->paginate(10);
-        }
+            ->where('tahun', $_GET['Tahun'] ?? date('Y'));
 
-        if($_GET['Tahun']==2023 or $_GET['Tahun']==2025){
-            $selects = DB::table('2023')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->paginate(10);}
+        if($_GET['filter']==null or $_GET['filter']==1){
+            $selects = $baseQuery->paginate(10);
+        } else if($_GET['filter']==2) {
+            $selects = (clone $baseQuery)->where('pendidikan', 'slta')->paginate(10);
+        } else if($_GET['filter']==3) {
+            $selects = (clone $baseQuery)->where('pendidikan', 'd')->paginate(10);
+        } else if($_GET['filter']==4) {
+            $selects = (clone $baseQuery)->where('pendidikan', 's')->paginate(10);
+        } else if($_GET['filter']==5) {
+            $selects = (clone $baseQuery)->where('pendidikan', 's2')->paginate(10);
+        }
 
         return view('Pendidikan.index', compact('selects'));
 
@@ -92,7 +77,7 @@ class PendidikanController extends Controller
     /**
      * create
      *
-     * @return void
+     * @return mixed
      */
     public function create()
     {
@@ -102,8 +87,7 @@ class PendidikanController extends Controller
     /**
      * store
      *
-     * @param  mixed $request
-     * @return void
+     * @return mixed
      */
     public function store(Request $request)
      {
@@ -119,9 +103,9 @@ class PendidikanController extends Controller
         $store = NilaiUnsur::create([
             'nama' => $request->nama,
             'alamat' => $request->alamat,
-            'Pendidikan' => $request->Pendidikan,
+            'pekerjaan' => $request->pekerjaan,
             'jenkel' => $request->jenkel,
-            'Pendidikan' => $request->Pendidikan,
+            'usia' => $request->usia,
             'nohp' => $request->nohp,
             'pendidikan' => $request->pendidikan,
             'nik' => $request->nik,
@@ -149,8 +133,7 @@ class PendidikanController extends Controller
     /**
      * edit
      *
-     * @param  mixed $NilaiUnsur
-     * @return void
+     * @return mixed
      */
     public function edit(request $request)
     {
@@ -167,8 +150,7 @@ class PendidikanController extends Controller
     /**
      * destroy
      *
-     * @param  mixed $id
-     * @return void
+     * @return mixed
      */
     public function destroy($id)
     {
@@ -187,9 +169,7 @@ class PendidikanController extends Controller
     /**
      * update
      *
-     * @param  mixed $request
-     * @param  mixed $NilaiUnsur
-     * @return void
+     * @return mixed
      */
     public function update(Request $request, NilaiUnsur $NilaiUnsur)
     {
@@ -202,3 +182,6 @@ class PendidikanController extends Controller
         return redirect()->route('NilaiUnsur.index');
     }
 }
+
+
+

@@ -1,6 +1,9 @@
 <?php
 
+
 namespace App\Http\Controllers;
+
+use DateTime;
 
 use Illuminate\Http\Request;
 use App\Models\NilaiUnsur;
@@ -36,7 +39,7 @@ class SkmController extends Controller
             'usia' => $request->usia,
             'nohp' => $request->nohp,
             'pendidikan' => $request->pendidikan,
-            'nik' => $request->nik,
+            'nik' => '', // NIK dikosongkan, tidak disimpan
             'u1' => $request->persyaratan,
             'u2' => $request->kompetensi,
             'u3' => $request->prosedur,

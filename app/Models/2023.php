@@ -10,7 +10,8 @@ class tahun_2023 extends Model
 {
 
     use HasFactory;
-    public $table = "2023";
+    public $table = "survey_responses";
+    protected $where = ['tahun' => 2023];
 
     protected $fillable = [
             'nama' ,

@@ -12,8 +12,9 @@ class PengaturanController extends Controller
      */
     public function index()
     {
-        $selects = DB::table('2024')
-            ->where('created_at','');
+        $selects = DB::table('survey_responses')
+            ->where('tahun', $_GET['Tahun'] ?? date('Y'))
+            ->paginate(10);
 
         return view('RekapTotal.index', compact('selects'));
 

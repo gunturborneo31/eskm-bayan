@@ -92,50 +92,19 @@ class ExportResume implements FromCollection, WithHeadings, WithCustomStartCell,
             $endDate = '2024-12-30';
         }
 
-        $tu1 = DB::table('2024')
+        $baseQuery = DB::table('survey_responses')
     ->whereBetween('created_at', [$startDate, $endDate])
-    ->get()
-    ->sum('u1');
+    ->where('tahun', $_GET['Tahun'] ?? date('Y'));
 
-$tu2 = DB::table('2024')
-    ->whereBetween('created_at', [$startDate, $endDate])
-    ->get()
-    ->sum('u2');
-
-$tu3 = DB::table('2024')
-    ->whereBetween('created_at', [$startDate, $endDate])
-    ->get()
-    ->sum('u3');
-
-$tu4 = DB::table('2024')
-    ->whereBetween('created_at', [$startDate, $endDate])
-    ->get()
-    ->sum('u4');
-
-$tu5 = DB::table('2024')
-    ->whereBetween('created_at', [$startDate, $endDate])
-    ->get()
-    ->sum('u5');
-
-$tu6 = DB::table('2024')
-    ->whereBetween('created_at', [$startDate, $endDate])
-    ->get()
-    ->sum('u6');
-
-$tu7 = DB::table('2024')
-    ->whereBetween('created_at', [$startDate, $endDate])
-    ->get()
-    ->sum('u7');
-
-$tu8 = DB::table('2024')
-    ->whereBetween('created_at', [$startDate, $endDate])
-    ->get()
-    ->sum('u8');
-
-$tu9 = DB::table('2024')
-    ->whereBetween('created_at', [$startDate, $endDate])
-    ->get()
-    ->sum('u9');
+        $tu1 = (clone $baseQuery)->get()->sum('u1');
+        $tu2 = (clone $baseQuery)->get()->sum('u2');
+        $tu3 = (clone $baseQuery)->get()->sum('u3');
+        $tu4 = (clone $baseQuery)->get()->sum('u4');
+        $tu5 = (clone $baseQuery)->get()->sum('u5');
+        $tu6 = (clone $baseQuery)->get()->sum('u6');
+        $tu7 = (clone $baseQuery)->get()->sum('u7');
+        $tu8 = (clone $baseQuery)->get()->sum('u8');
+        $tu9 = (clone $baseQuery)->get()->sum('u9');
 
         $export = ['nik', 'nama','jenisPelayanan'];
         $total = ['nik' => 'TOTAL'];
@@ -165,16 +134,10 @@ $tu9 = DB::table('2024')
         array_push($export, "created_at");
 
 
-        $selects = DB::table('2024')
+        $selects = DB::table('survey_responses')
             ->whereBetween('created_at', [$startDate, $endDate])
+            ->where('tahun', $_GET['Tahun'] ?? date('Y'))
             ->get($export);
-
-        if($_GET['Tahun']==2023 or $_GET['Tahun']==2025){
-            $selects = DB::table('2023')
-
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->get(['nik','nama','pendidikan','created_at']);}
-
 
         // dd($total);
 

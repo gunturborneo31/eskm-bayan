@@ -11,6 +11,8 @@ use PhpOffice\PhpWord\Element\Table;
 use PhpOffice\PhpWord\TemplateProcessor;
 use PhpOffice\PhpWord\Shared\Converter;
 use PhpOffice\PhpWord\SimpleType\TblWidth;
+use App\Support\BagianOptions;
+
 
 class WordController extends Controller
 {
@@ -177,7 +179,7 @@ class WordController extends Controller
         error_reporting(0);
         if ($_GET['Bulan'] == '') {
             for ($x = 0; $x <= date('m'); $x++) {
-                $responden[$x] = DB::table("2024")
+                $responden[$x] = DB::table("survey_responses")
                     ->whereMonth('created_at', '=', $x + 1)
                     ->get()
                     ->count();
@@ -186,7 +188,7 @@ class WordController extends Controller
             }
         } else {
             for ($x = 0; $x <= $_GET['Bulan']; $x++) {
-                $responden[$x] = DB::table("2024")
+                $responden[$x] = DB::table("survey_responses")
                     ->whereMonth('created_at', '=', $x + 1)
                     ->get()
                     ->count();
@@ -204,9 +206,9 @@ class WordController extends Controller
 
         error_reporting(0);
 
-        $startDate = '2024-01-01';
+        $startDate = 'survey_responses-01-01';
 
-        $endDate = '2024-10-03';
+        $endDate = 'survey_responses-10-03';
 
         if ($_GET['tw'] == null) {
             $today = date('Y-m-d', strtotime('+1 days'));
@@ -234,8 +236,15 @@ class WordController extends Controller
             $endDate = $_GET['Tahun'] . '-12-31';
         }
 
+        $bagians = $_GET['bagian'];
+        if($bagians == 'setkab'){
+            $bagians = BagianOptions::allCodesCsv();
+        }
+
+        $terms = array_values(array_unique(array_filter(array_map('trim', explode(',', $bagians )))));
+
         $indexTu = ['u1', 'u2', 'u3', 'u4', 'u5', 'u6', 'u7', 'u8', 'u9'];
-        $lastDate = ['2024-01-31', '2024-02-31', '2024-03-31', '2024-04-31', '2024-05-31', '2024-06-31', '2024-07-31', '2024-08-31', '2024-09-31', '2024-10-31', '2024-11-31', '2024-12-31'];
+        $lastDate = ['2026-01-31', '2026-02-31', '2026-03-31', '2026-04-31', '2026-05-31', '2026-06-31', '2026-07-31', '2026-08-31', '2026-09-31', '2026-10-31', '2026-11-31', '2026-12-31'];
         // dd($indexTu);
 
         $tu = [[]];
@@ -253,15 +262,19 @@ class WordController extends Controller
             for ($j = 1; $j <= 9; $j++) {
                 $xyz = $indexTu[$j - 1];
                 // echo $xyz;
-                $nilaiTu = DB::table('2024')
+                $nilaiTu = DB::table('survey_responses')
                     ->whereBetween('created_at', [$startDate, $abc])
+                    ->whereIn('jenisPelayanan', $terms)
+                    ->where('tahun', $_GET['Tahun'] ?? date('Y'))
                     ->get()
                     ->sum($xyz);
                 array_push($x, $nilaiTu);
             }
 
-            $nnn = DB::table('2024')
+            $nnn = DB::table('survey_responses')
                 ->whereBetween('created_at', [$startDate, $abc])
+                    ->whereIn('jenisPelayanan', $terms)
+                    ->where('tahun', $_GET['Tahun'] ?? date('Y'))
                 ->get()
                 ->count();
 
@@ -304,7 +317,7 @@ class WordController extends Controller
         }
 
         for ($i = 0; $i <= 11; $i++) {
-            if ($_GET['Tahun'] == '2023' or $_GET['Tahun'] == '2025') {
+            if ($_GET['Tahun'] == '2023') {
                 array_push($nilaiSkm, 0);
             } else {
                 array_push($nilaiSkm, $nrrTT[$i + 1] * 25);
@@ -313,60 +326,21 @@ class WordController extends Controller
 
         // dd($nilaiSkm);
 
-        $tu1 = DB::table('2024')
+        $baseQuery = DB::table('survey_responses')
             ->whereBetween('created_at', [$startDate, $endDate])
-            ->get()
-            ->sum('u1');
+            ->whereIn('jenisPelayanan', $terms)
+            ->where('tahun', $_GET['Tahun'] ?? date('Y'));
 
-        $tu2 = DB::table('2024')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->get()
-            ->sum('u2');
-
-        $tu3 = DB::table('2024')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->get()
-            ->sum('u3');
-
-        $tu4 = DB::table('2024')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->get()
-            ->sum('u4');
-
-        $tu5 = DB::table('2024')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->get()
-            ->sum('u5');
-
-        $tu6 = DB::table('2024')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->get()
-            ->sum('u6');
-
-        $tu7 = DB::table('2024')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->get()
-            ->sum('u7');
-
-        $tu8 = DB::table('2024')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->get()
-            ->sum('u8');
-
-        $tu9 = DB::table('2024')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->get()
-            ->sum('u9');
-
-        $n = DB::table('2024')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->get()
-            ->count();
-
-        $tu9 = DB::table('2024')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->get()
-            ->sum('u9');
+        $tu1 = (clone $baseQuery)->get()->sum('u1');
+        $tu2 = (clone $baseQuery)->get()->sum('u2');
+        $tu3 = (clone $baseQuery)->get()->sum('u3');
+        $tu4 = (clone $baseQuery)->get()->sum('u4');
+        $tu5 = (clone $baseQuery)->get()->sum('u5');
+        $tu6 = (clone $baseQuery)->get()->sum('u6');
+        $tu7 = (clone $baseQuery)->get()->sum('u7');
+        $tu8 = (clone $baseQuery)->get()->sum('u8');
+        $tu9 = (clone $baseQuery)->get()->sum('u9');
+        $n = (clone $baseQuery)->get()->count();
 
         // unset($nilaiSkm[0]);
 
@@ -434,27 +408,10 @@ class WordController extends Controller
 
             // $responden = [];
             // $bulan = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nop', 'Des'];
-
-            // if ($_GET['tw'] == '') {
-            //     for ($x = 0; $x <= date('m'); $x++) {
-            //         $responden[$x][0] = DB::table('2024')
-            //             ->whereMonth('created_at', '=', $x + 1)
-            //             ->get()
-            //             ->count();
-            //         $responden[$x][1] = $bulan[$x];
-            //     }
-            // } else {
-            //     for ($x = 0; $x <= $_GET['tw']; $x++) {
-            //         $responden[$x][0] = DB::table('2024')
-            //             ->whereMonth('created_at', '=', $x + 1)
-            //             ->get()
-            //             ->count();
-            //         $responden[$x][1] = $bulan[$x];
-            //     }
             // }
             // dd($responden);
 
-            if ($_GET['Tahun'] == '2023' or $_GET['Tahun'] == '2025' or $_GET['Tahun'] == '2025') {
+            if ($_GET['Tahun'] == '2023') {
                 $tu = [[]];
                 $x = [];
                 $nn = [];
@@ -466,142 +423,86 @@ class WordController extends Controller
         }
         // echo $nrrTotal;
         // echo $nrrTertimbang;
-        $jmlResponden = DB::table('2024')
+        $baseStatsQuery = DB::table('survey_responses')
             ->whereBetween('created_at', [$startDate, $endDate])
-            ->get()
-            ->count();
+            ->whereIn('jenisPelayanan', $terms)
+            ->where('tahun', $_GET['Tahun'] ?? date('Y'));
 
-            $jenkel_l = DB::table('2024')
-    ->where('jenkel', '=', 'Laki - Laki')
-    ->whereBetween('created_at', [$startDate, $endDate])
-    ->get()
-    ->count();
+        $jmlResponden = (clone $baseStatsQuery)->count();
+        $jenkel_l = (clone $baseStatsQuery)->where('jenkel', 'Laki - Laki')->count();
+        $jenkel_p = (clone $baseStatsQuery)->where('jenkel', 'Perempuan')->count();
 
-    $jenkel_p = DB::table('2024')
-        ->where('jenkel', '=', 'Perempuan')
-        ->whereBetween('created_at', [$startDate, $endDate])
-        ->get()
-        ->count();
+        $umur_1 = (clone $baseStatsQuery)->whereBetween('usia', [0, 29])->count();
+        $umur_2 = (clone $baseStatsQuery)->whereBetween('usia', [30, 40])->count();
+        $umur_3 = (clone $baseStatsQuery)->whereBetween('usia', [41, 50])->count();
+        $umur_4 = (clone $baseStatsQuery)->whereBetween('usia', [51, 100])->count();
 
-    $umur_1 = DB::table('2024')
-        ->whereBetween('usia', [0, 29])
-        ->whereBetween('created_at', [$startDate, $endDate])
-        ->get()
-        ->count();
+        $pendidikan_1 = (clone $baseStatsQuery)->where('pendidikan', 'SD')->count();
+        $pendidikan_2 = (clone $baseStatsQuery)->where('pendidikan', 'SMP')->count();
+        $pendidikan_3 = (clone $baseStatsQuery)->where('pendidikan', 'SMA / SMK')->count();
+        $pendidikan_4 = (clone $baseStatsQuery)->where('pendidikan', 'D-I / D-III')->count();
+        $pendidikan_5 = (clone $baseStatsQuery)->where('pendidikan', 'S1 / Setara')->count();
+        $pendidikan_6 = (clone $baseStatsQuery)->where('pendidikan', 'S2 / S3')->count();
 
-    $umur_2 = DB::table('2024')
-        ->whereBetween('usia', [30, 40])
-        ->whereBetween('created_at', [$startDate, $endDate])
-        ->get()
-        ->count();
+        $pekerjaan_1 = (clone $baseStatsQuery)->where('pekerjaan', 'ASN')->count();
+        $pekerjaan_2 = (clone $baseStatsQuery)->where('pekerjaan', 'TNI / POLRI')->count();
+        $pekerjaan_3 = (clone $baseStatsQuery)->where('pekerjaan', 'Swasta')->count();
+        $pekerjaan_4 = (clone $baseStatsQuery)->where('pekerjaan', 'Pengusaha')->count();
+        $pekerjaan_5 = (clone $baseStatsQuery)->where('pekerjaan', 'Pelajar')->count();
+        $pekerjaan_6 = (clone $baseStatsQuery)->where('pekerjaan', 'Lainnya')->count();
 
-    $umur_3 = DB::table('2024')
-        ->whereBetween('usia', [41, 50])
-        ->whereBetween('created_at', [$startDate, $endDate])
-        ->get()
-        ->count();
-
-    $umur_4 = DB::table('2024')
-        ->whereBetween('usia', [51, 100])
-        ->whereBetween('created_at', [$startDate, $endDate])
-        ->get()
-        ->count();
-
-    $pendidikan_1 = DB::table('2024')
-        ->where('pendidikan', '=', 'SD')
-        ->whereBetween('created_at', [$startDate, $endDate])
-        ->get()
-        ->count();
-
-    $pendidikan_2 = DB::table('2024')
-        ->where('pendidikan', '=', 'SMP')
-        ->whereBetween('created_at', [$startDate, $endDate])
-        ->get()
-        ->count();
-
-    $pendidikan_3 = DB::table('2024')
-        ->where('pendidikan', '=', 'SMA / SMK')
-        ->whereBetween('created_at', [$startDate, $endDate])
-        ->get()
-        ->count();
-
-    $pendidikan_4 = DB::table('2024')
-        ->where('pendidikan', '=', 'D-I / D-III')
-        ->whereBetween('created_at', [$startDate, $endDate])
-        ->get()
-        ->count();
-
-    $pendidikan_5 = DB::table('2024')
-        ->where('pendidikan', '=', 'S1 / Setara')
-        ->whereBetween('created_at', [$startDate, $endDate])
-        ->get()
-        ->count();
-
-    $pendidikan_6 = DB::table('2024')
-        ->where('pendidikan', '=', 'S2 / S3')
-        ->whereBetween('created_at', [$startDate, $endDate])
-        ->get()
-        ->count();
-
-    $pekerjaan_1 = DB::table('2024')
-        ->where('pekerjaan', '=', 'ASN')
-        ->whereBetween('created_at', [$startDate, $endDate])
-        ->get()
-        ->count();
-
-    $pekerjaan_2 = DB::table('2024')
-        ->where('pekerjaan', '=', 'TNI / POLRI')
-        ->whereBetween('created_at', [$startDate, $endDate])
-        ->get()
-        ->count();
-
-    $pekerjaan_3 = DB::table('2024')
-        ->where('pekerjaan', '=', 'Swasta')
-        ->whereBetween('created_at', [$startDate, $endDate])
-        ->get()
-        ->count();
-
-    $pekerjaan_4 = DB::table('2024')
-        ->where('pekerjaan', '=', 'Pengusaha')
-        ->whereBetween('created_at', [$startDate, $endDate])
-        ->get()
-        ->count();
-
-    $pekerjaan_5 = DB::table('2024')
-        ->where('pekerjaan', '=', 'Pelajar')
-        ->whereBetween('created_at', [$startDate, $endDate])
-        ->get()
-        ->count();
-
-    $pekerjaan_6 = DB::table('2024')
-        ->where('pekerjaan', '=', 'Lainnya')
-        ->whereBetween('created_at', [$startDate, $endDate])
-        ->get()
-        ->count();
+        $safeTotal = $jmlResponden > 0 ? $jmlResponden : 1;
+        $jenkel_l_psn = $jenkel_l * 100 / $safeTotal;
+        $jenkel_p_psn = $jenkel_p * 100 / $safeTotal;
+        $pendidikan_1_psn = $pendidikan_1 * 100 / $safeTotal;
+        $pendidikan_2_psn = $pendidikan_2 * 100 / $safeTotal;
+        $pendidikan_3_psn = $pendidikan_3 * 100 / $safeTotal;
+        $pendidikan_4_psn = $pendidikan_4 * 100 / $safeTotal;
+        $pendidikan_5_psn = $pendidikan_5 * 100 / $safeTotal;
+        $pendidikan_6_psn = $pendidikan_6 * 100 / $safeTotal;
+        $pekerjaan_1_psn = $pekerjaan_1 * 100 / $safeTotal;
+        $pekerjaan_2_psn = $pekerjaan_2 * 100 / $safeTotal;
+        $pekerjaan_3_psn = $pekerjaan_3 * 100 / $safeTotal;
+        $pekerjaan_4_psn = $pekerjaan_4 * 100 / $safeTotal;
+        $pekerjaan_5_psn = $pekerjaan_5 * 100 / $safeTotal;
+        $pekerjaan_6_psn = $pekerjaan_6 * 100 / $safeTotal;
 
         //-----------------------------------------------------------------------------------------------------------------
 
-        $document_with_table = new \PhpOffice\PhpWord\PhpWord();
-        $section = $document_with_table->addSection();
-        $table = $section->addTable();
-        for ($r = 1; $r <= 8; $r++) {
-            $table->addRow();
-            for ($c = 1; $c <= 5; $c++) {
-                $table->addCell(1750)->addText("Row {$r}, Cell {$c}");
-            }
-        }
-
-        // Create writer to convert document to xml
-        $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($document_with_table, 'Word2007');
-
-        // Get all document xml code
-        $fullxml = $objWriter->getWriterPart('Document')->write();
-
-        // Get only table xml code
-        $tablexml = preg_replace('/^[\s\S]*(<w:tbl\b.*<\/w:tbl>).*/', '$1', $fullxml);
-
         //Open template with ${table}
-        $templateProcessor = new TemplateProcessor('word-template/export.docx');
+        $bagian = $_GET['bagian'];
+
+        if($bagian=="organisasi"){
+            $templateProcessor = new TemplateProcessor('word-template/exportorganisasi.docx');
+            $namaBagian = "Bagian Organisasi";
+        } else if($bagian=="umum"){
+            $templateProcessor = new TemplateProcessor('word-template/exportumum.docx');
+            $namaBagian = "Bagian Umum";
+        } else if($bagian=="pemerintahan"){
+            $templateProcessor = new TemplateProcessor('word-template/exportpemerintahan.docx');
+            $namaBagian = "Bagian Pemerintahan";
+        } else if($bagian=="adbang"){
+            $templateProcessor = new TemplateProcessor('word-template/exportadbang.docx');
+            $namaBagian = "Bagian Adbang";
+        } else if($bagian=="prokopim"){
+            $templateProcessor = new TemplateProcessor('word-template/exportprokopim.docx');
+            $namaBagian = "Bagian Prokopim";
+        } else if($bagian=="kesra"){
+            $templateProcessor = new TemplateProcessor('word-template/exportkesra.docx');
+            $namaBagian = "Bagian Kesra";
+        } else if($bagian=="barjas"){
+            $templateProcessor = new TemplateProcessor('word-template/exportbarjas.docx');
+            $namaBagian = "Bagian Barjas";
+        } else if($bagian=="ekosda"){
+            $templateProcessor = new TemplateProcessor('word-template/exportekosda.docx');
+            $namaBagian = "Bagian Ekosda";
+        } else if($bagian=="hukum"){
+            $templateProcessor = new TemplateProcessor('word-template/exporthukum.docx');
+            $namaBagian = "Bagian Hukum";
+        } else if($bagian=="setkab"){
+            $templateProcessor = new TemplateProcessor('word-template/exportsetkab.docx');
+            $namaBagian = "";
+        }
 
         $tahun = $_GET['Tahun'];
         $tw = $_GET['tw'];
@@ -752,6 +653,10 @@ class WordController extends Controller
         }
         // dd($tahun);
         // Replace mark by xml code of table
+        $checkedBox='<w:sym w:font="Wingdings" w:char="F0FE"/>';
+        $unCheckedBox = '<w:sym w:font="Wingdings" w:char="F0A8"/>';
+        $templateProcessor->setValue('checkBox',$checkedBox);
+
         $templateProcessor->setValue('bulanAwal', $bulanAwal);
         $templateProcessor->setValue('bulanAkhir', $bulanAkhir);
         $templateProcessor->setValue('semester', $semester);
@@ -759,6 +664,8 @@ class WordController extends Controller
         $templateProcessor->setValue('jmlResponden', $jmlResponden);
         $templateProcessor->setValue('jenkel_p', $jenkel_p);
         $templateProcessor->setValue('jenkel_l', $jenkel_l);
+        $templateProcessor->setValue('jenkel_p_psn', $jenkel_p_psn);
+        $templateProcessor->setValue('jenkel_l_psn', $jenkel_l_psn);
         $templateProcessor->setValue('umur_1', $umur_1);
         $templateProcessor->setValue('umur_2', $umur_2);
         $templateProcessor->setValue('umur_3', $umur_3);
@@ -769,14 +676,32 @@ class WordController extends Controller
         $templateProcessor->setValue('pendidikan_4', $pendidikan_4);
         $templateProcessor->setValue('pendidikan_5', $pendidikan_5);
         $templateProcessor->setValue('pendidikan_6', $pendidikan_6);
+        $templateProcessor->setValue('pendidikan_1_psn', $pendidikan_1_psn);
+        $templateProcessor->setValue('pendidikan_2_psn', $pendidikan_2_psn);
+        $templateProcessor->setValue('pendidikan_3_psn', $pendidikan_3_psn);
+        $templateProcessor->setValue('pendidikan_4_psn', $pendidikan_4_psn);
+        $templateProcessor->setValue('pendidikan_5_psn', $pendidikan_5_psn);
+        $templateProcessor->setValue('pendidikan_6_psn', $pendidikan_6_psn);
         $templateProcessor->setValue('pekerjaan_1', $pekerjaan_1);
         $templateProcessor->setValue('pekerjaan_2', $pekerjaan_2);
         $templateProcessor->setValue('pekerjaan_3', $pekerjaan_3);
         $templateProcessor->setValue('pekerjaan_4', $pekerjaan_4);
         $templateProcessor->setValue('pekerjaan_5', $pekerjaan_5);
         $templateProcessor->setValue('pekerjaan_6', $pekerjaan_6);
+        $templateProcessor->setValue('pekerjaan_1_psn', $pekerjaan_1_psn);
+        $templateProcessor->setValue('pekerjaan_2_psn', $pekerjaan_2_psn);
+        $templateProcessor->setValue('pekerjaan_3_psn', $pekerjaan_3_psn);
+        $templateProcessor->setValue('pekerjaan_4_psn', $pekerjaan_4_psn);
+        $templateProcessor->setValue('pekerjaan_5_psn', $pekerjaan_5_psn);
+        $templateProcessor->setValue('pekerjaan_6_psn', $pekerjaan_6_psn);
+        $templateProcessor->setValue('pekerjaan_1_psn', $pekerjaan_1_psn);
+        $templateProcessor->setValue('pekerjaan_2_psn', $pekerjaan_2_psn);
+        $templateProcessor->setValue('pekerjaan_3_psn', $pekerjaan_3_psn);
+        $templateProcessor->setValue('pekerjaan_4_psn', $pekerjaan_4_psn);
+        $templateProcessor->setValue('pekerjaan_5_psn', $pekerjaan_5_psn);
+        $templateProcessor->setValue('pekerjaan_6_psn', $pekerjaan_6_psn);
         $templateProcessor->setValue('nilaiSkm', sprintf('%0.2f', $nilaiSKM));
-        $templateProcessor->setValue('$nrrT', $nrrT);
+        $templateProcessor->setValue('nrrT', $nrrT);
         $templateProcessor->setValue('mutu', $mutu);
         $templateProcessor->setValue('kinerja', $kinerja);
         $templateProcessor->setValue('hariIni', $hariIni);
@@ -830,8 +755,12 @@ class WordController extends Controller
         $chartPekerjaan->getStyle()->setWidth(Converter::inchToEmu(4))->setHeight(Converter::inchToEmu(2));
         $templateProcessor->setChart('chartPekerjaan', $chartPekerjaan);
 
-        $nilaiUnsur = DB::table('2024')
-            ->whereBetween('created_at', [$startDate, $endDate])->get();
+        $baseReportQuery = DB::table('survey_responses')
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->whereIn('jenisPelayanan', $terms)
+            ->where('tahun', $_GET['Tahun'] ?? date('Y'));
+
+        $nilaiUnsur = (clone $baseReportQuery)->get();
 
         // dd($nilaiUnsur);
 
@@ -865,60 +794,16 @@ class WordController extends Controller
             $table->addCell(800)->addText( '');
         }
 
-        $tu1 = DB::table('2024')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->get()
-            ->sum('u1');
-
-        $tu2 = DB::table('2024')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->get()
-            ->sum('u2');
-
-        $tu3 = DB::table('2024')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->get()
-            ->sum('u3');
-
-        $tu4 = DB::table('2024')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->get()
-            ->sum('u4');
-
-        $tu5 = DB::table('2024')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->get()
-            ->sum('u5');
-
-        $tu6 = DB::table('2024')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->get()
-            ->sum('u6');
-
-        $tu7 = DB::table('2024')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->get()
-            ->sum('u7');
-
-        $tu8 = DB::table('2024')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->get()
-            ->sum('u8');
-
-        $tu9 = DB::table('2024')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->get()
-            ->sum('u9');
-
-        $n = DB::table('2024')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->get()
-            ->count();
-
-        $tu9 = DB::table('2024')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->get()
-            ->sum('u9');
+        $tu1 = (clone $baseReportQuery)->sum('u1');
+        $tu2 = (clone $baseReportQuery)->sum('u2');
+        $tu3 = (clone $baseReportQuery)->sum('u3');
+        $tu4 = (clone $baseReportQuery)->sum('u4');
+        $tu5 = (clone $baseReportQuery)->sum('u5');
+        $tu6 = (clone $baseReportQuery)->sum('u6');
+        $tu7 = (clone $baseReportQuery)->sum('u7');
+        $tu8 = (clone $baseReportQuery)->sum('u8');
+        $tu9 = (clone $baseReportQuery)->sum('u9');
+        $n = (clone $baseReportQuery)->count();
 
         if ($n == 0) {
             $nrr1 = 0;
@@ -1059,7 +944,7 @@ class WordController extends Controller
         $templateProcessor->setValue(search: 'nrrt9', replace: $nrrt9);
 
         $table->addRow();
-        $table->addCell(200)->addText( 'Nilai SKM DISEPRINDAG KUTIM per'. $bulanAkhir. ' '. $tahun);
+        $table->addCell(200)->addText( 'Nilai SKM DISEPRINDAG MAHULU per'. $bulanAkhir. ' '. $tahun);
         $table->addCell(500)->addText( '');
         $table->addCell(500)->addText( '');
         $table->addCell(500)->addText( '');
@@ -1089,8 +974,8 @@ class WordController extends Controller
 
         $templateProcessor->setComplexBlock('{tabelSaran}', $table);
         //save template with table
-        $templateProcessor->saveAs('Laporan SKM DISPERINDAG KUTIM Semester '.$semester.' Tahun '.$tahun.'.docx');
-        return response()->download('Laporan SKM DISPERINDAG KUTIM Semester '.$semester.' Tahun '.$tahun.'.docx')->deleteFileAfterSend(true);
+        $templateProcessor->saveAs('Laporan SKM '.$namaBagian.'PT Bayan Tahun '.$tahun.'.docx');
+        return response()->download('Laporan SKM '.$namaBagian.'PT Bayan Tahun '.$tahun.'.docx')->deleteFileAfterSend(true);
     }
 
     // $document_with_table = new \PhpOffice\PhpWord\PhpWord();

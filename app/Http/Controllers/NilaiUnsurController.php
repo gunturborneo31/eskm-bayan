@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BagianLayanan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
@@ -43,14 +44,15 @@ if ($_GET['tw'] == null) {
 } elseif ($_GET['tw'] == 7) {
     $startDate = $_GET['Tahun'] . '-01-01';
     $endDate = $_GET['Tahun'] . '-12-31';
-}        $selects = DB::table('2024')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->paginate(10);
+}        
 
-        if($_GET['Tahun']==2023 or $_GET['Tahun']==2025){
-            $selects = DB::table('2023')
+$terms = array_values(array_unique(array_filter(array_map('trim', explode(',', $_GET['bagian'])))));
+
+$selects = DB::table('survey_responses')
             ->whereBetween('created_at', [$startDate, $endDate])
-            ->paginate(10);}
+            ->whereIn('jenisPelayanan', $terms)
+            ->where('tahun', $_GET['Tahun'] ?? date('Y'))
+            ->paginate(10);
 
         return view('NilaiUnsur.index', compact('selects'));
     }
@@ -66,7 +68,7 @@ if ($_GET['tw'] == null) {
     /**
      * create
      *
-     * @return void
+     * @return mixed
      */
     public function create()
     {
@@ -76,46 +78,53 @@ if ($_GET['tw'] == null) {
     /**
      * store
      *
-     * @param  mixed $request
-     * @return void
+     * @return mixed
      */
     public function store(Request $request)
      {
         // echo ("request");
-        // return $request->post();
+        
+
         // return $request->jenkel['jenkel'];
-
-        $this->validate($request, [
-            'nik' => 'required|string|min:18',
-            'nik' => 'required|string|max:18',
-            'nama' => 'required',
-            'jenisPelayanan' => 'required',
-            'nohp' => 'required',
-            'jenkel' => 'required',
-            'alamat' => 'required',
-            'usia' => 'required',
-            'u1' => 'required',
-            'u2' => 'required',
-            'u3' => 'required',
-            'u4' => 'required',
-            'u5' => 'required',
-            'u6' => 'required',
-            'u7' => 'required',
-            'u8' => 'required',
-            'u9' => 'required',
-            'saran' => 'required',
-        ]);
-
-
         $data = new NilaiUnsur();
 
+        $jenis_pelayanan = null;
+        if (\Illuminate\Support\Facades\Schema::hasTable('bagian_layanan')) {
+            $bagian = BagianLayanan::find((int) $request->bagian);
+            if ($bagian) {
+                $jenis_pelayanan = $bagian->kode;
+            }
+        }
+
+        if (!$jenis_pelayanan) {
+            if($request->bagian==1){
+                $jenis_pelayanan = "organisasi";
+            } else if($request->bagian==2){
+                $jenis_pelayanan = "umum";
+            } else if($request->bagian==3){
+                $jenis_pelayanan = "pemerintahan";
+            } else if($request->bagian==4){
+                $jenis_pelayanan = "adbang";
+            } else if($request->bagian==5){
+                $jenis_pelayanan = "prokopim";
+            } else if($request->bagian==6){
+                $jenis_pelayanan = "kesra";
+            } else if($request->bagian==7){
+                $jenis_pelayanan = "pbj";
+            } else if($request->bagian==8){
+                $jenis_pelayanan = "ekosda";
+            } else if($request->bagian==9){
+                $jenis_pelayanan = "hukum";
+            }
+        }
         // $data->nm_kelas = $request->nm_kelas;
         // $data->ket = $request->ket;
         // $data->save();
         // return redirect()->back();
 
         $store = NilaiUnsur::create([
-            'jenisPelayanan' => $request->jenisPelayanan,
+            'jenisPelayanan' => $jenis_pelayanan,
+            'tahun' => (int) ($request->input('tahun') ?: date('Y')),
             'nama' => $request->nama,
             'alamat' => $request->alamat,
             'pekerjaan' => $request->pekerjaan,
@@ -134,6 +143,7 @@ if ($_GET['tw'] == null) {
             'u8' => $request->u8,
             'u9' => $request->u9,
             'saran' => $request->saran,
+            'id_sub_jenis' => $request->filled('jenis') ? (int) $request->jenis : null,
         ]);
 
         if ($store) {
@@ -148,8 +158,7 @@ if ($_GET['tw'] == null) {
     /**
      * edit
      *
-     * @param  mixed $NilaiUnsur
-     * @return void
+     * @return mixed
      */
     public function edit(request $request)
     {
@@ -166,8 +175,7 @@ if ($_GET['tw'] == null) {
     /**
      * destroy
      *
-     * @param  mixed $id
-     * @return void
+     * @return mixed
      */
     public function destroy($id)
     {
@@ -186,9 +194,7 @@ if ($_GET['tw'] == null) {
     /**
      * update
      *
-     * @param  mixed $request
-     * @param  mixed $NilaiUnsur
-     * @return void
+     * @return mixed
      */
     public function update(Request $request, NilaiUnsur $NilaiUnsur)
     {
@@ -201,3 +207,6 @@ if ($_GET['tw'] == null) {
         return redirect()->route('NilaiUnsur.index');
     }
 }
+
+
+

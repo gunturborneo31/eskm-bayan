@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
-use Session;
 use App\Models\NilaiUnsur;
+use App\Models\User;
+use App\Support\BagianOptions;
 
 
 class DashboardController extends Controller
@@ -13,7 +16,7 @@ class DashboardController extends Controller
     public function index()
     {
         // echo (""+Session::get('subbidang'));
-        $selects = DB::table('2024')
+        $selects = DB::table('survey_responses')
             ->get();
 
         return view('dashboard', compact('selects'));
@@ -30,13 +33,12 @@ class DashboardController extends Controller
         } else if(date('m')<=12){
             $tw=7;
         }
-
-        if (array_key_exists("tw", $_GET)){
+if (array_key_exists("tw", $_GET)){
             // echo "ada";
         } else {
             // echo "kosong";
 
-            return redirect("?tw=".$tw."&Tahun=".date('Y'));
+            // return redirect("?tw=".$tw."&Tahun=".date('Y')."&bagian=" . BagianOptions::allCodesCsv());
         }
 
         // $tahun = date("Y");
@@ -45,39 +47,37 @@ class DashboardController extends Controller
         $responden = [];
         $singkatan = [];
 
-        $bulan = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nop', 'Des'];
 
-        error_reporting(0);
-        if ($_GET['Bulan'] == '') {
-            for ($x = 0; $x <= date('m'); $x++) {
-                $responden[$x] = DB::table("2024")
-                    ->whereMonth('created_at', '=', $x + 1)
-                    ->get()
-                    ->count();
-                $singkatan[$x] = $bulan[$x];
-                $jml = date('m');
-            }
-        } else {
-            for ($x = 0; $x <= $_GET['Bulan']; $x++) {
-                $responden[$x] = DB::table("2024")
-                    ->whereMonth('created_at', '=', $x + 1)
-                    ->get()
-                    ->count();
-                $singkatan[$x] = $bulan[$x];
-                $jml = $_GET['Bulan'];
-            }
+        // Ambil data agregat seluruh tahun
+        $allYears = DB::table('survey_responses')
+            ->select(DB::raw('YEAR(created_at) as tahun'), DB::raw('COUNT(*) as total'))
+            ->groupBy(DB::raw('YEAR(created_at)'))
+            ->orderBy('tahun')
+            ->get();
+
+        $responden = [];
+        $singkatan = [];
+        foreach ($allYears as $i => $row) {
+            $responden[$i] = $row->total;
+            $singkatan[$i] = $row->tahun;
         }
-        // dd($responden);
+        $jml = count($responden);
 
-            $responden = json_encode($responden);
-            $singkatan = json_encode($singkatan);
+
+        $responden = json_encode($responden);
+        $singkatan = json_encode($singkatan);
+
+        // Pastikan $selects terdefinisi untuk compact()
+        $selects = DB::table('survey_responses')->get();
 
         $i = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         // dd ($jml);
 
+        $bln = null;
         if($i == '/remake'){
-
+            // ...existing code...
         } else {
+            // Kirim data tren tahunan ke view, label grafik batang: "Tren SKM Tahunan"
             return view('welcome', compact('selects','responden','bln','jml', 'singkatan'));
         }
         // return view('welcome', compact('selects','responden','bln','jml', 'singkatan'));
@@ -87,14 +87,12 @@ class DashboardController extends Controller
     public function cariDashboard(Request $request)
     {
         $keyword = $request->search;
-        $datas = NilaiUnsur::where($tahun, 'like', "%" . 'like', "%" . $keyword . "%");
+        $datas = NilaiUnsur::where('tahun', 'like', "%" . $keyword . "%")->get();
         return view('dashboard.index', compact('datas'));
     }
 
     /**
-     * create
-     *
-     * @return void
+     * Show admin dashboard landing page.
      */
     public function create()
     {
@@ -102,25 +100,57 @@ class DashboardController extends Controller
     }
 
     /**
-     * store
-     *
-     * @param  mixed $request
-     * @return void
+     * Handle admin login.
      */
     public function store(Request $request)
     {
-        if(($request->username=="admin@~!=") && ($request->password=="admin@~!=")){
-            return redirect("/rekapTotal?jenkel=1&usia=1&pekerjaan=1&pendidikan=1&tw=".fmod(date('m'), 3)."&Tahun=".date('Y'));
-        } else {
-            return redirect("/login");
+        $validated = $request->validate([
+            'username' => ['required', 'string', 'max:255'],
+            'password' => ['required', 'string'],
+        ], [
+            'username.required' => 'Username wajib diisi.',
+            'password.required' => 'Password wajib diisi.',
+        ]);
+
+        $username = (string) $validated['username'];
+        $password = (string) $validated['password'];
+
+        // Look up the user by username (stored in the users.username column).
+        $user = User::where('username', $username)->first();
+
+        if (! $user || ! Hash::check($password, $user->password)) {
+            return back()->withInput($request->only('username'))->withErrors(['username' => 'Username atau password salah.']);
         }
+
+        $request->session()->regenerate();
+
+        // Store the authenticated user id and role in the session.
+        Session::put('user_id', $user->id);
+        Session::put('username', $user->username);
+        Session::put('keterangan', $user->keterangan ?? 'admin');
+
+        $role = $user->keterangan ?? 'admin';
+
+        // Role → department mapping (mirrors the legacy logic).
+        $bagian = BagianOptions::csvForRole($role);
+
+        $tw    = (int) ceil((int) date('m') / 3);
+        $tahun = date('Y');
+
+        return redirect("/rekapTotal?jenkel=1&usia=1&pekerjaan=1&pendidikan=1&tw={$tw}&Tahun={$tahun}&bagian={$bagian}&keterangan=" . urlencode($role));
+    }
+
+    public function logout(Request $request)
+    {
+        Session::forget(['user_id', 'username', 'keterangan']);
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/login');
     }
 
     /**
-     * edit
-     *
-     * @param  mixed $Dashboard
-     * @return void
+     * Edit dashboard data.
      */
     public function edit(request $request)
     {
@@ -137,7 +167,6 @@ class DashboardController extends Controller
     /**
      * destroy
      *
-     * @param  mixed $id
      * @return void
      */
     public function destroy($id)

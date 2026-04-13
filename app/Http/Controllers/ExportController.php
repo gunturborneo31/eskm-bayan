@@ -9,33 +9,28 @@ use App\Exports\ExportPendidikan;
 use App\Exports\ExportSaranMasukan;
 use App\Exports\ExportResume;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Models\User;
+use Illuminate\Http\Request;
 
 class ExportController extends Controller
 
 {
-    public function exportJenkel(){
-        return Excel::download(new ExportJenisKelamin, 'Resume Jenis Kelamin e-skm.xlsx');
-    }
+    public function export(Request $request)
+    {
+        $type = strtolower((string) $request->query('type', 'resume'));
 
-     public function exportUsia(){
-        return Excel::download(new ExportUsia, 'Resume Usia e-skm.xlsx');
-    }
+        $exports = [
+            'jenkel' => [ExportJenisKelamin::class, 'Resume Jenis Kelamin e-skm.xlsx'],
+            'usia' => [ExportUsia::class, 'Resume Usia e-skm.xlsx'],
+            'pekerjaan' => [ExportPekerjaan::class, 'Resume Pekerjaan e-skm.xlsx'],
+            'pendidikan' => [ExportPendidikan::class, 'Resume Pendidikan e-skm.xlsx'],
+            'saranmasukan' => [ExportSaranMasukan::class, 'Resume Saran dan Masukan e-skm.xlsx'],
+            'saran-masukan' => [ExportSaranMasukan::class, 'Resume Saran dan Masukan e-skm.xlsx'],
+            'resume' => [ExportResume::class, 'Resume e-skm.xlsx'],
+        ];
 
-     public function exportPekerjaan(){
-        return Excel::download(new ExportPekerjaan, 'Resume Pekerjaan e-skm.xlsx');
-    }
+        [$exportClass, $filename] = $exports[$type] ?? $exports['resume'];
 
-     public function exportPendidikan(){
-        return Excel::download(new ExportPendidikan, 'Resume Pendidikan e-skm.xlsx');
-    }
-
-     public function exportSaranMasukan(){
-        return Excel::download(new ExportSaranMasukan, 'Resume Saran dan Masukan e-skm.xlsx');
-    }
-
-    public function exportResume(){
-        return Excel::download(new ExportResume, 'Resume Resume e-skm.xlsx');
+        return Excel::download(new $exportClass(), $filename);
     }
 
 }

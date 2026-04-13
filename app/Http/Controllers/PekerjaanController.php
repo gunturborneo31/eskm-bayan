@@ -46,41 +46,23 @@ class PekerjaanController extends Controller
             $endDate = '2024-12-30';
         }
 
-         if($_GET['filter']==null or $_GET['filter']==1){
-            $selects = DB::table('2024')
+         $baseQuery = DB::table('survey_responses')
             ->whereBetween('created_at', [$startDate, $endDate])
-            ->paginate(10);
-        } else if($_GET['filter']==2) {
-            $selects = DB::table('2024')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->where('pekerjaan', 'pns')
-            ->paginate(10);
-        }  else if($_GET['filter']==3) {
-            $selects = DB::table('2024')
-            ->where('pekerjaan', 'nonasn')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->paginate(10);
-        } else if($_GET['filter']==4) {
-            $selects = DB::table('2024')
-            ->where('pekerjaan', 'mahasiswa')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->paginate(10);
-        } else if($_GET['filter']==5) {
-            $selects = DB::table('2024')
-            ->where('pekerjaan', 'swasta')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->paginate(10);
-        } else if($_GET['filter']==6) {
-            $selects = DB::table('2024')
-            ->where('pekerjaan', 'lainnya')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->paginate(10);
-        }
+            ->where('tahun', $_GET['Tahun'] ?? date('Y'));
 
-        if($_GET['Tahun']==2023 or $_GET['Tahun']==2025){
-            $selects = DB::table('2023')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->paginate(10);}
+        if($_GET['filter']==null or $_GET['filter']==1){
+            $selects = $baseQuery->paginate(10);
+        } else if($_GET['filter']==2) {
+            $selects = (clone $baseQuery)->where('pekerjaan', 'pns')->paginate(10);
+        } else if($_GET['filter']==3) {
+            $selects = (clone $baseQuery)->where('pekerjaan', 'nonasn')->paginate(10);
+        } else if($_GET['filter']==4) {
+            $selects = (clone $baseQuery)->where('pekerjaan', 'mahasiswa')->paginate(10);
+        } else if($_GET['filter']==5) {
+            $selects = (clone $baseQuery)->where('pekerjaan', 'swasta')->paginate(10);
+        } else if($_GET['filter']==6) {
+            $selects = (clone $baseQuery)->where('pekerjaan', 'lainnya')->paginate(10);
+        }
 
         return view('Pekerjaan.index', compact('selects'));
 
@@ -97,7 +79,7 @@ class PekerjaanController extends Controller
     /**
      * create
      *
-     * @return void
+     * @return mixed
      */
     public function create()
     {
@@ -107,8 +89,7 @@ class PekerjaanController extends Controller
     /**
      * store
      *
-     * @param  mixed $request
-     * @return void
+     * @return mixed
      */
     public function store(Request $request)
      {
@@ -126,7 +107,7 @@ class PekerjaanController extends Controller
             'alamat' => $request->alamat,
             'pekerjaan' => $request->pekerjaan,
             'jenkel' => $request->jenkel,
-            'Pekerjaan' => $request->Pekerjaan,
+            'usia' => $request->usia,
             'nohp' => $request->nohp,
             'pendidikan' => $request->pendidikan,
             'nik' => $request->nik,
@@ -154,8 +135,7 @@ class PekerjaanController extends Controller
     /**
      * edit
      *
-     * @param  mixed $NilaiUnsur
-     * @return void
+     * @return mixed
      */
     public function edit(request $request)
     {
@@ -172,8 +152,7 @@ class PekerjaanController extends Controller
     /**
      * destroy
      *
-     * @param  mixed $id
-     * @return void
+     * @return mixed
      */
     public function destroy($id)
     {
@@ -192,9 +171,7 @@ class PekerjaanController extends Controller
     /**
      * update
      *
-     * @param  mixed $request
-     * @param  mixed $NilaiUnsur
-     * @return void
+     * @return mixed
      */
     public function update(Request $request, NilaiUnsur $NilaiUnsur)
     {
@@ -207,3 +184,6 @@ class PekerjaanController extends Controller
         return redirect()->route('NilaiUnsur.index');
     }
 }
+
+
+

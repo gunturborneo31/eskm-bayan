@@ -78,27 +78,19 @@ class ExportSaranMasukan implements FromCollection, WithHeadings, WithCustomStar
             $endDate = '2024-12-30';
         }
 
+        $baseQuery = DB::table('survey_responses')
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->where('tahun', $_GET['Tahun'] ?? date('Y'));
+
         if($_GET['filter']==null or $_GET['filter']==1){
-            $selects = DB::table('2024')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->get(['nik','nama','saran','created_at']);
+            $selects = $baseQuery->get(['nik','nama','saran','created_at']);
         } else if($_GET['filter']==2) {
-            $selects = DB::table('2024')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->where('saran', 'laki')
-            ->get(['nik','nama','saran','created_at']);
-        }  else if($_GET['filter']==3) {
-            $selects = DB::table('2024')
-            ->where('saran', 'perempuan')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->get(['nik','nama','saran','created_at']);
+            $selects = (clone $baseQuery)->where('saran', 'laki')->get(['nik','nama','saran','created_at']);
+        } else if($_GET['filter']==3) {
+            $selects = (clone $baseQuery)->where('saran', 'perempuan')->get(['nik','nama','saran','created_at']);
+        } else {
+            $selects = $baseQuery->get(['nik','nama','saran','created_at']);
         }
-
-        if($_GET['Tahun']==2023 or $_GET['Tahun']==2025){
-            $selects = DB::table('2023')
-
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->get(['nik','nama','saran','created_at']);}
 
         // return dd($_GET['filter']);
 

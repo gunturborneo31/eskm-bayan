@@ -1,0 +1,159 @@
+#jangan gunakan bagian header, footer dan background
+
+<!DOCTYPE html>
+
+<html lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SurveyApp - Welcome</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed-variant": "#6b3a0e",
+                    "inverse-primary": "#ffb781",
+                    "inverse-on-surface": "#f0f1f2",
+                    "primary-fixed": "#ffdcc4",
+                    "error-container": "#ffdad6",
+                    "surface-container-low": "#f3f4f5",
+                    "primary-container": "#ff8800",
+                    "background": "#f8f9fa",
+                    "primary": "#924c00",
+                    "surface-container-high": "#e7e8e9",
+                    "on-primary-fixed": "#2f1400",
+                    "tertiary": "#006491",
+                    "on-error": "#ffffff",
+                    "surface-bright": "#f8f9fa",
+                    "outline": "#8a7262",
+                    "on-secondary-container": "#794619",
+                    "on-tertiary-fixed-variant": "#004c6e",
+                    "surface-container": "#edeeef",
+                    "on-secondary": "#ffffff",
+                    "surface": "#f8f9fa",
+                    "on-primary-fixed-variant": "#6f3800",
+                    "surface-container-highest": "#e1e3e4",
+                    "secondary-container": "#ffb781",
+                    "on-surface": "#191c1d",
+                    "inverse-surface": "#2e3132",
+                    "secondary-fixed": "#ffdcc4",
+                    "on-background": "#191c1d",
+                    "tertiary-fixed": "#c9e6ff",
+                    "surface-dim": "#d9dadb",
+                    "on-primary-container": "#613000",
+                    "tertiary-container": "#00b2fd",
+                    "error": "#ba1a1a",
+                    "surface-tint": "#924c00",
+                    "on-primary": "#ffffff",
+                    "primary-fixed-dim": "#ffb781",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary": "#885124",
+                    "on-tertiary-container": "#004160",
+                    "secondary-fixed-dim": "#ffb781",
+                    "tertiary-fixed-dim": "#8aceff",
+                    "on-error-container": "#93000a",
+                    "outline-variant": "#dec1ae",
+                    "surface-variant": "#e1e3e4",
+                    "on-tertiary": "#ffffff",
+                    "on-tertiary-fixed": "#001e2f",
+                    "on-surface-variant": "#574335",
+                    "on-secondary-fixed": "#2f1400"
+            },
+            "borderRadius": {
+                    "DEFAULT": "1rem",
+                    "lg": "2rem",
+                    "xl": "3rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Manrope"],
+                    "label": ["Manrope"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bg-pattern {
+            background-image: radial-gradient(rgba(255, 255, 255, 0.2) 2px, transparent 2px);
+            background-size: 32px 32px;
+        }
+    </style>
+</head>
+<body class="bg-surface overflow-hidden">
+<!-- TopNavBar Shell -->
+<nav class="fixed top-0 w-full z-50 flex justify-between items-center px-8 py-4 bg-[#F8F9FA]/80 backdrop-blur-xl no-line tonal-shift bg-surface-container-low">
+<div class="text-xl font-bold text-[#924C00] tracking-tighter">SurveyApp</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="font-manrope font-medium text-sm tracking-wide text-[#924C00] font-bold border-b-2 border-[#FF8800] pb-1" href="#">Survey</a>
+<a class="font-manrope font-medium text-sm tracking-wide text-[#574335] hover:text-[#924C00] transition-colors" href="#">Progress</a>
+<a class="font-manrope font-medium text-sm tracking-wide text-[#574335] hover:text-[#924C00] transition-colors" href="#">History</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-[#F3F4F5] transition-colors">
+<span class="material-symbols-outlined text-[#924C00]" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</nav>
+<!-- Main Content Area: Gradient Background -->
+<main class="relative h-screen w-full flex items-center justify-center pt-16 pb-24 px-6 md:px-20 bg-gradient-to-br from-[#FF8800] via-[#E67A00] to-[#924C00]">
+<!-- Dot Pattern Overlay -->
+<div class="absolute inset-0 bg-pattern opacity-40"></div>
+<!-- Central Modal Card -->
+<div class="relative z-10 w-full max-w-4xl bg-surface-container-lowest rounded-lg shadow-[0px_12px_32px_rgba(25,28,29,0.06)] p-12 md:p-16 flex flex-col items-center">
+<h1 class="headline-md text-center text-[#924C00] font-extrabold mb-10 tracking-tight">
+                SELAMAT DATANG DI SURVEY KEPUASAN MASYARAKAT
+            </h1>
+<div class="w-full space-y-8 mb-12">
+<div class="space-y-4">
+<h2 class="title-md font-bold text-on-surface">PERHATIAN :</h2>
+<ul class="space-y-4 body-lg text-on-surface-variant">
+<li class="flex gap-4">
+<span class="flex-shrink-0 w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-bold text-sm">1</span>
+<p>Survey ini bertujuan untuk mengukur tingkat kepuasan masyarakat terhadap layanan yang kami berikan.</p>
+</li>
+<li class="flex gap-4">
+<span class="flex-shrink-0 w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-bold text-sm">2</span>
+<p>Silahkan isi data diri Anda dengan benar sebelum memulai pengisian kuesioner.</p>
+</li>
+<li class="flex gap-4">
+<span class="flex-shrink-0 w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-bold text-sm">3</span>
+<p>Berikan jawaban yang jujur dan objektif sesuai dengan pengalaman yang Anda rasakan.</p>
+</li>
+<li class="flex gap-4">
+<span class="flex-shrink-0 w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-bold text-sm">4</span>
+<p>Data pribadi Anda akan kami jaga kerahasiaannya dan hanya digunakan untuk keperluan evaluasi layanan.</p>
+</li>
+</ul>
+</div>
+</div>
+<!-- Primary Action -->
+<button class="bg-[#FF8800] text-white font-bold px-16 py-4 rounded-full shadow-lg hover:opacity-90 active:scale-95 transition-all tracking-widest text-lg">
+                OK
+            </button>
+</div>
+</main>
+<!-- BottomNavBar Shell -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-between items-center px-10 py-6 bg-[#F8F9FA]/90 backdrop-blur-lg rounded-t-[32px] shadow-[0px_-12px_32px_rgba(25,28,29,0.04)] tonal-layering">
+<!-- Inactive Back Button -->
+<button class="flex flex-row items-center gap-2 bg-[#EDEEEF] text-[#574335] rounded-full px-8 py-3 hover:opacity-90 active:scale-95 transition-all font-manrope font-bold uppercase tracking-widest text-xs">
+<span class="material-symbols-outlined text-sm" data-icon="arrow_back">arrow_back</span>
+            KEMBALI
+        </button>
+<!-- Active Next Button -->
+<button class="flex flex-row items-center gap-2 bg-[#FF8800] text-white rounded-full px-8 py-3 shadow-lg hover:opacity-90 active:scale-95 transition-all font-manrope font-bold uppercase tracking-widest text-xs">
+            LANJUT
+            <span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</nav>
+</body></html>

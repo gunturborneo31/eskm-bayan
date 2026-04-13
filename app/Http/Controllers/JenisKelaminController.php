@@ -46,26 +46,19 @@ class JenisKelaminController extends Controller
             $endDate = '2024-12-30';
         }
 
-        if($_GET['filter']==null or $_GET['filter']==1){
-            $selects = DB::table('2024')
+        $baseQuery = DB::table('survey_responses')
             ->whereBetween('created_at', [$startDate, $endDate])
-            ->paginate(10);
-        } else if($_GET['filter']==2) {
-            $selects = DB::table('2024')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->where('jenkel', 'laki')
-            ->paginate(10);
-        }  else if($_GET['filter']==3) {
-            $selects = DB::table('2024')
-            ->where('jenkel', 'perempuan')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->paginate(10);
-        }
+            ->where('tahun', $_GET['Tahun'] ?? date('Y'));
 
-        if($_GET['Tahun']==2023 or $_GET['Tahun']==2025){
-            $selects = DB::table('2023')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->paginate(10);}
+        if($_GET['filter']==null or $_GET['filter']==1){
+            $selects = $baseQuery->paginate(10);
+        } else if($_GET['filter']==2) {
+            $selects = (clone $baseQuery)->where('jenkel', 'laki')->paginate(10);
+        } else if($_GET['filter']==3) {
+            $selects = (clone $baseQuery)->where('jenkel', 'perempuan')->paginate(10);
+        } else {
+            $selects = $baseQuery->paginate(10);
+        }
 
         return view('JenisKelamin.index', ['selects' => $selects]);
     }
@@ -81,7 +74,7 @@ class JenisKelaminController extends Controller
     /**
      * create
      *
-     * @return void
+     * @return mixed
      */
     public function create()
     {
@@ -91,8 +84,7 @@ class JenisKelaminController extends Controller
     /**
      * store
      *
-     * @param  mixed $request
-     * @return void
+     * @return mixed
      */
     public function store(Request $request)
      {
@@ -138,8 +130,7 @@ class JenisKelaminController extends Controller
     /**
      * edit
      *
-     * @param  mixed $NilaiUnsur
-     * @return void
+     * @return mixed
      */
     public function edit(request $request)
     {
@@ -156,8 +147,7 @@ class JenisKelaminController extends Controller
     /**
      * destroy
      *
-     * @param  mixed $id
-     * @return void
+     * @return mixed
      */
     public function destroy($id)
     {
@@ -176,9 +166,7 @@ class JenisKelaminController extends Controller
     /**
      * update
      *
-     * @param  mixed $request
-     * @param  mixed $NilaiUnsur
-     * @return void
+     * @return mixed
      */
     public function update(Request $request, NilaiUnsur $NilaiUnsur)
     {
@@ -191,3 +179,5 @@ class JenisKelaminController extends Controller
         return redirect()->route('NilaiUnsur.index');
     }
 }
+
+

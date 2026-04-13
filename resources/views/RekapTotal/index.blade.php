@@ -32,55 +32,67 @@ if ($_GET['tw'] == null) {
     $endDate = $_GET['Tahun'] . '-12-31';
 }
 
-$tu1 = DB::table('2024')
+$terms = array_values(array_unique(array_filter(array_map('trim', explode(',', $_GET['bagian'])))));
+
+$tu1 = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
+    ->whereIn('jenisPelayanan', $terms)
     ->get()
     ->sum('u1');
 
-$tu2 = DB::table('2024')
+$tu2 = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
+    ->whereIn('jenisPelayanan', $terms)
     ->get()
     ->sum('u2');
 
-$tu3 = DB::table('2024')
+$tu3 = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
+    ->whereIn('jenisPelayanan', $terms)
     ->get()
     ->sum('u3');
 
-$tu4 = DB::table('2024')
+$tu4 = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
+    ->whereIn('jenisPelayanan', $terms)
     ->get()
     ->sum('u4');
 
-$tu5 = DB::table('2024')
+$tu5 = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
+    ->whereIn('jenisPelayanan', $terms)
     ->get()
     ->sum('u5');
 
-$tu6 = DB::table('2024')
+$tu6 = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
+    ->whereIn('jenisPelayanan', $terms)
     ->get()
     ->sum('u6');
 
-$tu7 = DB::table('2024')
+$tu7 = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
+    ->whereIn('jenisPelayanan', $terms)
     ->get()
     ->sum('u7');
 
-$tu8 = DB::table('2024')
+$tu8 = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
+    ->whereIn('jenisPelayanan', $terms)
     ->get()
     ->sum('u8');
 
-$tu9 = DB::table('2024')
+$tu9 = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
+    ->whereIn('jenisPelayanan', $terms)
     ->get()
     ->sum('u9');
 
 $Ttl_Nilai_Unsur = $tu1 + $tu2 + $tu3 + $tu4 + $tu5 + $tu6 + $tu7 + $tu8 + $tu9;
 
-$n = DB::table('2024')
+$n = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
+    ->whereIn('jenisPelayanan', $terms)
     ->get()
     ->count();
 
@@ -144,16 +156,28 @@ if ($n == 0) {
 
 ?>
 
+@php
+    // role/keterangan dari URL login, contoh: ?keterangan=asisten2
+    $role = request('keterangan', 'admin');
+    $bagianQuery = request('bagian', '');
+
+    // Semua opsi yang tersedia untuk ditampilkan
+    $allOptions = \App\Support\BagianOptions::codeNameMap();
+    $visibleKeys = \App\Support\BagianOptions::codesForRole($role);
+@endphp
+
+
+
 @extends('layouts.index', ['title' => 'Dashboard'])
 
 @section('content')
-    <div class="absolute top-0 left-[215px] h-screen w-10/12 p-2">
+    <div class="admin-main">
         <div class="bg-white h-full w-full rounded-xl p-3  mb-2">
-            <div class="flex w-full justify-between items-center -mt-3">
-                <p class="text-[25px] font-black text-[#01683d]">RESUME </p>
+            <div class="admin-toolbar flex w-full justify-between items-start lg:items-center gap-3 flex-wrap lg:flex-nowrap">
+                <p class="text-[25px] font-black text-gray-800">RESUME </p>
                 <div class="flex justify-between items-center py-4 ">
                     <div>
-                        <label class="text-white font-bold text-xl"> </label>
+                        <label class="text-gray-900 font-bold text-xl"> </label>
                     </div>
                     <?php
 
@@ -163,240 +187,189 @@ if ($n == 0) {
                     <div class="flex flex-row items-center gap-3">
 
                         {{-- filter --}}
-                        <div class="flex flex-row items-center gap-2">
-                            <label for="countries" class=" font-bold text-[#01683d] text-sm ">
-                                Filter</label>
+<div class="flex flex-row items-center gap-2">
+    <label class="font-bold text-gray-800 text-sm">Filter</label>
+  
+    <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown"
+      class="flex items-center bg-white border border-gray-300 text-[#005C3A] font-bold text-sm rounded-full px-5 py-1" type="button">
+      Pilih
+      <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+      </svg>
+    </button>
+  
+    <div id="dropdown" class="z-10 hidden border bg-white divide-y divide-gray-100 rounded-lg shadow w-44">
+      <ul class="py-2 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
+        @php
+          $tw = $_GET['tw'] ?? '';
+          $Tahun = $_GET['Tahun'] ?? '';
+          $bagian = $_GET['bagian'] ?? '';
+          $jenkel = $_GET['jenkel'] ?? '0';
+          $usia = $_GET['usia'] ?? '0';
+          $pekerjaan = $_GET['pekerjaan'] ?? '0';
+          $pendidikan = $_GET['pendidikan'] ?? '0';
+        @endphp
+  
+        <li>
+          <a href="/rekapTotal?tw={{ $tw }}&Tahun={{ $Tahun }}&bagian={{ urlencode($bagian) }}&jenkel={{ $jenkel=='0'?'1':'0' }}&usia={{ $usia }}&pekerjaan={{ $pekerjaan }}&pendidikan={{ $pendidikan }}"
+             class="block px-4 py-2 hover:bg-gray-100 flex items-center gap-2">
+            <p>Jenis kelamin</p>
+            <svg aria-hidden="true" fill="none" stroke-width="4" stroke="currentColor" viewBox="0 0 24 24" class="w-3 h-3 {{ $jenkel=='1' ? '' : 'hidden' }}">
+              <path d="m4.5 12.75 6 6 9-13.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </a>
+        </li>
+  
+        <li>
+          <a href="/rekapTotal?tw={{ $tw }}&Tahun={{ $Tahun }}&bagian={{ urlencode($bagian) }}&jenkel={{ $jenkel }}&usia={{ $usia=='0'?'1':'0' }}&pekerjaan={{ $pekerjaan }}&pendidikan={{ $pendidikan }}"
+             class="block px-4 py-2 hover:bg-gray-100 flex items-center gap-2">
+            <p>Usia</p>
+            <svg aria-hidden="true" fill="none" stroke-width="4" stroke="currentColor" viewBox="0 0 24 24" class="w-3 h-3 {{ $usia=='1' ? '' : 'hidden' }}">
+              <path d="m4.5 12.75 6 6 9-13.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </a>
+        </li>
+  
+        <li>
+          <a href="/rekapTotal?tw={{ $tw }}&Tahun={{ $Tahun }}&bagian={{ urlencode($bagian) }}&jenkel={{ $jenkel }}&usia={{ $usia }}&pekerjaan={{ $pekerjaan=='0'?'1':'0' }}&pendidikan={{ $pendidikan }}"
+             class="block px-4 py-2 hover:bg-gray-100 flex items-center gap-2">
+            <p>Pekerjaan</p>
+            <svg aria-hidden="true" fill="none" stroke-width="4" stroke="currentColor" viewBox="0 0 24 24" class="w-3 h-3 {{ $pekerjaan=='1' ? '' : 'hidden' }}">
+              <path d="m4.5 12.75 6 6 9-13.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </a>
+        </li>
+  
+        <li>
+          <a href="/rekapTotal?tw={{ $tw }}&Tahun={{ $Tahun }}&bagian={{ urlencode($bagian) }}&jenkel={{ $jenkel }}&usia={{ $usia }}&pekerjaan={{ $pekerjaan }}&pendidikan={{ $pendidikan=='0'?'1':'0' }}"
+             class="block px-4 py-2 hover:bg-gray-100 flex items-center gap-2">
+            <p>Pendidikan</p>
+            <svg aria-hidden="true" fill="none" stroke-width="4" stroke="currentColor" viewBox="0 0 24 24" class="w-3 h-3 {{ $pendidikan=='1' ? '' : 'hidden' }}">
+              <path d="m4.5 12.75 6 6 9-13.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
 
-                            <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown"
-                                class="flex items-center  bg-white border border-gray-300 text-[#005C3A] font-bold   text-sm rounded-full px-5 py-1"
-                                type="button">Pilih <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true"
-                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                        stroke-width="2" d="m1 1 4 4 4-4" />
-                                </svg>
-                            </button>
+  {{-- tahun --}}
+@php
+$tw = $_GET['tw'] ?? '';
+$Tahun = $_GET['Tahun'] ?? '';
+$bagian = $_GET['bagian'] ?? '';
+$jenkel = $_GET['jenkel'] ?? '0';
+$usia = $_GET['usia'] ?? '0';
+$pekerjaan = $_GET['pekerjaan'] ?? '0';
+$pendidikan = $_GET['pendidikan'] ?? '0';
+@endphp
 
-                            <!-- Dropdown menu -->
-                            <div id="dropdown"
-                                class="z-10 hidden border bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
-                                <ul class="py-2 text-sm text-gray-700 dark:text-gray-200"
-                                    aria-labelledby="dropdownDefaultButton">
-                                    <li>
-                                        <a href="/rekapTotal?jenkel={{ $_GET['jenkel'] == 0 ? 1 : 0 }}&usia={{ $_GET['usia'] }}&pekerjaan={{ $_GET['pekerjaan'] }}&pendidikan={{ $_GET['pendidikan'] }}&tahun={{ $_GET['tahun'] }}"
-                                            class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white flex items-center gap-2">
-                                            <p>Jenis kelamin</p>
-                                            <svg data-slot="icon" aria-hidden="true" fill="none" stroke-width="4"
-                                                stroke="currentColor" viewBox="0 0 24 24" class="w-3 h-3 "
-                                                {{ $_GET['jenkel'] == 0 ? 'hidden' : '' }}
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <path d="m4.5 12.75 6 6 9-13.5" stroke-linecap="round"
-                                                    stroke-linejoin="round"></path>
-                                            </svg>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="/rekapTotal?jenkel={{ $_GET['jenkel'] }}&usia={{ $_GET['usia'] == 0 ? 1 : 0 }}&pekerjaan={{ $_GET['pekerjaan'] }}&pendidikan={{ $_GET['pendidikan'] }}&tahun={{ $_GET['tahun'] }}"
-                                            class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white flex items-center gap-2">
-                                            <p>Usia</p>
-                                            <svg data-slot="icon" aria-hidden="true" fill="none" stroke-width="4"
-                                                stroke="currentColor" viewBox="0 0 24 24" class="w-3 h-3 "
-                                                {{ $_GET['usia'] == 0 ? 'hidden' : '' }}
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <path d="m4.5 12.75 6 6 9-13.5" stroke-linecap="round"
-                                                    stroke-linejoin="round"></path>
-                                            </svg>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="/rekapTotal?jenkel={{ $_GET['jenkel'] }}&usia={{ $_GET['usia'] }}&pekerjaan={{ $_GET['pekerjaan'] == 0 ? 1 : 0 }}&pendidikan={{ $_GET['pendidikan'] }}&tahun={{ $_GET['tahun'] }}"
-                                            class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white flex items-center gap-2">
-                                            <p>Pekerjaan</p>
-                                            <svg data-slot="icon" aria-hidden="true" fill="none" stroke-width="4"
-                                                stroke="currentColor" viewBox="0 0 24 24" class="w-3 h-3 "
-                                                {{ $_GET['pekerjaan'] == 0 ? 'hidden' : '' }}
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <path d="m4.5 12.75 6 6 9-13.5" stroke-linecap="round"
-                                                    stroke-linejoin="round"></path>
-                                            </svg>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="/rekapTotal?jenkel={{ $_GET['jenkel'] }}&usia={{ $_GET['usia'] }}&pekerjaan={{ $_GET['pekerjaan'] }}&pendidikan={{ $_GET['pendidikan'] == 0 ? 1 : 0 }}"
-                                            class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white flex items-center gap-2">
-                                            <p>Pendidikan</p>
-                                            <svg data-slot="icon" aria-hidden="true" fill="none" stroke-width="4"
-                                                stroke="currentColor" viewBox="0 0 24 24" class="w-3 h-3 "
-                                                {{ $_GET['pendidikan'] == 0 ? 'hidden' : '' }}
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <path d="m4.5 12.75 6 6 9-13.5" stroke-linecap="round"
-                                                    stroke-linejoin="round"></path>
-                                            </svg>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        {{-- tahun --}}
-                        <div class="flex flex-row items-center gap-3 mb-5 lg:mb-0">
-                            <label for="countries" class=" font-bold text-[#01683d] text-5xl lg:text-base ">
-                                Tahun</label>
+<div class="flex flex-row items-center gap-3 mb-5 lg:mb-0">
+<label for="tahun" class="font-bold text-gray-800 text-5xl lg:text-base">Tahun</label>
+<select id="tahun"
+  onChange="document.location.href='/rekapTotal?tw={{ $tw }}&Tahun=' + this.value + '&bagian={{ urlencode($bagian) }}&jenkel={{ $jenkel }}&usia={{ $usia }}&pekerjaan={{ $pekerjaan }}&pendidikan={{ $pendidikan }}'"
+  class="bg-white border border-gray-300 text-gray-800 font-bold text-5xl w-[250px] text-center lg:w-fit lg:text-sm rounded-full px-3 py-1">
+  <option value="2023" {{ $Tahun=='2023' ? 'selected' : '' }}>2023</option>
+  <option value="2024" {{ $Tahun=='2024' ? 'selected' : '' }}>2024</option>
+  <option value="2025" {{ $Tahun=='2025' ? 'selected' : '' }}>2025</option>
+  <option value="2026" {{ ($Tahun=='2026' || $Tahun=='') ? 'selected' : '' }}>2026</option>
+</select>
+</div>
 
-                            <?php if($_GET['Tahun'] == ''){ ?>
-                            <select id="countries" id="language"
-                                onChange="document.location.href='?jenkel=1&usia=1&pekerjaan=1&pendidikan=1&tw=' + {{ $_GET['tw'] == null ? '2024' : $_GET['tw'] }} + '&Tahun=' + this.value   "
-                                class="bg-white border border-gray-300 text-[#01683d] font-bold text-5xl w-[250px] text-center lg:w-fit lg:text-sm rounded-full px-3 py-1">
-                                <option value="2023" <?php if (date('Y') == '2023') {
-                                    echo 'selected';
-                                } else {
-                                } ?>>2023</option>
+{{-- tw --}}
+@php
+  $tw = $_GET['tw'] ?? '';
+  $Tahun = $_GET['Tahun'] ?? '';
+  $bagian = $_GET['bagian'] ?? '';
+  $jenkel = $_GET['jenkel'] ?? '0';
+  $usia = $_GET['usia'] ?? '0';
+  $pekerjaan = $_GET['pekerjaan'] ?? '0';
+  $pendidikan = $_GET['pendidikan'] ?? '0';
+@endphp
 
-                                <option value="2024" <?php if (date('Y') == '2024') {
-                                    echo 'selected';
-                                } else {
-                                } ?>>2024</option>
+<div class="flex flex-row items-center gap-3 mb-5 lg:mb-0">
+  <label for="tw" class="font-bold text-gray-800 text-5xl lg:text-base">Triwulan</label>
+  <select id="tw"
+    onChange="document.location.href='/rekapTotal?tw=' + this.value + '&Tahun={{ $Tahun }}&bagian={{ urlencode($bagian) }}&jenkel={{ $jenkel }}&usia={{ $usia }}&pekerjaan={{ $pekerjaan }}&pendidikan={{ $pendidikan }}'"
+    class="bg-white border border-gray-300 text-gray-800 font-bold text-5xl w-[300px] text-center lg:w-fit lg:text-sm rounded-full px-3 py-1">
+    <option value="1" {{ $tw=='1' ? 'selected' : '' }}>Triwulan 1 (Jan, Feb, Mar)</option>
+    <option value="2" {{ $tw=='2' ? 'selected' : '' }}>Triwulan 2 (Apr, Mei, Jun)</option>
+    <option value="3" {{ $tw=='3' ? 'selected' : '' }}>Triwulan 2 (Jan s/d Jun)</option>
+    <option value="4" {{ $tw=='4' ? 'selected' : '' }}>Triwulan 3 (Jul, Agu, Sep)</option>
+    <option value="5" {{ $tw=='5' ? 'selected' : '' }}>Triwulan 3 (Jan s/d Sep)</option>
+    <option value="6" {{ $tw=='6' ? 'selected' : '' }}>Triwulan 4 (Okt, Nop, Des)</option>
+    <option value="7" {{ $tw=='7' ? 'selected' : '' }}>Triwulan 4 (Jan s/d Des)</option>
+  </select>
+</div>
 
-                                <option value="2025" <?php if (date('Y') == '2025') {
-                                    echo 'selected';
-                                } else {
-                                } ?>>2025</option>
-                            </select>
-                            <?php  } else {?>
-                            <select id="countries" id="language"
-                                onChange="document.location.href='?jenkel=1&usia=1&pekerjaan=1&pendidikan=1&tw=' + {{ $_GET['tw'] == null ? '2024' : $_GET['tw'] }} + '&Tahun=' + this.value   "
-                                class="bg-white border border-gray-300 text-[#01683d] font-bold text-5xl w-[250px] text-center lg:w-fit lg:text-sm rounded-full px-3 py-1">
-                                <option value="2023" <?php
-                                if ($_GET['Tahun'] == '2023' or $_GET['Tahun'] == '2025') {
-                                    echo 'selected';
-                                } else {
-                                }
-                                ?>>2023</option>
+ {{-- bagian --}}
+ <div class="flex flex-row items-center gap-2">
+    <label for="countries" class="text-black font-bold text-sm ">
+        Bagian</label>
 
-                                <option value="2024" <?php
-                                if ($_GET['Tahun'] == '2024') {
-                                    echo 'selected';
-                                } else {
-                                }
-                                ?>>2024</option>
+    <button id="dropdownDefaultButton" data-dropdown-toggle="dropdownP"
+        class="flex items-center  bg-[#ffffff] border border-gray-400 font-bold   text-sm rounded-full px-3 py-1"
+        type="button">Pilih <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                stroke-width="2" d="m1 1 4 4 4-4" />
+        </svg>
+    </button>
 
-                                <option value="2025" <?php
-                                if ($_GET['Tahun'] == '2025') {
-                                    echo 'selected';
-                                } else {
-                                }
-                                ?>>2025</option>
-                            </select>
-                            <?php
-                    }?>
-
-                        </div>
-
-                        {{-- tw --}}
-
-                        <div class="flex flex-row items-center gap-3 mb-5 lg:mb-0">
-                            <label for="countries" class=" font-bold text-[#155748] text-5xl lg:text-base">
-                                Triwulan</label>
-                            <?php if($_GET['tw'] == ''){ ?>
-                            <select id="countries" id="language"
-                                onChange="document.location.href='?tw=' + this.value + '&Tahun=' + {{ $_GET['Tahun'] == null ? '2024' : $_GET['Tahun'] }} "
-                                class="bg-white border border-gray-300 text-[#155748] font-bold text-5xl w-full text-center lg:w-fit lg:text-sm rounded-full px-3 py-1">
-
-                                <option value="1" <?php if (date('m') == 1) {
-                                    echo 'selected';
-                                } else {
-                                } ?>>Triwulan 1 (Jan, Feb, Mar)</option>
-
-                                <option value="2" <?php if (date('m') == 2) {
-                                    echo 'selected';
-                                } else {
-                                } ?>>Triwulan 2 (Apr, Mei, Jun)</option>
-
-                                <option value="3" <?php if (date('m') == 3) {
-                                    echo 'selected';
-                                } else {
-                                } ?>>Triwulan 2 (Jan s/d Jun)</option>
-
-                                <option value="4" <?php if (date('m') == 4) {
-                                    echo 'selected';
-                                } else {
-                                } ?>>Triwulan 3 (Jul, Agu, Sep)</option>
-
-                                <option value="5" <?php if (date('m') == 5) {
-                                    echo 'selected';
-                                } else {
-                                } ?>>Triwulan 3 (Jan s/d Sep)</option>
-
-                                <option value="6" <?php if (date('m') == 6) {
-                                    echo 'selected';
-                                } else {
-                                } ?>>Triwulan 4 (Okt, Nop, Des)</option>
-
-                                <option value="7" <?php if (date('m') == 7) {
-                                    echo 'selected';
-                                } else {
-                                } ?>>Triwulan 4 (Jan s/d Des)</option>
-                            </select>
-                            <?php  } else {?>
-                            <select id="countries" id="language"
-                                onChange="document.location.href='?tw=' + this.value + '&Tahun=' + {{ $_GET['Tahun'] == null ? '2024' : $_GET['Tahun'] }}"
-                                class="bg-white border border-gray-300 text-[#155748] font-bold text-5xl w-[300px] text-center lg:w-fit lg:text-sm rounded-full px-3 py-1">
-
-                                <option value="1" <?php
-                                if ($_GET['tw'] == 1) {
-                                    echo 'selected';
-                                } else {
-                                }
-                                ?>>Triwulan 1 (Jan, Feb, Mar)</option>
-
-                                <option value="2" <?php
-                                if ($_GET['tw'] == 2) {
-                                    echo 'selected';
-                                } else {
-                                }
-                                ?>>Triwulan 2 (Apr, Mei, Jun)</option>
-
-                                <option value="3" <?php
-                                if ($_GET['tw'] == 3) {
-                                    echo 'selected';
-                                } else {
-                                }
-                                ?>>Triwulan 2 (Jan s/d Jun)</option>
-
-                                <option value="4" <?php
-                                if ($_GET['tw'] == 4) {
-                                    echo 'selected';
-                                } else {
-                                }
-                                ?>>Triwulan 3 (Jul, Agu, Sep)</option>
-
-                                <option value="5" <?php
-                                if ($_GET['tw'] == 5) {
-                                    echo 'selected';
-                                } else {
-                                }
-                                ?>>Triwulan 3 (Jan s/d Sep)</option>
-
-                                <option value="6" <?php
-                                if ($_GET['tw'] == 6) {
-                                    echo 'selected';
-                                } else {
-                                }
-                                ?>>Triwulan 4 (Okt, Nop, Des)</option>
-
-                                <option value="7" <?php
-                                if ($_GET['tw'] == 7) {
-                                    echo 'selected';
-                                } else {
-                                }
-                                ?>>Triwulan 4 (Jan s/d Des)</option>
-                            </select>
-                            <?php
-                    }?>
-
-                        </div>
+    <!-- Dropdown menu -->
+    <div id="dropdownP"
+        class="z-10 hidden border bg-[#ffffff] divide-y divide-gray-100 rounded-lg shadow w-[250px] dark:bg-gray-700">
+        <ul class="py-2 px-4 text-sm text-gray-700 dark:text-gray-200"
+            aria-labelledby="dropdownDefaultButton">
+            @foreach($allOptions as $key => $label)
+                @if(in_array($key, $visibleKeys))
+                <li class="flex items-center gap-4 py-1">
+                    <input id="{{ $key }}" type="checkbox" value="{{ $key }}"
+                        {{ str_contains($bagianQuery, $key) ? 'checked' : '' }}
+                        class="w-4 h-4 text-orange-600 border-orange-300 rounded focus:ring-orange-500">
+                    <label for="{{ $key }}" class="text-sm text-gray-700 dark:text-gray-200">
+                    {{ $label }}
+                    </label>
+                </li>
+                @endif
+            @endforeach
+            
+            <!-- Tombol Tampilkan -->
+            <div class="mt-4 py-1">
+                <button onclick="submitCheckboxes()" 
+                        class="w-full px-4 py-2 text-gray-900 rounded-lg bg-gradient-to-br from-[#EA580C] from-60% font-bold to-[#FDBA74] to-95%">
+                Tampilkan
+                </button>
+            </div>
+            
+            <script>
+            function submitCheckboxes() {
+                const checked = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
+                                .map(cb => cb.value);
+                if (checked.length === 0) {
+                alert("Silakan pilih minimal satu bagian!");
+                return;
+                }
+                // Redirect dengan parameter bagian=... (dipisah koma)
+                const tw = "{{ $_GET['tw'] }}";
+                const tahun = "{{ $_GET['Tahun'] }}";
+                const jenkel = "{{ $_GET['jenkel'] }}";
+                const usia = "{{ $_GET['usia'] }}";
+                const pekerjaan = "{{ $_GET['pekerjaan'] }}";
+                const pendidikan = "{{ $_GET['pendidikan'] }}";
+                const bagian = checked.join(",");
+                window.location.href = `/rekapTotal?tw=${tw}&Tahun=${tahun}&bagian=${bagian}&jenkel=${jenkel}&usia=${usia}&pekerjaan=${pekerjaan}&pendidikan=${pendidikan}`;
+            }
+            </script>
+            
+            
+        </ul>
+    </div>
+</div>
 
                         {{-- download --}}
-                        <a href="/exportResume?jenkel={{ $_GET['jenkel'] }}&usia={{ $_GET['usia'] }}&pekerjaan={{ $_GET['pekerjaan'] }}&pendidikan={{ $_GET['pendidikan'] }}&tahun={{ $_GET['tahun'] }}"
-                            class="py-1 text-center items-center  bg-[#155748] rounded-full font-bold text-sm px-3  w-full  text-white"
+                        <a href="{{ route('exports.download', ['type' => 'resume', 'jenkel' => $_GET['jenkel'], 'usia' => $_GET['usia'], 'pekerjaan' => $_GET['pekerjaan'], 'pendidikan' => $_GET['pendidikan'], 'tahun' => $_GET['tahun'], 'Tahun' => $_GET['Tahun'] ?? $_GET['tahun'] ?? date('Y'), 'Bulan' => $_GET['Bulan'] ?? null]) }}"
+                            class="py-1 text-center items-center  bg-gradient-to-br from-[#EA580C] from-60%  to-[#FDBA74] to-95% rounded-full font-bold text-sm px-3  w-full  text-gray-900"
                             style="font-family:'Roboto'">
                             <p>DOWNLOAD</p>
                         </a>
@@ -407,73 +380,78 @@ if ($n == 0) {
             <div class="w-full ">
                 <div class="-m-1.5  ">
                     <div class="p-1.5 ">
-                        <div class="border border-[#02A859] rounded-lg overflow-hidden h-[460px] overflow-x-auto">
+                        <div class="border border-[#EA580C] rounded-lg overflow-hidden h-[460px] overflow-x-auto">
                             <table class="w-full divide-y divide-gray-200 h-full ">
-                                <thead
-                                    style="background-color: #51a592;
-    background-image:
-        radial-gradient(at -30% -30%, #02A859, transparent 80%),
-        radial-gradient(at 130% 150%, #02A859, transparent 80%);">
+                                <thead class="bg-gradient-to-br from-[#EA580C] from-60%  to-[#FDBA74] to-95%">
                                     <tr>
                                         <th scope="col" rowspan="2"
-                                            class="px-6 py-3 w-[50px] text-center text-xs font-medium text-white uppercase">
+                                            class="px-6 py-3 w-[50px] text-center text-xs font-medium text-gray-900 uppercase">
                                             No.<br>RESPONDEN</th>
+                                        {{-- <th scope="col" rowspan="2"
+                                            class="px-6 py-3 w-[50px] text-center text-xs font-medium text-gray-900 uppercase">
+                                            NIK</th> --}}
                                         <th scope="col" rowspan="2"
-                                            class="px-6 py-3 w-[50px] text-center text-xs font-medium text-white uppercase">
-                                            NIK</th>
-                                        <th scope="col" rowspan="2"
-                                            class="px-6 py-3 w-[50px] text-center text-xs font-medium text-white uppercase">
+                                            class="px-6 py-3 w-[50px] text-center text-xs font-medium text-gray-900 uppercase">
                                             NAMA</th>
                                         {{-- <th scope="col" rowspan="2"
-                                            class="px-6 py-3 w-[50px] text-center text-xs font-medium text-white uppercase">
+                                            class="px-6 py-3 w-[50px] text-center text-xs font-medium text-gray-900 uppercase">
                                             JENIS<br>Pelayanan</th> --}}
                                         <th scope="col" rowspan="2"
-                                            class="px-6 py-3 w-[50px] text-center text-xs font-medium text-white uppercase {{ $_GET['jenkel'] == 0 ? 'hidden' : '' }}">
+                                            class="px-6 py-3 w-[50px] text-center text-xs font-medium text-gray-900 uppercase {{ $_GET['jenkel'] == 0 ? 'hidden' : '' }}">
                                             JENIS<br>KELAMIN</th>
                                         <th scope="col" rowspan="2"
-                                            class="px-6 py-3 w-[50px] text-center text-xs font-medium text-white uppercase {{ $_GET['usia'] == 0 ? 'hidden' : '' }}">
+                                            class="px-6 py-3 w-[50px] text-center text-xs font-medium text-gray-900 uppercase {{ $_GET['usia'] == 0 ? 'hidden' : '' }}">
                                             USIA</th>
                                         <th scope="col" rowspan="2"
-                                            class="px-6 py-3 w-[50px] text-center text-xs font-medium text-white uppercase {{ $_GET['pekerjaan'] == 0 ? 'hidden' : '' }}">
+                                            class="px-6 py-3 w-[50px] text-center text-xs font-medium text-gray-900 uppercase {{ $_GET['pekerjaan'] == 0 ? 'hidden' : '' }}">
                                             PEKERJAAN</th>
                                         <th scope="col" rowspan="2"
-                                            class="px-6 py-3 w-[50px] text-center text-xs font-medium text-white uppercase {{ $_GET['pendidikan'] == 0 ? 'hidden' : '' }}">
+                                            class="px-6 py-3 w-[50px] text-center text-xs font-medium text-gray-900 uppercase {{ $_GET['pendidikan'] == 0 ? 'hidden' : '' }}">
                                             PENDIDIKAN</th>
-                                        <th scope="col" colspan="10"
-                                            class=" px-6 px-6 py-1 w-[50px] text-center text-xs font-medium text-white uppercase ">
+                                        <th scope="col" rowspan="2"
+                                            class="px-6 py-3 w-[50px] text-center text-xs font-medium text-gray-900 uppercase {{ $_GET['pendidikan'] == 0 ? 'hidden' : '' }}">
+                                            BAGIAN</th>
+                                        {{-- <th scope="col" rowspan="2"
+                                            class="px-6 py-3 w-[50px] text-center text-xs font-medium text-gray-900 uppercase {{ $_GET['pendidikan'] == 0 ? 'hidden' : '' }}">
+                                            JENIS PELAYANAN</th> --}}
+                                        <th scope="col" colspan="9"
+                                            class=" px-6 px-6 py-1 w-[50px] text-center text-xs font-medium text-gray-900 uppercase ">
                                             NILAI UNSUR PELAYANAN</th>
+                                        <th scope="col" rowspan="2"
+                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-gray-900 uppercase">
+                                            Tanggal</th>
+                                        <th scope="col" rowspan="2"
+                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-gray-900 uppercase">
+                                            AKSI</th>
                                     </tr>
                                     <tr>
                                         <th scope="col"
-                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-white uppercase">
+                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-gray-900 uppercase">
                                             U1</th>
                                         <th scope="col"
-                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-white uppercase">
+                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-gray-900 uppercase">
                                             U2</th>
                                         <th scope="col"
-                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-white uppercase">
+                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-gray-900 uppercase">
                                             U3</th>
                                         <th scope="col"
-                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-white uppercase">
+                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-gray-900 uppercase">
                                             U4</th>
                                         <th scope="col"
-                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-white uppercase">
+                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-gray-900 uppercase">
                                             U5</th>
                                         <th scope="col"
-                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-white uppercase">
+                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-gray-900 uppercase">
                                             U6</th>
                                         <th scope="col"
-                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-white uppercase">
+                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-gray-900 uppercase">
                                             U7</th>
                                         <th scope="col"
-                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-white uppercase">
+                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-gray-900 uppercase">
                                             U8</th>
                                         <th scope="col"
-                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-white uppercase">
+                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-gray-900 uppercase">
                                             U9</th>
-                                        <th scope="col"
-                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-white uppercase">
-                                            AKSI</th>
                                     </tr>
                                 </thead>
                                 <div class="h-200 overflow-y-auto">
@@ -485,12 +463,12 @@ if ($n == 0) {
                                                 <td class="text-center px-2 font-normal text-xs">
                                                     {{ $row++ }}
                                                 </td>
-                                                <td class="text-center px-2 font-normal text-xs">
-                                                    {{ $data->nik }}
+                                                {{-- <td class="text-center px-2 font-normal text-xs">
+                                                    {{-- NIK intentionally left blank --}}
                                                 </td>
                                                 <td class="text-center px-2 font-normal text-xs">
                                                     {{ $data->nama }}
-                                                </td>
+                                                </td> 
                                                 {{-- <td class="text-center px-2 font-normal text-xs">
                                                     {{ $data->jenisPelayanan }}
                                                 </td> --}}
@@ -510,6 +488,35 @@ if ($n == 0) {
                                                     class="text-center px-2 font-normal text-xs {{ $_GET['pendidikan'] == 0 ? 'hidden' : '' }}">
                                                     {{ $data->pendidikan }}
                                                 </td>
+                                                <td
+                                                    class="text-center px-2 font-normal text-xs {{ $_GET['jenkel'] == 0 ? 'hidden' : '' }}">
+                                                    @if($data->jenisPelayanan == 'organisasi')
+                                                        ORGANISASI
+                                                    @elseif($data->jenisPelayanan == 'umum')
+                                                        UMUM
+                                                    @elseif($data->jenisPelayanan == 'pemerintahan')
+                                                        PEMERINTAHAN
+                                                    @elseif($data->jenisPelayanan == 'adbang')
+                                                        ADMINISTRASI PEMBANGUNAN
+                                                    @elseif($data->jenisPelayanan == 'prokopim')
+                                                        PROTOKOL DAN KOMUNIKASI PIMPINAN
+                                                    @elseif($data->jenisPelayanan == 'kesra')
+                                                        KESEJAHTERAAN RAKYAT
+                                                    @elseif(\App\Support\BagianOptions::normalizeCode($data->jenisPelayanan) == 'pbj')
+                                                        PENGADAAN BARANG DAN JASA
+                                                    @elseif($data->jenisPelayanan == 'ekosda')
+                                                        PEREKONOMIAN DAN SUMBER DAYA ALAM
+                                                    @elseif($data->jenisPelayanan == 'hukum')
+                                                        HUKUM
+                                                    @else
+                                                        {{ strtoupper($data->jenisPelayanan ?? '-') }}
+                                                    @endif
+
+                                                </td>
+                                                {{-- <td
+                                                    class="text-center px-2 font-normal text-xs {{ $_GET['usia'] == 0 ? 'hidden' : '' }}">
+                                                    {{ $data->sub_jenis_jenis }}
+                                                </td> --}}
                                                 <td class="text-center px-2 font-normal text-xs">
                                                     {{ $data->u1 }}
                                                 </td>
@@ -538,6 +545,9 @@ if ($n == 0) {
                                                     {{ $data->u9 }}
                                                 </td>
                                                 <td class="text-center px-2 font-normal text-xs">
+                                                    {{ $data->created_at }}
+                                                </td>
+                                                <td class="text-center px-2 font-normal text-xs">
                                                     <form onsubmit="return confirm('Apakah Anda Yakin ?');"
                                                         action="{{ route('rekapTotal.destroy', $data->id) }}"
                                                         method="POST">
@@ -563,11 +573,8 @@ if ($n == 0) {
                                             </td>
                                         </tr>
                                     </tbody>
-                                    <tfoot class="text-white"
-                                        style="background-color: #51a592;
-    background-image:
-        radial-gradient(at -30% -30%, #02A859, transparent 80%),
-        radial-gradient(at 130% 150%, #02A859, transparent 80%);
+                                    <tfoot class="bg-gradient-to-br from-[#EA580C] h-[50px] from-60%  to-[#FDBA74] to-95% text-gray-900"
+                                        style="
                                         overflow-y:auto;">
                                         <?php $row = 1; ?>
                                         <t>
@@ -575,6 +582,13 @@ if ($n == 0) {
                                             <td class="text-center px-2 font-normal text-xs">
                                                 TOTAL
                                             </td>
+                                            {{-- <td class="text-center px-2 font-normal text-xs">
+
+                                            </td>
+                                            <td class="text-center px-2 font-normal text-xs">
+
+                                            </td> --}}
+                                            
                                             <td class="text-center px-2 font-normal text-xs">
 
                                             </td>
@@ -594,10 +608,6 @@ if ($n == 0) {
                                             </td>
                                             <td
                                                 class="text-center px-2 font-normal text-xs {{ $_GET['pekerjaan'] == 0 ? 'hidden' : '' }}">
-
-                                            </td>
-                                            <td
-                                                class="text-center px-2 font-normal text-xs {{ $_GET['pendidikan'] == 0 ? 'hidden' : '' }}">
 
                                             </td>
                                             <td class="text-center px-2 font-normal text-xs">
@@ -630,6 +640,9 @@ if ($n == 0) {
                                             <td class="text-center px-2 font-normal text-xs">
 
                                             </td>
+                                            <td class="text-center px-2 font-normal text-xs">
+
+                                            </td>
                                             </tr>
                                     </tfoot>
                                 </div>
@@ -650,3 +663,9 @@ if ($n == 0) {
         CKEDITOR.replace('content');
     </script>
 @endsection
+
+
+
+
+
+

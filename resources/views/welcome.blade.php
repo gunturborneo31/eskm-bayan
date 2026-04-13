@@ -2,1104 +2,601 @@
 
 error_reporting(0);
 
-$startDate = '2024-01-01';
 
-$endDate = '2024-10-03';
-
-if ($_GET['tw'] == null) {
-    $today = date('Y-m-d', strtotime('+1 days'));
-    $endDate = $today;
-} elseif ($_GET['tw'] == 1) {
-    $startDate = $_GET['Tahun'] . '-01-01';
-    $endDate = $_GET['Tahun'] . '-03-31';
-} elseif ($_GET['tw'] == 2) {
-    $startDate = $_GET['Tahun'] . '-04-01';
-    $endDate = $_GET['Tahun'] . '-06-31';
-} elseif ($_GET['tw'] == 3) {
-    $startDate = $_GET['Tahun'] . '-01-01';
-    $endDate = $_GET['Tahun'] . '-06-31';
-} elseif ($_GET['tw'] == 4) {
-    $startDate = $_GET['Tahun'] . '-07-01';
-    $endDate = $_GET['Tahun'] . '-09-31';
-} elseif ($_GET['tw'] == 5) {
-    $startDate = $_GET['Tahun'] . '-01-01';
-    $endDate = $_GET['Tahun'] . '-09-31';
-} elseif ($_GET['tw'] == 6) {
-    $startDate = $_GET['Tahun'] . '-10-01';
-    $endDate = $_GET['Tahun'] . '-12-31';
-} elseif ($_GET['tw'] == 7) {
-    $startDate = $_GET['Tahun'] . '-01-01';
-    $endDate = $_GET['Tahun'] . '-12-31';
+$yearOptions = ['2023', '2024', '2025', '2026'];
+// PILAR filter
+$pilarParam = $_GET['bagian'] ?? '';
+$defaultPilar = array_keys(\App\Support\BagianOptions::codeNameMap());
+$terms = array_values(array_unique(array_filter(array_map('trim', explode(',', $pilarParam)))));
+if (empty($terms)) {
+    $terms = $defaultPilar;
 }
-
 $indexTu = ['u1', 'u2', 'u3', 'u4', 'u5', 'u6', 'u7', 'u8', 'u9'];
-$lastDate = ['2024-01-31', '2024-02-31', '2024-03-31', '2024-04-31', '2024-05-31', '2024-06-31', '2024-07-31', '2024-08-31', '2024-09-31', '2024-10-31', '2024-11-31', '2024-12-31'];
-// dd($indexTu);
-
-$tu = [[]];
-$x = [];
-$nn = [];
-$nrr = [[]];
-$nrrT = [[]];
-$nrrTT = [];
-$nilaiSkm = [];
-
-array_push($nn, '');
-
-for ($i = 1; $i <= 12; $i++) {
-    $abc = $lastDate[$i - 1];
-    for ($j = 1; $j <= 9; $j++) {
-        $xyz = $indexTu[$j - 1];
-        // echo $xyz;
-        $nilaiTu = DB::table('2024')
-            ->whereBetween('created_at', [$startDate, $abc])
-            ->get()
-            ->sum($xyz);
-        array_push($x, $nilaiTu);
-    }
-
-    $nnn = DB::table('2024')
-        ->whereBetween('created_at', [$startDate, $abc])
-        ->get()
-        ->count();
-
-    array_push($tu, $x);
-    array_push($nn, $nnn);
-    $x = [];
+$aggregateSelect = 'COUNT(*) as total';
+foreach ($indexTu as $index) {
+    $aggregateSelect .= ', COALESCE(SUM(' . $index . '),0) as ' . $index;
 }
 
-for ($i = 1; $i <= 12; $i++) {
-    $x;
-    for ($j = 1; $j <= 9; $j++) {
-        if ($nn[$i] == 0) {
-            array_push($x, 0);
-        } else {
-            $nrrx = $tu[$i][$j - 1] / $nn[$i];
-            array_push($x, round($nrrx, 2));
-        }
+$nilaiSkmTahun = [];
+foreach ($yearOptions as $tahun) {
+    $startDate = $tahun . '-01-01';
+    $endDate = $tahun . '-12-31';
+    $aggregate = DB::table('survey_responses')
+        ->whereIn('jenisPelayanan', $terms)
+        ->whereBetween('created_at', [$startDate, $endDate])
+        ->selectRaw($aggregateSelect)
+        ->first();
+    $total = (int) ($aggregate->total ?? 0);
+    $weightedTotal = 0;
+    foreach ($indexTu as $index) {
+        $avg = $total === 0 ? 0 : round(((float) ($aggregate->{$index} ?? 0)) / $total, 2);
+        $weightedTotal += $avg * 0.111;
     }
-    // print_r($x);
-    // echo '<br>';
-    array_push($nrr, $x);
-    $x = [];
+    $nilaiSkmTahun[] = round($weightedTotal * 25, 2);
 }
+$nilaiSkm = json_encode($nilaiSkmTahun);
 
-array_push($nrrTT, '');
-for ($i = 1; $i <= 12; $i++) {
-    $x;
-    $y;
-    for ($j = 1; $j <= 9; $j++) {
-        $nrrTx = $nrr[$i][$j - 1] * 0.111;
-        array_push($x, round($nrrTx, 2));
-        $y = $y + $nrrTx;
-    }
-    array_push($nrrT, $x);
-    array_push($nrrTT, round($y, 2));
-    $x = [];
-    $y = 0;
-}
-
-for ($i = 0; $i <= 11; $i++) {
-    if ($_GET['Tahun'] == '2023' or $_GET['Tahun'] == '2025') {
-        array_push($nilaiSkm, 0);
-    } else {
-        array_push($nilaiSkm, $nrrTT[$i + 1] * 25);
+// Ambil tahun terakhir yang ada data
+$tahunTerakhir = null;
+for ($i = count($yearOptions) - 1; $i >= 0; $i--) {
+    if (($nilaiSkmTahun[$i] ?? 0) > 0) {
+        $tahunTerakhir = $yearOptions[$i];
+        break;
     }
 }
+if (!$tahunTerakhir) {
+    $tahunTerakhir = end($yearOptions);
+}
 
-// dd($nilaiSkm);
 
-$tu1 = DB::table('2024')
+// Query agregat unsur dan total responden untuk tahun terakhir (tanpa filter bagian, agar total responden benar)
+$startDate = $tahunTerakhir . '-01-01';
+$endDate = $tahunTerakhir . '-12-31';
+$aggregateUnsur = DB::table('survey_responses')
     ->whereBetween('created_at', [$startDate, $endDate])
-    ->get()
-    ->sum('u1');
+    ->selectRaw($aggregateSelect)
+    ->first();
+$totalUnsur = (int) ($aggregateUnsur->total ?? 0);
+$nrrPerUnsur = [];
+foreach ($indexTu as $index) {
+    $nrrPerUnsur[] = $totalUnsur === 0 ? 0 : round(((float) ($aggregateUnsur->{$index} ?? 0)) / $totalUnsur, 3);
+}
 
-$tu2 = DB::table('2024')
-    ->whereBetween('created_at', [$startDate, $endDate])
-    ->get()
-    ->sum('u2');
+// Nilai SKM untuk tahun terakhir
+$nilaiSKM = 0;
+if ($totalUnsur > 0) {
+    $weightedTotal = 0;
+    foreach ($nrrPerUnsur as $nrr) {
+        $weightedTotal += $nrr * 0.111;
+    }
+    $nilaiSKM = round($weightedTotal * 25, 2);
+}
 
-$tu3 = DB::table('2024')
-    ->whereBetween('created_at', [$startDate, $endDate])
-    ->get()
-    ->sum('u3');
+// Total responden tahun terakhir (tanpa filter bagian)
+$jmlResponden = DB::table('survey_responses')->count();
 
-$tu4 = DB::table('2024')
-    ->whereBetween('created_at', [$startDate, $endDate])
-    ->get()
-    ->sum('u4');
 
-$tu5 = DB::table('2024')
-    ->whereBetween('created_at', [$startDate, $endDate])
-    ->get()
-    ->sum('u5');
+$unsurPelayanan = [
+    'Persyaratan',
+    'Sistem, Mekanisme dan Prosedur',
+    'Waktu Penyelesaian',
+    'Biaya / Tarif',
+    'Produk Spesifikasi Jenis Pelayanan',
+    'Kompetensi Pelaksana',
+    'Perilaku Pelaksana',
+    'Sarana dan Prasarana',
+    'Penanganan Pengaduan, Saran & Masukan',
+];
 
-$tu6 = DB::table('2024')
-    ->whereBetween('created_at', [$startDate, $endDate])
-    ->get()
-    ->sum('u6');
+$getMutuBySkm = static function (float $value): string {
+    if ($value <= 24.99) {
+        return 'E';
+    }
+    if ($value <= 64.99) {
+        return 'D';
+    }
+    if ($value <= 76.6) {
+        return 'C';
+    }
+    if ($value <= 88.3) {
+        return 'B';
+    }
+    return 'A';
+};
 
-$tu7 = DB::table('2024')
-    ->whereBetween('created_at', [$startDate, $endDate])
-    ->get()
-    ->sum('u7');
+$getKinerjaBySkm = static function (float $value): string {
+    if ($value <= 24.99) {
+        return 'SANGAT TIDAK MEMUASKAN';
+    }
+    if ($value <= 64.99) {
+        return 'TIDAK MEMUASKAN';
+    }
+    if ($value <= 76.6) {
+        return 'KURANG MEMUASKAN';
+    }
+    if ($value <= 88.3) {
+        return 'MEMUASKAN';
+    }
+    return 'SANGAT MEMUASKAN';
+};
 
-$tu8 = DB::table('2024')
-    ->whereBetween('created_at', [$startDate, $endDate])
-    ->get()
-    ->sum('u8');
+$getMutuByNrr = static function (float $value) {
+    if ($value <= 0.99) {
+        return 'E';
+    }
+    if ($value <= 2.599) {
+        return 'D';
+    }
+    if ($value <= 3.064) {
+        return 'C';
+    }
+    if ($value <= 3.532) {
+        return 'B';
+    }
+    return 'A';
+};
 
-$tu9 = DB::table('2024')
-    ->whereBetween('created_at', [$startDate, $endDate])
-    ->get()
-    ->sum('u9');
+// $nrrPerUnsur is already calculated above from aggregation
+$kinerjaLabel =  $getKinerjaBySkm((float) $nilaiSKM);
+$mutuPelayananLabel = $getMutuBySkm((float) $nilaiSKM);
+$getMutuClass = static function (string $mutu): string {
+    return match ($mutu) {
+        'A' => 'bg-[#26C281]',
+        'B' => 'bg-[#3B82F6]',
+        'C' => 'bg-[#FACC15]',
+        'D' => 'bg-[#FF8800]',
+        default => 'bg-[#F43F5E]',
+    };
+};
 
-$n = DB::table('2024')
-    ->whereBetween('created_at', [$startDate, $endDate])
-    ->get()
-    ->count();
-
-$tu9 = DB::table('2024')
-    ->whereBetween('created_at', [$startDate, $endDate])
-    ->get()
-    ->sum('u9');
-
-// unset($nilaiSkm[0]);
-
+$nilaiSkmSeries = $nilaiSkm;
 $nilaiSkm = json_encode($nilaiSkm);
 
-// dd($responden);
-// dd($nilaiSkm);
-
-if ($n == 0) {
-    $nrr1 = 0;
-    $nrr2 = 0;
-    $nrr3 = 0;
-    $nrr4 = 0;
-    $nrr5 = 0;
-    $nrr6 = 0;
-    $nrr7 = 0;
-    $nrr8 = 0;
-    $nrr9 = 0;
-
-    $nrr = 0;
-    $nrr = 0;
-
-    $nrrt1 = 0;
-    $nrrt2 = 0;
-    $nrrt3 = 0;
-    $nrrt4 = 0;
-    $nrrt5 = 0;
-    $nrrt6 = 0;
-    $nrrt7 = 0;
-    $nrrt8 = 0;
-    $nrrt9 = 0;
-
-    $nrrT = 0;
-    $nrrT = 0;
-
-    $nilaiSKM = $nrrT * 25;
-} else {
-    $nrr1 = sprintf('%0.3f', $tu1 / $n);
-    $nrr2 = sprintf('%0.3f', $tu2 / $n);
-    $nrr3 = sprintf('%0.3f', $tu3 / $n);
-    $nrr4 = sprintf('%0.3f', $tu4 / $n);
-    $nrr5 = sprintf('%0.3f', $tu5 / $n);
-    $nrr6 = sprintf('%0.3f', $tu6 / $n);
-    $nrr7 = sprintf('%0.3f', $tu7 / $n);
-    $nrr8 = sprintf('%0.3f', $tu8 / $n);
-    $nrr9 = sprintf('%0.3f', $tu9 / $n);
-
-    $nrr = $nrr1 + $nrr2 + $nrr3 + $nrr4 + $nrr5 + $nrr6 + $nrr7 + $nrr8 + $nrr9;
-    $nrr = sprintf('%0.3f', $nrr);
-
-    $nrrt1 = sprintf('%0.3f', $nrr1 * 0.111);
-    $nrrt2 = sprintf('%0.3f', $nrr2 * 0.111);
-    $nrrt3 = sprintf('%0.3f', $nrr3 * 0.111);
-    $nrrt4 = sprintf('%0.3f', $nrr4 * 0.111);
-    $nrrt5 = sprintf('%0.3f', $nrr5 * 0.111);
-    $nrrt6 = sprintf('%0.3f', $nrr6 * 0.111);
-    $nrrt7 = sprintf('%0.3f', $nrr7 * 0.111);
-    $nrrt8 = sprintf('%0.3f', $nrr8 * 0.111);
-    $nrrt9 = sprintf('%0.3f', $nrr9 * 0.111);
-
-    $nrrT = $nrrt1 + $nrrt2 + $nrrt3 + $nrrt4 + $nrrt5 + $nrrt6 + $nrrt7 + $nrrt8 + $nrrt9;
-    $nrrT = sprintf('%0.3f', $nrrT);
-
-    $nilaiSKM = $nrrT * 25;
-
-    // $responden = [];
-    // $bulan = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nop', 'Des'];
-
-    // if ($_GET['tw'] == '') {
-    //     for ($x = 0; $x <= date('m'); $x++) {
-    //         $responden[$x][0] = DB::table('2024')
-    //             ->whereMonth('created_at', '=', $x + 1)
-    //             ->get()
-    //             ->count();
-    //         $responden[$x][1] = $bulan[$x];
-    //     }
-    // } else {
-    //     for ($x = 0; $x <= $_GET['tw']; $x++) {
-    //         $responden[$x][0] = DB::table('2024')
-    //             ->whereMonth('created_at', '=', $x + 1)
-    //             ->get()
-    //             ->count();
-    //         $responden[$x][1] = $bulan[$x];
-    //     }
-    // }
-    // dd($responden);
-
-    if ($_GET['Tahun'] == '2023' or $_GET['Tahun'] == '2025' or $_GET['Tahun'] == '2025') {
-        $tu = [[]];
-        $x = [];
-        $nn = [];
-        $nrr = [[]];
-        $nrrT = [[]];
-        $nrrTT = [];
-        // $nilaiSkm = [];
-    }
-}
-// echo $nrrTotal;
-// echo $nrrTertimbang;
-$jmlResponden = DB::table('2024')
-    ->whereBetween('created_at', [$startDate, $endDate])
-    ->get()
-    ->count();
 
 ?>
 
 <!doctype html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" conteitial-scale="1.0">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>E-SKM PPM Bayan Group - Dashboard</title>
     <link rel="dns-prefetch" href="//fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary": "#885124",
+                        "primary-container": "#ff8800",
+                        "tertiary-fixed": "#c9e6ff",
+                        "primary": "#ff8800",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#d9dadb",
+                        "surface-tint": "#ff8800",
+                        "on-primary-container": "#613000",
+                        "error": "#ba1a1a",
+                        "primary-fixed-dim": "#ffb781",
+                        "on-secondary-fixed-variant": "#6b3a0e",
+                        "surface-container-highest": "#e1e3e4",
+                        "background": "#f1f5f9",
+                        "tertiary": "#006491",
+                        "error-container": "#ffdad6",
+                        "outline": "#8a7262",
+                        "secondary-fixed-dim": "#ffb781",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed-dim": "#8aceff",
+                        "on-primary-fixed-variant": "#6f3800",
+                        "surface-container": "#e2e8f0",
+                        "on-secondary-fixed": "#2f1400",
+                        "tertiary-container": "#00b2fd",
+                        "surface-container-high": "#cbd5e1",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-surface": "#2e3132",
+                        "on-error": "#ffffff",
+                        "secondary-fixed": "#ffdcc4",
+                        "secondary-container": "#ffb781",
+                        "on-tertiary-container": "#004160",
+                        "inverse-primary": "#ffb781",
+                        "on-secondary-container": "#794619",
+                        "on-surface": "#191c1d",
+                        "on-tertiary-fixed": "#001e2f",
+                        "surface-variant": "#e1e3e4",
+                        "outline-variant": "#dec1ae",
+                        "on-surface-variant": "#574335",
+                        "on-background": "#191c1d",
+                        "inverse-on-surface": "#f0f1f2",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed": "#ffdcc4",
+                        "on-primary-fixed": "#2f1400",
+                        "surface": "#f1f5f9",
+                        "surface-container-low": "#f8fafc",
+                        "surface-bright": "#f8fafc",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed-variant": "#004c6e"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1.5rem",
+                        "lg": "2rem",
+                        "xl": "2.5rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .pattern-bg {
+            background-color: #ff8800;
+            background-image: radial-gradient(circle at 2px 2px, rgba(255, 255, 255, 0.15) 1px, transparent 0);
+            background-size: 16px 16px;
+        }
+
+        .pattern-bg-light {
+            background-image: radial-gradient(circle at 1px 1px, rgba(255, 136, 0, 0.05) 1px, transparent 0);
+            background-size: 12px 12px;
+        }
+
+@include('partials.filter-ui-styles', ['chipMinWidth' => '136px'])
+
+        /* ─── Mobile responsive ───────────────────────────────── */
+        @media (max-width: 767px) {
+            /* Allow full-page scroll on mobile */
+            html, body { overflow: visible !important; height: auto !important; }
+
+            /* Tighten main padding */
+            main { padding-left: 0.5rem !important; padding-right: 0.5rem !important; padding-bottom: 5rem; }
+
+            /* Stack grid to single column */
+            .grid-cols-12 { grid-template-columns: 1fr !important; }
+            [class*="col-span-"] { grid-column: span 1 !important; }
+
+            /* Remove fixed heights – let content breathe */
+            [class*="h-\[60\%\]"],
+            [class*="h-\[320px\]"] { height: auto !important; }
+            [class*="h-28"],
+            [class*="h-36"] { height: auto !important; }
+            [class*="min-h-0"] { min-height: 0 !important; }
+
+            /* Chart area: give reasonable fixed height on mobile */
+            #monthlyBars { height: 12rem !important; flex: none !important; }
+
+            /* Nilai SKM card: compact height on mobile */
+            .pattern-bg { height: 13rem !important; }
+
+            /* SKM value: smaller on mobile */
+            .pattern-bg h1 { font-size: 4rem !important; }
+
+            /* Remove heavy x-padding from grid inner wrapper */
+            .px-16 { padding-left: 0.5rem !important; padding-right: 0.5rem !important; }
+
+            /* Nav: compact on mobile */
+            nav > div { flex-wrap: wrap; gap: 0.25rem; padding-left: 0.5rem; padding-right: 0.5rem; }
+            nav > div > div:nth-child(2) {
+                order: 3;
+                width: 100%;
+                overflow-x: auto;
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+                padding-bottom: 0.35rem;
+            }
+            nav > div > div:nth-child(2)::-webkit-scrollbar { display: none; }
+
+            /* Legenda: allow natural height */
+            .space-y-3 { overflow: visible !important; }
+        }
+    </style>
 </head>
 
-<body class="items-center bg-fixed w-full grid grid-cols-1"
-    style="
-    background-color: #51a592;
-    background-image:
-        radial-gradient(at -30% -30%, #02A859, transparent 80%),
-        radial-gradient(at 130% 150%, #02A859, transparent 80%);">
-    <div class="h-screen lg:px-20 px-3 flex flex-col w-full">
-        <div class="flex justify-between py-[16px] lg:py-1 items-center">
-            <div class="flex items-center gap-3 justify-between w-full lg:justify-normal">
-                <div class="flex gap-2">
-                    <img src="/assets/logo_kutai_timur.png" class="h-[100px] lg:h-[42px] p-0.5 rounded-xl bg-white"
-                        alt="">
-                    <img src="/assets/disperindag.png" class="h-[100px] lg:h-[42px] p-0.5 rounded-xl bg-white"
-                        alt="">
-                </div>
-                <div
-                    class="rounded-full lg:whitespace-nowrap text-4xl lg:text-2xl font-bold text-white lg:text-left text-right drop-shadow-[0_3px_3px_rgba(0,0,0,0.3)]">
-                    E-SKM <br class="lg:hidden"> DISPERINDAG <br class="lg:hidden"> Kab. KUTAI TIMUR
-                </div>
-            </div>
-            <div class="hidden lg:block">
-                <a href="/login">
-                    <div class="rounded-full whitespace-nowrap p-2 text-xs bg-white font-bold text-[#02A859] ">
-                        Halaman Admin</div>
-                </a>
-            </div>
+<body class="bg-slate-100 text-on-surface h-screen overflow-hidden flex flex-col">
+    <div id="loadingOverlay" class="hidden fixed inset-0 z-[999] bg-white/70 backdrop-blur-sm items-center justify-center">
+        <div class="bg-white border border-slate-200 shadow-lg rounded-full px-5 py-3 flex items-center gap-2 text-[12px] font-black text-[#FF8800]">
+            <span class="material-symbols-outlined animate-spin">progress_activity</span>
+            Memuat data...
         </div>
-        <hr class="mt-1 lg:border-1 border-3">
-        <div class="lg:flex lg:flex-row  justify-between items-center   lg:flex-row-reverse my-2">
-            <div class="lg:flex gap-4 lg:justify-normal items-center  justify-between">
-                {{-- tahun --}}
-                <div class="flex gap-4 lg:justify-normal items-center justify-between">
-                    <div class="flex flex-row items-center gap-3 mb-5 lg:mb-0">
-                        <label for="countries"
-                            class=" font-bold text-white text-4xl lg:text-base drop-shadow-[0_3px_3px_rgba(0,0,0,0.3)]">
-                            Tahun</label>
+    </div>
 
-                        <?php if($_GET['Tahun'] == ''){ ?>
-                        <select id="countries" id="language"
-                            onChange="document.location.href='?tw=' + {{ $_GET['tw'] == null ? '2024' : $_GET['tw'] }} + '&Tahun=' + this.value "
-                            class="bg-white border border-gray-300 text-[#02A859] font-bold text-4xl w-[250px] text-center lg:w-fit lg:text-sm rounded-full px-3 py-1">
-                            <option value="2023" <?php if (date('Y') == '2023') {
-                                echo 'selected';
-                            } else {
-                            } ?>>2023</option>
 
-                            <option value="2024" <?php if (date('Y') == '2024') {
-                                echo 'selected';
-                            } else {
-                            } ?>>2024</option>
 
-                            <option value="2025" <?php if (date('Y') == '2025') {
-                                echo 'selected';
-                            } else {
-                            } ?>>2025</option>
-                        </select>
-                        <?php  } else {?>
-                        <select id="countries" id="language"
-                            onChange="document.location.href='?tw=' + {{ $_GET['tw'] == null ? '2024' : $_GET['tw'] }} + '&Tahun=' + this.value "
-                            class="bg-white border border-gray-300 text-[#02A859] font-bold text-4xl w-[250px] text-center lg:w-fit lg:text-sm rounded-full px-3 py-1">
-                            <option value="2023" <?php
-                            if ($_GET['Tahun'] == '2023' or $_GET['Tahun'] == '2025') {
-                                echo 'selected';
-                            } else {
-                            }
-                            ?>>2023</option>
+@include('partials.top-nav-filters', [
+    'routeBase' => '/',
+    'selectedYear' => null, // tahun di-nonaktifkan
+    'selectedTw' => null,
+    'bagianQuery' => $_GET['bagian'] ?? '',
+    'showBagian' => true,
+    'selectedBagian' => $terms ?? [],
+    'bagianOptions' => \App\Support\BagianOptions::codeNameMap(),
+    'showHomeButton' => false,
+    'showAdminButton' => true,
+    'enableLoadingNav' => true,
+    'extraButtons' => '<a href="https://www.bayan.com.sg/id" target="_blank" rel="noopener noreferrer" class="bg-[#FF8800] text-white px-4 py-2 rounded-full font-extrabold text-xs hover:opacity-90 active:scale-95 duration-200 whitespace-nowrap">Website Resmi Bayan</a>',
+    'navClass' => 'shrink-0 bg-white shadow-sm z-50 px-3 md:px-8 py-1 md:py-1.5',
+    'containerClass' => 'max-w-full mx-auto flex flex-wrap md:flex-nowrap items-center justify-between gap-1',
+    'filterWrapperClass' => 'flex items-center gap-2 md:gap-6 order-last md:order-none w-full md:w-auto overflow-x-auto no-scrollbar py-0.5 md:py-0',
+])
 
-                            <option value="2024" <?php
-                            if ($_GET['Tahun'] == '2024') {
-                                echo 'selected';
-                            } else {
-                            }
-                            ?>>2024</option>
-
-                            <option value="2025" <?php
-                            if ($_GET['Tahun'] == '2025') {
-                                echo 'selected';
-                            } else {
-                            }
-                            ?>>2025</option>
-                        </select>
-                        <?php
-                    }?>
-
-                    </div>
-
-                    {{-- bulan --}}
-                    <div class="flex flex-row items-center gap-3 mb-5 lg:mb-0">
-                        <label for="countries"
-                            class=" font-bold text-white text-4xl lg:text-base drop-shadow-[0_3px_3px_rgba(0,0,0,0.3)]">
-                            Triwulan</label>
-                        <?php if($_GET['tw'] == ''){ ?>
-                        <select id="countries" id="language"
-                            onChange="document.location.href='?tw=' + this.value + '&Tahun=' + {{ $_GET['Tahun'] == null ? '2024' : $_GET['Tahun'] }} "
-                            class="bg-white border border-gray-300 text-[#02A859] font-bold text-4xl w-full text-left lg:w-fit lg:text-sm rounded-full px-3 py-1">
-
-                            <option value="1" <?php if (date('m') == 1) {
-                                echo 'selected';
-                            } else {
-                            } ?>>TW 1 (Jan, Feb, Mar)</option>
-
-                            <option value="2" <?php if (date('m') == 2) {
-                                echo 'selected';
-                            } else {
-                            } ?>>TW 2 (Apr, Mei, Jun)</option>
-
-                            <option value="3" <?php if (date('m') == 3) {
-                                echo 'selected';
-                            } else {
-                            } ?>>TW 2 (Jan s/d Jun)</option>
-
-                            <option value="4" <?php if (date('m') == 4) {
-                                echo 'selected';
-                            } else {
-                            } ?>>TW 3 (Jul, Agu, Sep)</option>
-
-                            <option value="5" <?php if (date('m') == 5) {
-                                echo 'selected';
-                            } else {
-                            } ?>>TW 3 (Jan s/d Sep)</option>
-
-                            <option value="6" <?php if (date('m') == 6) {
-                                echo 'selected';
-                            } else {
-                            } ?>>TW 4 (Okt, Nop, Des)</option>
-
-                            <option value="7" <?php if (date('m') == 7) {
-                                echo 'selected';
-                            } else {
-                            } ?>>TW 4 (Jan s/d Des)</option>
-                        </select>
-                        <?php  } else {?>
-                        <select id="countries" id="language"
-                            onChange="document.location.href='?tw=' + this.value + '&Tahun=' + {{ $_GET['Tahun'] == null ? '2024' : $_GET['Tahun'] }}"
-                            class="bg-white border border-gray-300 text-[#02A859] font-bold text-4xl w-[300px] text-left lg:w-fit lg:text-sm rounded-full px-3 py-1">
-
-                            <option value="1" <?php
-                            if ($_GET['tw'] == 1) {
-                                echo 'selected';
-                            } else {
-                            }
-                            ?>>TW 1 (Jan, Feb, Mar)</option>
-
-                            <option value="2" <?php
-                            if ($_GET['tw'] == 2) {
-                                echo 'selected';
-                            } else {
-                            }
-                            ?>>TW 2 (Apr, Mei, Jun)</option>
-
-                            <option value="3" <?php
-                            if ($_GET['tw'] == 3) {
-                                echo 'selected';
-                            } else {
-                            }
-                            ?>>TW 2 (Jan s/d Jun)</option>
-
-                            <option value="4" <?php
-                            if ($_GET['tw'] == 4) {
-                                echo 'selected';
-                            } else {
-                            }
-                            ?>>TW 3 (Jul, Agu, Sep)</option>
-
-                            <option value="5" <?php
-                            if ($_GET['tw'] == 5) {
-                                echo 'selected';
-                            } else {
-                            }
-                            ?>>TW 3 (Jan s/d Sep)</option>
-
-                            <option value="6" <?php
-                            if ($_GET['tw'] == 6) {
-                                echo 'selected';
-                            } else {
-                            }
-                            ?>>TW 4 (Okt, Nop, Des)</option>
-
-                            <option value="7" <?php
-                            if ($_GET['tw'] == 7) {
-                                echo 'selected';
-                            } else {
-                            }
-                            ?>>TW 4 (Jan s/d Des)</option>
-                        </select>
-                        <?php
-                    }?>
-
-                    </div>
+    <main class="flex-1 flex flex-col p-4 gap-4 px-4 md:px-8 w-full md:overflow-hidden">
+        <div class="flex-1 grid grid-cols-1 md:grid-cols-12 px-2 md:px-16 gap-4 md:min-h-0">
+            {{-- #kolom1 --}}
+            <div class="md:col-span-4 flex flex-col gap-4 overflow-visible">
+                <div class="pattern-bg card-elevated p-8 flex flex-col items-center justify-center text-center h-[60%] relative overflow-hidden rounded-[1vw]">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-24 -mt-24 blur-3xl"></div>
+                    <div class="absolute bottom-0 left-0 w-48 h-48 bg-black/5 rounded-full -ml-16 -mb-16 blur-2xl"></div>
+                    <span class="material-symbols-outlined text-white/20 text-7xl absolute top-6 left-6 pointer-events-none" style='font-variation-settings: "FILL" 1;'>analytics</span>
+                    <span class="relative z-10 text-white drop-shadow-xl text-[20px] font-extrabold uppercase tracking-[0.2em] mb-4 drop-shadow-sm text-sm">NILAI SKM</span>
+                    <h1 class="relative z-10 font-black text-white drop-shadow-md text-[80px] leading-none">
+                        {{  sprintf('%0.2f', $nilaiSKM) }}
+                    </h1>
                 </div>
-            </div>
-            <div class="flex gap-5 justify-between">
-                <label
-                    class="whitespace-nowrap text-white font-bold text-5xl lg:text-xl drop-shadow-[0_3px_3px_rgba(0,0,0,0.3)]">
-                    Nilai SKM :
-                </label>
-            </div>
-        </div>
 
-        <div class="lg:flex lg:grid lg:grid-cols-5  lg:gap-3 flex flex-col h-full ">
-            <div class=" justify-stretch col-span-2 gap-4 lg:gap-2 flex flex-col lg:h-full lg:justify-between">
-                <div class="items-center justify-center flex">
-                    <label class="w-full text-center  lg:py-10 rounded-3xl bg-white shadow-2xl ">
-                        <h1
-                            class="font-extrabold text-[200px] lg:text-9xl text-transparent bg-clip-text bg-gradient-to-tl from-[#02A859]  via-[#02A859] to-[#02A859] ">
-                            {{ ($_GET['Tahun'] == '2023' or $_GET['Tahun'] == '2025') ? '00' : sprintf('%0.2f', $nilaiSKM) }}
-                        </h1>
-                    </label>
-                </div>
-                <div class="flex grid grid-cols-3 gap-4 lg:gap-2 lg:h-full lg:mb-0 mb-3">
-                    <div
-                        class="col-span-2 rounded-xl items-center flex flex-col overflow-hidden w-full h-full p-1 bg-white">
-                        <table class="w-full rounded-xl h-fit ">
-                            <thead
-                                class="bg-gradient-to-br from-[#02A859]  to-[#008952] font-normal border text-sm text-white">
-                                <tr class="">
-                                    <th scope="col" class=" px-4 py-5 lg:py-1 lg:text-lg text-5xl">Kualitas
-                                        Kinerja <br class="hidden lg:block">Pelayanan
-                                    </th>
-                                </tr>
-                            </thead>
-                        </table>
-                        <h1
-                            class="font-extrabold flex text-center justify-center h-full items-center  text-9xl text-transparent bg-clip-text bg-gradient-to-tl from-[#02A859]  via-[#02A859] to-[#02A859] ">
-                            <label
-                                class="ml-5 py-5 lg:py-1 font-black text-5xl lg:text-3xl text-[#02A859] drop-shadow-[0_3px_3px_rgba(0,0,0,0.3)]">
-                                <?php
-                                $nilai = '';
-                                if ($nilaiSKM >= 0 and $nilaiSKM <= 24.99) {
-                                    $nilai = 'SANGAT TIDAK MEMUASKAN';
-                                } elseif ($nilaiSKM >= 25.0 and $nilaiSKM <= 64.99) {
-                                    $nilai = 'TIDAK MEMUASKAN';
-                                } elseif ($nilaiSKM >= 65.0 and $nilaiSKM <= 76.6) {
-                                    $nilai = 'KURANG MEMUASKAN';
-                                } elseif ($nilaiSKM >= 76.61 and $nilaiSKM <= 88.3) {
-                                    $nilai = 'MEMUASKAN';
-                                } elseif ($nilaiSKM >= 88.4) {
-                                    $nilai = 'SANGAT MEMUASKAN';
-                                } else {
-                                    $nilai = 'SANGAT TIDAK MEMUASKAN';
-                                }
-                                ?>
-
-                                {{ ($_GET['Tahun'] == '2023' or $_GET['Tahun'] == '2025') ? 'SANGAT TIDAK MEMUASKAN' : $nilai }}
-                                {{-- {{ ($_GET['Tahun'] == '2023' or $_GET['Tahun'] == '2025') ? 'SANGAT TIDAK MEMUASKAN' : 'SANGAT MEMUASKAN' }} --}}
-                            </label>
-                        </h1>
-                    </div>
-                    <div class="col-span-1 rounded-xl items-center flex flex-col overflow-hidden h-full p-1 bg-white">
-                        <table class="w-full rounded-xl h-fit ">
-                            <thead
-                                class="bg-gradient-to-br from-[#02A859]  to-[#008952] font-normal border text-sm text-white">
-                                <tr class="">
-                                    <th scope="col" class=" px-4 py-5 lg:py-1 lg:text-lg text-5xl"> Mutu Pelayanan
-                                    </th>
-                                </tr>
-                                <tr>
-                            </thead>
-                        </table>
-                        <h1
-                            class="font-extrabold flex items-center h-full text-center  text-9xl text-transparent bg-clip-text bg-gradient-to-tl from-[#02A859]  via-[#02A859] to-[#02A859] ">
-                            <label class="font-black text-6xl text-[#02A859] drop-shadow-[0_3px_3px_rgba(0,0,0,0.3)]">
-                                <?php
-                                $nilai = '';
-                                if ($nilaiSKM >= 0 and $nilaiSKM <= 24.99) {
-                                    $nilai = 'E';
-                                } elseif ($nilaiSKM >= 25.0 and $nilaiSKM <= 64.99) {
-                                    $nilai = 'D';
-                                } elseif ($nilaiSKM >= 65.0 and $nilaiSKM <= 76.6) {
-                                    $nilai = 'C';
-                                } elseif ($nilaiSKM >= 76.61 and $nilaiSKM <= 88.3) {
-                                    $nilai = 'B';
-                                } elseif ($nilaiSKM >= 88.4) {
-                                    $nilai = 'A';
-                                } else {
-                                    $nilai = 'E';
-                                }
-                                ?>
-
-                                {{ ($_GET['Tahun'] == '2023' or $_GET['Tahun'] == '2025') ? 'E' : $nilai }} </label>
-                        </h1>
-                    </div>
-                </div>
-                <div class="flex flex-col gap-4 lg:gap-2 hidden lg:flex">
-                    <div class="w-full bottom-0">
-                        <a href="/dashboard?tw={{ date('m') }}&Tahun={{ date('Y') }}&Triwulan1=on">
-                            <button type="button"
-                                class="bg-white w-full b-0 p-4 shadow-2xl text-xl font-black  rounded-2xl  text-[#02A859] ">
-                                INFO RESPONDEN</button>
-                        </a>
-                    </div>
-                    <div class="w-full bottom-0">
-                        <a href="/skm#pertama">
-                            <button type="button"
-                                class="bg-white w-full b-0 p-4 shadow-2xl text-xl font-black  rounded-2xl  text-[#02A859] ">
-                                KLIK UNTUK
-                                MEMULAI
-                                SURVEI</button>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="flex flex-col col-span-3 justify-stretch h-full gap-5">
-
-                <div class="lg:grid lg:grid-cols-3 gap-3 h-full">
-                    <div
-                        class="col-span-2 rounded-xl overflow-hidden justify-stretch p-1 lg:h-full h-fit mb-3 lg:mb-0  bg-white ">
-                        <div class="bg-white rounded-xl  w-full">
-                            <canvas id="myChart" height="120" width="full" class="w-full m-2"></canvas>
+                <div class="grid grid-cols-6 gap-4 h-28 shrink-0">
+                    <div class="bg-white pattern-bg-light col-span-4 card-elevated p-4 flex flex-col  relative border border-slate-100 rounded-[1vw] overflow-hidden">
+                        <div class="flex justify-between items-start">
+                            <p class="font-black text-gray-800 uppercase  text-[10px]">KINERJA</p>
+                            <span class="material-symbols-outlined text-gray-80 text-sm ">speed</span>
                         </div>
-                        <table class="w-full rounded-xl ">
-                            <thead
-                                class="bg-gradient-to-br from-[#02A859]  to-[#008952] font-normal border text-3xl lg:text-sm text-white">
-                                <tr class="">
-                                    <th scope="col" class=" px-4 py-1 ">No</th>
-                                    <th scope="col" class=" px-4 py-1 ">Unsur Pelayanan</th>
-                                    <th scope="col" class=" px-4 py-1 ">Nilai Unsur Pelayanan</th>
-                                    <th scope="col" class=" px-4 py-1 ">Mutu Pelayanan</th>
+                        <p class="font-black text-[#FF8800] leading-tight uppercase text-xl text-center mt-3">{{ $kinerjaLabel }}</p>
+                    </div>
+
+                    <div class="bg-white pattern-bg-light col-span-2 card-elevated p-4 flex flex-col  relative border border-slate-100 rounded-[1vw] overflow-hidden items-center">
+                        <div class="flex justify-between items-start w-full">
+                            <p class="font-black text-gray-800 uppercase  text-[10px]">MUTU</p>
+                            <span class="material-symbols-outlined text-gray-80 text-sm ">verified</span>
+                        </div>
+                        <p class="font-black text-on-surface text-5xl mt-1">{{ $mutuPelayananLabel }}</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-3 shrink-0">
+                    <a class="js-nav" href="dashboard/?Tahun=2024&bagian={{ \App\Support\BagianOptions::allCodesCsv() }}">
+                        <button class="w-full bg-white hover:bg-[#ffd6aa] transition-all py-3 rounded-[1vw] flex items-center justify-center gap-2 text-[11px] font-black text-[#FF8800] border border-2 border-[#ffab4c]">
+                            <span class="material-symbols-outlined text-xl">group</span>
+                            INFO RESPONDEN
+                        </button>
+                    </a>
+                    <a class="js-nav" href="/skm#awal">
+                        <button class="w-full bg-[#FF8800] text-white py-4 rounded-[1vw] flex items-center justify-center gap-3 font-black text-sm shadow-lg hover:opacity-95 active:scale-95 transition-all group">
+                            <span class="material-symbols-outlined text-xl" style='font-variation-settings: "FILL" 1;'>description</span>
+                            MULAI SURVEI
+                        </button>
+                    </a>
+                </div>
+            </div>
+
+            {{-- #kolom2 --}}
+            <div class="md:col-span-5 flex flex-col gap-4 md:min-h-0">
+                <div class="bg-white card-elevated p-5 flex flex-col border border-slate-100 md:min-h-0 rounded-[1vw] md:flex-1">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xs font-black uppercase tracking-tight">Tren SKM Tahunan</h2>
+                        <div class="flex items-center gap-2 text-[10px] font-black text-on-surface-variant bg-slate-50 px-3 py-1 rounded-full">
+                            <span class="w-2 h-2 rounded-full bg-[#FF8800]"></span> INDEKS
+                        </div>
+                    </div>
+
+                    <div id="yearlyBars" class="flex items-end justify-between gap-0.5 px-1 pb-2 w-full"></div>
+                </div>
+
+                <div class="bg-white card-elevated overflow-visible flex flex-col md:h-[320px] h-auto border border-slate-100 rounded-[1vw] shrink-0">
+                    <div class="h-full overflow-hidden flex flex-col">
+                        <table class="w-full text-left h-full flex flex-col">
+                            <thead class="shrink-0">
+                                <tr class="bg-[#FF8800] flex items-center">
+                                    <th class="w-12 text-[12px] font-black uppercase tracking-wider px-2 py-0.5 text-white border-none text-center">No</th>
+                                    <th class="flex-1 text-[12px] font-black uppercase tracking-wider px-4 py-0.5 text-white border-none">Unsur Pelayanan</th>
+                                    <th class="w-20 text-[12px] font-black uppercase tracking-wider px-2 py-0.5 text-white border-none text-center">Nilai</th>
+                                    <th class="w-16 text-[12px] font-black uppercase tracking-wider text-center px-2 py-0.5 text-white border-none">Mutu</th>
                                 </tr>
                             </thead>
-                            <tbody class="border">
-                                <tr class="border-b dark:border-neutral-500 bg-white  text-xs">
-                                    <td
-                                        class="whitespace-nowrap text-center px-4 py-1 font-normal text-3xl py-2 lg:py-auto lg:text-xs">
-                                        1
-                                    </td>
-                                    <td
-                                        class="whitespace-nowrap  px-4 font-normal text-3xl py-2 lg:py-auto lg:text-xs">
-                                        Persyaratan
-                                    </td>
-                                    <td
-                                        class="whitespace-nowrap text-center px-4 font-normal text-3xl py-2 lg:py-auto lg:text-xs">
-                                        {{ ($_GET['Tahun'] == '2023' or $_GET['Tahun'] == '2025') ? '00' : sprintf('%0.3f', $nrr1) }}
-                                    </td>
-                                    <td
-                                        class="whitespace-nowrap  text-center px-4 font-normal text-3xl py-2 lg:py-auto lg:text-xs">
-                                        <?php
-                                        if ($_GET['Tahun'] == '2023' or $_GET['Tahun'] == '2025') {
-                                            echo 'E';
-                                        } elseif ($nrr1 >= 0.0 and $nrr1 <= 0.99) {
-                                            echo 'E';
-                                        } elseif ($nrr1 >= 1.0 and $nrr1 <= 2.599) {
-                                            echo 'D';
-                                        } elseif ($nrr1 >= 2.6 and $nrr1 <= 3.064) {
-                                            echo 'C';
-                                        } elseif ($nrr1 >= 3.064 and $nrr1 <= 3.532) {
-                                            echo 'B';
-                                        } else {
-                                            echo 'A';
-                                        }
-                                        ?>
-                                    </td>
-                                </tr>
-                                <tr class="border-b dark:border-neutral-500 bg-white  text-xs">
-                                    <td
-                                        class="whitespace-nowrap text-center px-4 py-1 font-normal text-3xl py-2 lg:py-auto lg:text-xs">
-                                        2
-                                    </td>
-                                    <td
-                                        class="whitespace-nowrap  px-4 font-normal text-3xl py-2 lg:py-auto lg:text-xs">
-                                        Prosedur Pelayanan
-                                    </td>
-                                    <td
-                                        class="whitespace-nowrap text-center px-4 font-normal text-3xl py-2 lg:py-auto lg:text-xs">
-                                        {{ ($_GET['Tahun'] == '2023' or $_GET['Tahun'] == '2025') ? '00' : sprintf('%0.3f', $nrr2) }}
-
-                                    </td>
-                                    <td
-                                        class="whitespace-nowrap  text-center px-4 font-normal text-3xl py-2 lg:py-auto lg:text-xs">
-                                        <?php
-                                        if ($_GET['Tahun'] == '2023' or $_GET['Tahun'] == '2025') {
-                                            echo 'E';
-                                        } elseif ($nrr2 >= 0.0 and $nrr2 <= 0.99) {
-                                            echo 'E';
-                                        } elseif ($nrr2 >= 1.0 and $nrr2 <= 2.599) {
-                                            echo 'D';
-                                        } elseif ($nrr2 >= 2.6 and $nrr2 <= 3.064) {
-                                            echo 'C';
-                                        } elseif ($nrr2 >= 3.064 and $nrr2 <= 3.532) {
-                                            echo 'B';
-                                        } else {
-                                            echo 'A';
-                                        }
-                                        ?>
-                                    </td>
-                                </tr>
-                                <tr class="border-b dark:border-neutral-500 bg-white  text-xs">
-                                    <td
-                                        class="whitespace-nowrap text-center px-4 py-1 font-normal text-3xl py-2 lg:py-auto lg:text-xs">
-                                        3
-                                    </td>
-                                    <td
-                                        class="whitespace-nowrap  px-4 font-normal text-3xl py-2 lg:py-auto lg:text-xs">
-                                        Waktu Pelaksana
-                                    </td>
-                                    <td
-                                        class="whitespace-nowrap text-center px-4 font-normal text-3xl py-2 lg:py-auto lg:text-xs">
-                                        {{ ($_GET['Tahun'] == '2023' or $_GET['Tahun'] == '2025') ? '00' : sprintf('%0.3f', $nrr3) }}
-
-                                    </td>
-                                    <td
-                                        class="whitespace-nowrap  text-center px-4 font-normal text-3xl py-2 lg:py-auto lg:text-xs">
-                                        <?php
-                                        if ($_GET['Tahun'] == '2023' or $_GET['Tahun'] == '2025') {
-                                            echo 'E';
-                                        } elseif ($nrr3 >= 0.0 and $nrr3 <= 0.99) {
-                                            echo 'E';
-                                        } elseif ($nrr3 >= 1.0 and $nrr3 <= 2.599) {
-                                            echo 'D';
-                                        } elseif ($nrr3 >= 2.6 and $nrr3 <= 3.064) {
-                                            echo 'C';
-                                        } elseif ($nrr3 >= 3.064 and $nrr3 <= 3.532) {
-                                            echo 'B';
-                                        } else {
-                                            echo 'A';
-                                        }
-                                        ?>
-                                    </td>
-                                </tr>
-                                <tr class="border-b dark:border-neutral-500 bg-white  text-xs">
-                                    <td
-                                        class="whitespace-nowrap text-center px-4 py-1 font-normal text-3xl py-2 lg:py-auto lg:text-xs">
-                                        4
-                                    </td>
-                                    <td
-                                        class="whitespace-nowrap  px-4 font-normal text-3xl py-2 lg:py-auto lg:text-xs">
-                                        Biaya / Tarif
-                                    </td>
-                                    <td
-                                        class="whitespace-nowrap text-center px-4 font-normal text-3xl py-2 lg:py-auto lg:text-xs">
-                                        {{ ($_GET['Tahun'] == '2023' or $_GET['Tahun'] == '2025') ? '00' : sprintf('%0.3f', $nrr4) }}
-
-                                    </td>
-                                    <td
-                                        class="whitespace-nowrap  text-center px-4 font-normal text-3xl py-2 lg:py-auto lg:text-xs">
-                                        <?php
-                                        if ($_GET['Tahun'] == '2023' or $_GET['Tahun'] == '2025') {
-                                            echo 'E';
-                                        } elseif ($nrr4 >= 0.0 and $nrr4 <= 0.99) {
-                                            echo 'E';
-                                        } elseif ($nrr4 >= 1.0 and $nrr4 <= 2.599) {
-                                            echo 'D';
-                                        } elseif ($nrr4 >= 2.6 and $nrr4 <= 3.064) {
-                                            echo 'C';
-                                        } elseif ($nrr4 >= 3.064 and $nrr4 <= 3.532) {
-                                            echo 'B';
-                                        } else {
-                                            echo 'A';
-                                        }
-                                        ?>
-                                    </td>
-                                </tr>
-                                <tr class="border-b dark:border-neutral-500 bg-white  text-xs">
-                                    <td
-                                        class="whitespace-nowrap text-center px-4 py-1 font-normal text-3xl py-2 lg:py-auto lg:text-xs">
-                                        5
-                                    </td>
-                                    <td
-                                        class="whitespace-nowrap  px-4 font-normal text-3xl py-2 lg:py-auto lg:text-xs">
-                                        Produk Layanan
-                                    </td>
-                                    <td
-                                        class="whitespace-nowrap text-center px-4 font-normal text-3xl py-2 lg:py-auto lg:text-xs">
-                                        {{ ($_GET['Tahun'] == '2023' or $_GET['Tahun'] == '2025') ? '00' : sprintf('%0.3f', $nrr5) }}
-
-                                    </td>
-                                    <td
-                                        class="whitespace-nowrap  text-center px-4 font-normal text-3xl py-2 lg:py-auto lg:text-xs">
-                                        <?php
-                                        if ($_GET['Tahun'] == '2023' or $_GET['Tahun'] == '2025') {
-                                            echo 'E';
-                                        } elseif ($nrr5 >= 0.0 and $nrr5 <= 0.99) {
-                                            echo 'E';
-                                        } elseif ($nrr5 >= 1.0 and $nrr5 <= 2.599) {
-                                            echo 'D';
-                                        } elseif ($nrr5 >= 2.6 and $nrr5 <= 3.064) {
-                                            echo 'C';
-                                        } elseif ($nrr5 >= 3.064 and $nrr5 <= 3.532) {
-                                            echo 'B';
-                                        } else {
-                                            echo 'A';
-                                        }
-                                        ?>
-                                    </td>
-                                </tr>
-                                <tr class="border-b dark:border-neutral-500 bg-white  text-xs">
-                                    <td
-                                        class="whitespace-nowrap text-center px-4 py-1 font-normal text-3xl py-2 lg:py-auto lg:text-xs">
-                                        6
-                                    </td>
-                                    <td
-                                        class="whitespace-nowrap  px-4 font-normal text-3xl py-2 lg:py-auto lg:text-xs">
-                                        Kompetensi Pelaksana
-                                    </td>
-                                    <td
-                                        class="whitespace-nowrap text-center px-4 font-normal text-3xl py-2 lg:py-auto lg:text-xs">
-                                        {{ ($_GET['Tahun'] == '2023' or $_GET['Tahun'] == '2025') ? '00' : sprintf('%0.3f', $nrr6) }}
-
-                                    </td>
-                                    <td
-                                        class="whitespace-nowrap  text-center px-4 font-normal text-3xl py-2 lg:py-auto lg:text-xs">
-                                        <?php
-                                        if ($_GET['Tahun'] == '2023' or $_GET['Tahun'] == '2025') {
-                                            echo 'E';
-                                        } elseif ($nrr6 >= 0.0 and $nrr6 <= 0.99) {
-                                            echo 'E';
-                                        } elseif ($nrr6 >= 1.0 and $nrr6 <= 2.599) {
-                                            echo 'D';
-                                        } elseif ($nrr6 >= 2.6 and $nrr6 <= 3.064) {
-                                            echo 'C';
-                                        } elseif ($nrr6 >= 3.064 and $nrr6 <= 3.532) {
-                                            echo 'B';
-                                        } else {
-                                            echo 'A';
-                                        }
-                                        ?>
-                                    </td>
-                                </tr>
-                                <tr class="border-b dark:border-neutral-500 bg-white  text-xs">
-                                    <td
-                                        class="whitespace-nowrap text-center px-4 py-1 font-normal text-3xl py-2 lg:py-auto lg:text-xs">
-                                        7
-                                    </td>
-                                    <td
-                                        class="whitespace-nowrap  px-4 font-normal text-3xl py-2 lg:py-auto lg:text-xs">
-                                        Perilaku Pelaksana
-                                    </td>
-                                    <td
-                                        class="whitespace-nowrap text-center px-4 font-normal text-3xl py-2 lg:py-auto lg:text-xs">
-                                        {{ ($_GET['Tahun'] == '2023' or $_GET['Tahun'] == '2025') ? '00' : sprintf('%0.3f', $nrr7) }}
-
-                                    </td>
-                                    <td
-                                        class="whitespace-nowrap  text-center px-4 font-normal text-3xl py-2 lg:py-auto lg:text-xs">
-                                        <?php
-                                        if ($_GET['Tahun'] == '2023' or $_GET['Tahun'] == '2025') {
-                                            echo 'E';
-                                        } elseif ($nrr7 >= 0.0 and $nrr7 <= 0.99) {
-                                            echo 'E';
-                                        } elseif ($nrr7 >= 1.0 and $nrr7 <= 2.599) {
-                                            echo 'D';
-                                        } elseif ($nrr7 >= 2.6 and $nrr7 <= 3.064) {
-                                            echo 'C';
-                                        } elseif ($nrr7 >= 3.064 and $nrr7 <= 3.532) {
-                                            echo 'B';
-                                        } else {
-                                            echo 'A';
-                                        }
-                                        ?>
-                                    </td>
-                                </tr>
-                                <tr class="border-b dark:border-neutral-500 bg-white  text-xs">
-                                    <td
-                                        class="whitespace-nowrap text-center px-4 py-1 font-normal text-3xl py-2 lg:py-auto lg:text-xs">
-                                        8
-                                    </td>
-                                    <td class="whitespace-wrap  px-4 font-normal text-3xl py-2 lg:py-auto lg:text-xs">
-                                        Sarana dan Prasarana
-                                    </td>
-                                    <td
-                                        class="whitespace-nowrap text-center px-4 font-normal text-3xl py-2 lg:py-auto lg:text-xs">
-                                        {{ ($_GET['Tahun'] == '2023' or $_GET['Tahun'] == '2025') ? '00' : sprintf('%0.3f', $nrr8) }}
-
-                                    </td>
-                                    <td
-                                        class="whitespace-nowrap  text-center px-4 font-normal text-3xl py-2 lg:py-auto lg:text-xs">
-                                        <?php
-                                        if ($_GET['Tahun'] == '2023' or $_GET['Tahun'] == '2025') {
-                                            echo 'E';
-                                        } elseif ($nrr8 >= 0.0 and $nrr8 <= 0.99) {
-                                            echo 'E';
-                                        } elseif ($nrr8 >= 1.0 and $nrr8 <= 2.599) {
-                                            echo 'D';
-                                        } elseif ($nrr8 >= 2.6 and $nrr8 <= 3.064) {
-                                            echo 'C';
-                                        } elseif ($nrr8 >= 3.064 and $nrr8 <= 3.532) {
-                                            echo 'B';
-                                        } else {
-                                            echo 'A';
-                                        }
-                                        ?>
-                                    </td>
-                                </tr>
-                                <tr class="border-b dark:border-neutral-500 bg-white  text-xs">
-                                    <td
-                                        class="whitespace-nowrap text-center px-4 py-1 font-normal text-3xl py-2 lg:py-auto lg:text-xs">
-                                        9
-                                    </td>
-                                    <td
-                                        class="whitespace-nowrap  px-4 font-normal text-3xl py-2 lg:py-auto lg:text-xs">
-                                        Penanganan Pengaduan
-                                    </td>
-                                    <td
-                                        class="whitespace-nowrap text-center px-4 font-normal text-3xl py-2 lg:py-auto lg:text-xs">
-                                        {{ ($_GET['Tahun'] == '2023' or $_GET['Tahun'] == '2025') ? '00' : sprintf('%0.3f', $nrr9) }}
-
-                                    </td>
-                                    <td
-                                        class="whitespace-nowrap  text-center px-4 font-normal text-3xl py-2 lg:py-auto lg:text-xs">
-                                        <?php
-                                        if ($_GET['Tahun'] == '2023' or $_GET['Tahun'] == '2025') {
-                                            echo 'E';
-                                        } elseif ($nrr9 >= 0.0 and $nrr9 <= 0.99) {
-                                            echo 'E';
-                                        } elseif ($nrr9 >= 1.0 and $nrr9 <= 2.599) {
-                                            echo 'D';
-                                        } elseif ($nrr9 >= 2.6 and $nrr9 <= 3.064) {
-                                            echo 'C';
-                                        } elseif ($nrr9 >= 3.064 and $nrr9 <= 3.532) {
-                                            echo 'B';
-                                        } else {
-                                            echo 'A';
-                                        }
-                                        ?>
-                                    </td>
-                                </tr>
+                            <tbody class="divide-y divide-slate-50 flex flex-col flex-1">
+                                @foreach ($unsurPelayanan as $i => $unsur)
+                                    @php
+                                        $nilaiUnsur = $nrrPerUnsur[$i] ?? 0;
+                                        $mutuUnsur = $getMutuByNrr((float) $nilaiUnsur);
+                                    @endphp
+                                    <tr class="hover:bg-slate-50 transition-colors flex-1 flex items-center">
+                                        <td class="w-12 text-center text-[11px] font-black px-2">{{ $i + 1 }}</td>
+                                        <td class="flex-1 px-4 py-0.5 text-[11px] font-medium">{{ $unsur }}</td>
+                                        <td class="w-20 px-2 py-0.5 text-[11px] font-black text-center">{{  sprintf('%0.3f', $nilaiUnsur) }}</td>
+                                        <td class="w-16 px-2 py-0.5 text-center flex items-center justify-center">
+                                            <span class="{{ $getMutuClass($mutuUnsur) }} text-white w-4 h-4 inline-flex items-center justify-center rounded-md text-[8px] font-black shadow-sm">
+                                                {{ $mutuUnsur }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
-                    <div class="flex flex-col gap-3 justify-stretch">
-                        <div class="rounded-xl overflow-hidden h-fit  lg:h-2/3 p-1 bg-white items-center">
-                            <table class="w-full rounded-xl h-fit ">
-                                <thead
-                                    class="bg-gradient-to-br from-[#02A859]  to-[#008952] font-normal border text-5xl lg:text-sm text-white">
-                                    <tr class="">
-                                        <th scope="col" class=" px-4 py-1">TOTAL <br
-                                                class="hidden lg:block">RESPONDEN </th>
-                                    </tr>
-                                </thead>
-                            </table>
-                            <div
-                                class="font-extrabold   flex text-center lg:mt-5 justify-center py-5 lgp-0 text-9xl lg:text-7xl text-transparent bg-clip-text bg-gradient-to-tl from-[#02A859]  via-[#02A859] to-[#02A859] ">
-                                {{ $jmlResponden }}
-                            </div>
+                </div>
+            </div>
+
+            {{-- #kolom3 --}}
+            <div class="md:col-span-3 flex flex-col gap-4 md:min-h-0">
+                <div class="p-6 card-elevated relative overflow-hidden bg-white md:h-36 h-auto py-5 shrink-0 flex flex-col justify-center border border-slate-100 rounded-[1vw]">
+                    <div class="absolute -right-8 -top-8 w-48 h-48 bg-white rounded-full blur-3xl"></div>
+                    <div class="relative z-10">
+                        <div class="flex w-full justify-between items-end mb-3">
+                            <p class="font-black uppercase tracking-[0.2em] text-gray-80  text-[12px]">TOTAL RESPONDEN</p>
+                        
+                            <span class="material-symbols-outlined text-gray-80 text-xl" style='font-variation-settings: "FILL" 1;'>groups</span>
                         </div>
-                        <div class="col-span-1 rounded-xl overflow-hidden lg:h-full p-1 h-fit lg:h-1/3  bg-white">
-                            <table class="w-full rounded-xl h-full ">
-                                <thead
-                                    class="bg-gradient-to-br from-[#02A859]  to-[#008952] font-normal border text-5xl lg:text-sm text-white">
-                                    <tr class="">
-                                        <th scope="col" class=" px-4 py-1 lg:hidden">Nilai Interval </th>
-                                        <th scope="col" class=" px-4 py-1 lg:hidden">Nilai Konversi </th>
-                                        <th scope="col" class=" px-4 py-1">Mutu </th>
-                                        <th scope="col" class=" px-4 py-1">Keterangan</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="border">
-                                    <tr class="border-b dark:border-neutral-500 bg-white  text-xs">
-                                        <td
-                                            class="whitespace-nowrap lg:hidden text-center px-4 py-1 font-normal text-3xl py-2 lg:py-0 lg:text-xs">
-                                            3,532 - 4,000
-                                        </td>
-                                        <td
-                                            class="whitespace-nowrap lg:hidden text-center px-4 py-1 font-normal text-3xl py-2 lg:py-0 lg:text-xs">
-                                            88,31 - 100,00
-                                        </td>
-                                        <td
-                                            class="whitespace-nowrap text-center px-4 py-1 font-normal text-3xl py-2 lg:py-0 lg:text-xs">
-                                            A
-                                        </td>
-                                        <td
-                                            class="whitespace-nowrap  px-4 font-normal text-3xl py-2 lg:py-0 lg:text-xs text-center  ">
-                                            Sangat Memuaskan
-                                            <label class="hidden justify-center w-full lg:flex"> 88,31 - 100,00
-                                            </label>
-                                        </td>
-                                    </tr>
-                                    <tr class="border-b dark:border-neutral-500 bg-white  text-xs">
-                                        <td
-                                            class="whitespace-nowrap lg:hidden text-center px-4 py-1 font-normal text-3xl py-2 lg:py-0 lg:text-xs">
-                                            3,064 - 3,532
-                                        </td>
-                                        <td
-                                            class="whitespace-nowrap lg:hidden text-center px-4 py-1 font-normal text-3xl py-2 lg:py-0 lg:text-xs">
-                                            76,61 - 88,30
-                                        </td>
-                                        <td
-                                            class="whitespace-nowrap text-center px-4 py-1 font-normal text-3xl py-2 lg:py-0 lg:text-xs">
-                                            B
-                                        </td>
-                                        <td
-                                            class="whitespace-nowrap  px-4 font-normal text-3xl py-2 lg:py-0 lg:text-xs text-center  ">
-                                            Memuaskan
-                                            <label class="hidden justify-center w-full lg:flex"> 76,61 - 88,30
-                                            </label>
-                                        </td>
-                                    </tr>
-                                    <tr class="border-b dark:border-neutral-500 bg-white  text-xs">
-                                        <td
-                                            class="whitespace-nowrap lg:hidden text-center px-4 py-1 font-normal text-3xl py-2 lg:py-0 lg:text-xs">
-                                            2,600 - 3,064
-                                        </td>
-                                        <td
-                                            class="whitespace-nowrap lg:hidden text-center px-4 py-1 font-normal text-3xl py-2 lg:py-0 lg:text-xs">
-                                            65,00 - 76,60
-                                        </td>
-                                        <td
-                                            class="whitespace-nowrap text-center px-4 py-1 font-normal text-3xl py-2 lg:py-0 lg:text-xs">
-                                            C
-                                        </td>
-                                        <td
-                                            class="whitespace-nowrap  px-4 font-normal text-3xl py-2 lg:py-0 lg:text-xs text-center  ">
-                                            Kurang Memuaskan
-                                            <label class="hidden justify-center w-full lg:flex"> 65,00 - 76,60
-                                            </label>
-                                        </td>
-                                    </tr>
-                                    <tr class="border-b dark:border-neutral-500 bg-white  text-xs">
-                                        <td
-                                            class="whitespace-nowrap lg:hidden text-center px-4 py-1 font-normal text-3xl py-2 lg:py-0 lg:text-xs">
-                                            1,000 - 2,599
-                                        </td>
-                                        <td
-                                            class="whitespace-nowrap lg:hidden text-center px-4 py-1 font-normal text-3xl py-2 lg:py-0 lg:text-xs">
-                                            25,00 - 64,99
-                                        </td>
-                                        <td
-                                            class="whitespace-nowrap text-center px-4 py-1 font-normal text-3xl py-2 lg:py-0 lg:text-xs">
-                                            D
-                                        </td>
-                                        <td
-                                            class="whitespace-nowrap  px-4 font-normal text-3xl py-2 lg:py-0 lg:text-xs text-center  ">
-                                            Tidak Memuaskan
-                                            <label class="hidden justify-center w-full lg:flex"> 25,00 - 64,99
-                                            </label>
-                                        </td>
-                                    </tr>
-                                    <tr class="border-b dark:border-neutral-500 bg-white  text-xs">
-                                        <td
-                                            class="whitespace-nowrap lg:hidden text-center px-4 py-1 font-normal text-3xl py-2 lg:py-0 lg:text-xs">
-                                            0,000 - 0,999
-                                        </td>
-                                        <td
-                                            class="whitespace-nowrap lg:hidden text-center px-4 py-1 font-normal text-3xl py-2 lg:py-0 lg:text-xs">
-                                            0,00 - 24,99
-                                        </td>
-                                        <td
-                                            class="whitespace-nowrap text-center px-4 py-1 font-normal text-3xl py-2 lg:py-0 lg:text-xs">
-                                            E
-                                        </td>
-                                        <td
-                                            class="whitespace-nowrap  px-4 font-normal text-3xl py-2 lg:py-0 lg:text-xs text-center  ">
-                                            Sangat Tidak <br class="hidden lg:flex">Memuaskan
-                                            <label class="hidden justify-center w-full lg:flex"> 0,00 - 24,99
-                                            </label>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="flex flex-col gap-1 mt-2 lg:gap-2  lg:hidden">
-                        <div class="w-full bottom-0">
-                            <a href="/dashboard">
-                                <button type="button"
-                                    class="bg-white w-full b-0 p-5  shadow-2xl text-4xl font-black  rounded-2xl  text-[#02A859] ">
-                                    INFO RESPONDEN</button>
-                            </a>
-                        </div>
-                        <div class="w-full lg:mb-0 mb-10 bottom-0">
-                            <a href="/skm">
-                                <button type="button"
-                                    class="bg-white w-full b-0 p-5  shadow-2xl text-4xl font-black  rounded-2xl  text-[#02A859] ">
-                                    KLIK UNTUK
-                                    MEMULAI
-                                    SURVEI</button>
-                            </a>
+                        <div class="flex items-center gap-5">
+                            <h3 class="text-6xl font-black text-center text-[#FF8800]">{{ number_format($jmlResponden, 0, ',', '.') }}</h3>
                         </div>
                     </div>
                 </div>
 
+                <div class="bg-white card-elevated p-4 flex flex-col flex-1 border border-slate-100 min-h-0 rounded-[1vw]">
+                    <h2 class="text-[11px] font-black mb-3 shrink-0 uppercase tracking-tight">Legenda</h2>
+                    <div class="flex-1 space-y-3 overflow-hidden pl-3 pt-3">
+                        <div class="flex items-center gap-4 group">
+                            <div class="w-8 h-8 shrink-0 rounded-[1vw] bg-[#26C281] flex items-center justify-center text-white text-xs font-black shadow-sm group-hover:scale-110 transition-transform">A</div>
+                            <div class="flex-1">
+                                <p class="text-[11px] font-black text-on-surface">Sangat Memuaskan</p>
+                                <p class="text-[9px] text-on-surface-variant font-bold opacity-70 uppercase tracking-tighter">88,31 - 100,00</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-4 group">
+                            <div class="w-8 h-8 shrink-0 rounded-[1vw] bg-[#3B82F6] flex items-center justify-center text-white text-xs font-black shadow-sm group-hover:scale-110 transition-transform">B</div>
+                            <div class="flex-1">
+                                <p class="text-[11px] font-black text-on-surface">Memuaskan</p>
+                                <p class="text-[9px] text-on-surface-variant font-bold opacity-70 uppercase tracking-tighter">76,61 - 88,30</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-4 group">
+                            <div class="w-8 h-8 shrink-0 rounded-[1vw] bg-[#FACC15] flex items-center justify-center text-white text-xs font-black shadow-sm group-hover:scale-110 transition-transform">C</div>
+                            <div class="flex-1">
+                                <p class="text-[11px] font-black text-on-surface">Kurang Memuaskan</p>
+                                <p class="text-[9px] text-on-surface-variant font-bold opacity-70 uppercase tracking-tighter">65,00 - 76,60</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-4 group">
+                            <div class="w-8 h-8 shrink-0 rounded-[1vw] bg-[#FF8800] flex items-center justify-center text-white text-xs font-black shadow-sm group-hover:scale-110 transition-transform">D</div>
+                            <div class="flex-1">
+                                <p class="text-[11px] font-black text-on-surface">Tidak Memuaskan</p>
+                                <p class="text-[9px] text-on-surface-variant font-bold opacity-70 uppercase tracking-tighter">25,00 - 64,99</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-4 group opacity-40">
+                            <div class="w-8 h-8 shrink-0 rounded-[1vw] bg-[#F43F5E] flex items-center justify-center text-white text-xs font-black shadow-sm group-hover:scale-110 transition-transform">E</div>
+                            <div class="flex-1">
+                                <p class="text-[11px] font-black text-on-surface">Gagal</p>
+                                <p class="text-[9px] text-on-surface-variant font-bold opacity-70 uppercase tracking-tighter">0.00 - 24,99</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-
         </div>
+    </main>
 
+    <nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-6 pb-4 md:hidden bg-white/95 backdrop-blur-xl rounded-t-3xl shadow-2xl border-t border-slate-100">
+        <a class="js-nav flex flex-col items-center justify-center bg-[#FF8800] text-white rounded-full p-4 transition-all scale-110 shadow-lg" href="#">
+            <span class="material-symbols-outlined">grid_view</span>
+        </a>
+        <a class="js-nav flex flex-col items-center justify-center text-[#574335] p-3 hover:bg-slate-100 rounded-full transition-colors" href="/dashboard">
+            <span class="material-symbols-outlined">assignment</span>
+        </a>
+        <a class="js-nav flex flex-col items-center justify-center text-[#574335] p-3 hover:bg-slate-100 rounded-full transition-colors" href="/skm#awal">
+            <span class="material-symbols-outlined">database</span>
+        </a>
+        <a class="js-nav flex flex-col items-center justify-center text-[#574335] p-3 hover:bg-slate-100 rounded-full transition-colors" href="/login">
+            <span class="material-symbols-outlined">person</span>
+        </a>
+    </nav>
 
-    </div>
-</body>
+@include('partials.filter-ui-script', [
+    'enableLoadingOverlay' => true,
+    'loadingOverlaySelector' => '#loadingOverlay',
+    'loadingNavSelector' => '.js-nav',
+])
+
 <script>
-    var data = {{ $nilaiSkm }};
-    // var label = {{ $singkatan }};
-    var bulan = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nop', 'Des'];
-    var bln = [];
-    var jum = {{ $jml }};
-
-    let str = '';
-
-    for (let i = 0; i < jum; i++) {
-        bln[i] = bulan[i];
+    const applyBagianButton = document.getElementById('applyBagian');
+    if (applyBagianButton) {
+        applyBagianButton.addEventListener('click', () => {
+            const checked = Array.from(document.querySelectorAll('.bagian-checkbox:checked')).map((cb) => cb.value);
+            if (checked.length === 0) {
+                alert('Silakan pilih minimal satu bagian.');
+                return;
+            }
+            window.showPageLoading();
+            const tw = '{{ $_GET['tw'] }}';
+            const tahun = '{{ $_GET['Tahun'] }}';
+            const bagian = checked.join(',');
+            window.location.href = `/?tw=${tw}&Tahun=${tahun}&bagian=${bagian}`;
+        });
     }
 
-    const ctx = document.getElementById('myChart');
+    const data = @json($nilaiSkmTahun ?? []);
+    const tahun = [2023, 2024, 2025, 2026];
+    const barsContainer = document.getElementById('yearlyBars');
+    const safeData = Array.isArray(data) ? data : [];
 
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: bulan,
-            datasets: [{
-                label: 'Nilai SKM',
-                data: data,
-                borderWidth: 1,
-                borderColor: '#02A859',
-                backgroundColor: '#02A859',
+    if (barsContainer) barsContainer.innerHTML = '';
 
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
+    for (let i = 0; i < tahun.length; i++) {
+        const value = Number(safeData[i] ?? 0);
+        const normalizedValue = Math.max(Math.min(value, 100), 0);
+        const height = Math.min(normalizedValue * 0.8, 120);
+        const formattedValue = value.toLocaleString('id-ID', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
 
-    });
+        // Stack: value, bar, year label
+        const wrapper = document.createElement('div');
+        wrapper.className = 'flex flex-col items-center justify-end flex-1 min-w-0';
+
+        const bar = document.createElement('div');
+        bar.className = 'w-8 md:w-12 rounded-t-lg bg-[#FF8800] flex items-end justify-center shadow-md';
+        bar.style.height = height + 'px';
+        bar.title = formattedValue;
+
+        const valueLabel = document.createElement('div');
+        valueLabel.className = 'text-[12px] font-black text-[#FF8800] mb-1 truncate';
+        valueLabel.innerText = formattedValue;
+
+        const yearLabel = document.createElement('div');
+        yearLabel.className = 'text-[11px] font-black text-center truncate max-w-[3.5rem] mt-1';
+        yearLabel.innerText = tahun[i];
+
+        wrapper.appendChild(bar);
+        wrapper.appendChild(valueLabel);
+        wrapper.appendChild(yearLabel);
+        barsContainer.appendChild(wrapper);
+    }
 </script>
 
 </body>
 
 </html>
+
+
+
+
+
+
+
+

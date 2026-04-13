@@ -32,54 +32,54 @@ if ($_GET['tw'] == null) {
     $endDate = $_GET['Tahun'] . '-12-31';
 }
 
-$tu1 = DB::table('2024')
+$tu1 = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
     ->get()
     ->sum('u1');
 
-$tu2 = DB::table('2024')
+$tu2 = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
     ->get()
     ->sum('u2');
 
-$tu3 = DB::table('2024')
+$tu3 = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
     ->get()
     ->sum('u3');
 
-$tu4 = DB::table('2024')
+$tu4 = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
     ->get()
     ->sum('u4');
 
-$tu5 = DB::table('2024')
+$tu5 = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
     ->get()
     ->sum('u5');
 
-$tu6 = DB::table('2024')
+$tu6 = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
     ->get()
     ->sum('u6');
 
-$tu7 = DB::table('2024')
+$tu7 = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
     ->get()
     ->sum('u7');
 
-$tu8 = DB::table('2024')
+$tu8 = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
     ->get()
     ->sum('u8');
 
-$tu9 = DB::table('2024')
+$tu9 = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
     ->get()
     ->sum('u9');
 
 $Ttl_Nilai_Unsur = $tu1 + $tu2 + $tu3 + $tu4 + $tu5 + $tu6 + $tu7 + $tu8 + $tu9;
 
-$n = DB::table('2024')
+$n = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
     ->get()
     ->count();
@@ -144,16 +144,26 @@ if ($n == 0) {
 
 ?>
 
-@extends('layouts.index', ['title' => 'Dashboard'])
+@php
+    // role/keterangan dari URL login, contoh: ?keterangan=asisten2
+    $role = request('keterangan', 'admin');
+    $bagianQuery = request('bagian', '');
+
+    // Semua opsi yang tersedia untuk ditampilkan
+    $allOptions = \App\Support\BagianOptions::codeNameMap();
+    $visibleKeys = \App\Support\BagianOptions::codesForRole($role);
+@endphp
+
+@extends('layouts.index', ['title' => 'nilaiUnsur'])
 
 @section('content')
-    <div class="absolute top-0 left-[215px] h-screen w-10/12 p-2">
+    <div class="admin-main">
         <div class="bg-white h-full w-full rounded-xl p-3  mb-2">
-            <div class="flex w-full justify-between items-center -mt-3">
-                <p class="text-[25px] font-black text-[#01683d]">RESUME / PENDIDIKAN</p>
+            <div class="admin-toolbar flex w-full justify-between items-start lg:items-center gap-3 flex-wrap lg:flex-nowrap">
+                <p class="text-[25px] font-black text-gray-800">RESUME / PENDIDIKAN</p>
                 <div class="flex justify-between items-center py-4 ">
                     <div>
-                        <label class="text-white font-bold text-xl"> </label>
+                        <label class="text-gray-900 font-bold text-xl"> </label>
                     </div>
                     <?php
 
@@ -171,166 +181,106 @@ if ($n == 0) {
                     <div class="flex flex-row items-center gap-3">
 
                         {{-- tahun --}}
-                        <div class="flex flex-row items-center gap-3 mb-5 lg:mb-0">
-                            <label for="countries" class=" font-bold text-[#01683d] text-5xl lg:text-base ">
+                        <div class="flex flex-row items-center gap-3">
+                            <label for="tahun"
+                                class=" font-bold text-gray-900 text-4xl lg:text-base drop-shadow-[0_3px_3px_rgba(0,0,0,0.3)]">
                                 Tahun</label>
-
-                            <?php if($_GET['Tahun'] == ''){ ?>
-                            <select id="countries" id="language"
-                                onChange="document.location.href='?jenkel=1&usia=1&pekerjaan=1&pendidikan=1&tw=' + {{ $_GET['tw'] == null ? '2024' : $_GET['tw'] }} + '&Tahun=' + this.value   "
-                                class="bg-white border border-gray-300 text-[#01683d] font-bold text-5xl w-[250px] text-center lg:w-fit lg:text-sm rounded-full px-3 py-1">
-                                <option value="2023" <?php if (date('Y') == '2023') {
-                                    echo 'selected';
-                                } else {
-                                } ?>>2023</option>
-
-                                <option value="2024" <?php if (date('Y') == '2024') {
-                                    echo 'selected';
-                                } else {
-                                } ?>>2024</option>
-
-                                <option value="2025" <?php if (date('Y') == '2025') {
-                                    echo 'selected';
-                                } else {
-                                } ?>>2025</option>
+                            <select id="tahun"  
+                                onChange="document.location.href='/nilaiUnsur?tw=' + {{ $_GET['tw'] }} + '&Tahun=' + this.value + '&bagian={{ $_GET['bagian'] }}'"
+                                class="bg-white border border-gray-400 text-gray-900 font-bold text-4xl w-[200px] text-center lg:w-fit lg:text-sm rounded-full px-3 py-1">
+                    
+                                <option value="2023" <?php if($_GET['Tahun']=='2023') echo 'selected'; ?>>2023</option>
+                                <option value="2024" <?php if($_GET['Tahun']=='2024') echo 'selected'; ?>>2024</option>
+                                <option value="2025" <?php if($_GET['Tahun']=='2024') echo 'selected'; ?>>2025</option>
+                                <option value="2026" <?php if($_GET['Tahun']=='2026' || $_GET['Tahun']=='') echo 'selected'; ?>>2026</option>
                             </select>
-                            <?php  } else {?>
-                            <select id="countries" id="language"
-                                onChange="document.location.href='?jenkel=1&usia=1&pekerjaan=1&pendidikan=1&tw=' + {{ $_GET['tw'] == null ? '2024' : $_GET['tw'] }} + '&Tahun=' + this.value   "
-                                class="bg-white border border-gray-300 text-[#01683d] font-bold text-5xl w-[250px] text-center lg:w-fit lg:text-sm rounded-full px-3 py-1">
-                                <option value="2023" <?php
-                                if ($_GET['Tahun'] == '2023' or $_GET['Tahun'] == '2025') {
-                                    echo 'selected';
-                                } else {
-                                }
-                                ?>>2023</option>
-
-                                <option value="2024" <?php
-                                if ($_GET['Tahun'] == '2024') {
-                                    echo 'selected';
-                                } else {
-                                }
-                                ?>>2024</option>
-
-                                <option value="2025" <?php
-                                if ($_GET['Tahun'] == '2025') {
-                                    echo 'selected';
-                                } else {
-                                }
-                                ?>>2025</option>
-                            </select>
-                            <?php
-                    }?>
-
                         </div>
-
-                        {{-- tw --}}
-
-                        <div class="flex flex-row items-center gap-3 mb-5 lg:mb-0">
-                            <label for="countries" class=" font-bold text-[#155748] text-5xl lg:text-base">
+                    
+                        {{-- triwulan --}}
+                        <div class="flex flex-row items-center gap-3">
+                            <label for="tw"
+                                class=" font-bold text-gray-900 text-4xl lg:text-base drop-shadow-[0_3px_3px_rgba(0,0,0,0.3)]">
                                 Triwulan</label>
-                            <?php if($_GET['tw'] == ''){ ?>
-                            <select id="countries" id="language"
-                                onChange="document.location.href='?tw=' + this.value + '&Tahun=' + {{ $_GET['Tahun'] == null ? '2024' : $_GET['Tahun'] }} "
-                                class="bg-white border border-gray-300 text-[#155748] font-bold text-5xl w-full text-center lg:w-fit lg:text-sm rounded-full px-3 py-1">
-
-                                <option value="1" <?php if (date('m') == 1) {
-                                    echo 'selected';
-                                } else {
-                                } ?>>Triwulan 1 (Jan, Feb, Mar)</option>
-
-                                <option value="2" <?php if (date('m') == 2) {
-                                    echo 'selected';
-                                } else {
-                                } ?>>Triwulan 2 (Apr, Mei, Jun)</option>
-
-                                <option value="3" <?php if (date('m') == 3) {
-                                    echo 'selected';
-                                } else {
-                                } ?>>Triwulan 2 (Jan s/d Jun)</option>
-
-                                <option value="4" <?php if (date('m') == 4) {
-                                    echo 'selected';
-                                } else {
-                                } ?>>Triwulan 3 (Jul, Agu, Sep)</option>
-
-                                <option value="5" <?php if (date('m') == 5) {
-                                    echo 'selected';
-                                } else {
-                                } ?>>Triwulan 3 (Jan s/d Sep)</option>
-
-                                <option value="6" <?php if (date('m') == 6) {
-                                    echo 'selected';
-                                } else {
-                                } ?>>Triwulan 4 (Okt, Nop, Des)</option>
-
-                                <option value="7" <?php if (date('m') == 7) {
-                                    echo 'selected';
-                                } else {
-                                } ?>>Triwulan 4 (Jan s/d Des)</option>
+                            <select id="tw"
+                                onChange="document.location.href='/nilaiUnsur?tw=' + this.value + '&Tahun=' + {{ $_GET['Tahun'] }} + '&bagian={{ $_GET['bagian'] }}'"
+                                class="bg-white border border-gray-400 text-gray-900 font-bold text-4xl w-[300px] text-center lg:w-fit lg:text-sm rounded-full px-3 py-1">
+                    
+                                <option value="1" <?php if($_GET['tw']=='1') echo 'selected'; ?>>TW 1 (Jan, Feb, Mar)</option>
+                                <option value="2" <?php if($_GET['tw']=='2') echo 'selected'; ?>>TW 2 (Apr, Mei, Jun)</option>
+                                <option value="3" <?php if($_GET['tw']=='3') echo 'selected'; ?>>TW 2 (Jan s/d Jun)</option>
+                                <option value="4" <?php if($_GET['tw']=='4') echo 'selected'; ?>>TW 3 (Jul, Agu, Sep)</option>
+                                <option value="5" <?php if($_GET['tw']=='5') echo 'selected'; ?>>TW 3 (Jan s/d Sep)</option>
+                                <option value="6" <?php if($_GET['tw']=='6') echo 'selected'; ?>>TW 4 (Okt, Nop, Des)</option>
+                                <option value="7" <?php if($_GET['tw']=='7') echo 'selected'; ?>>TW 4 (Jan s/d Des)</option>
                             </select>
-                            <?php  } else {?>
-                            <select id="countries" id="language"
-                                onChange="document.location.href='?tw=' + this.value + '&Tahun=' + {{ $_GET['Tahun'] == null ? '2024' : $_GET['Tahun'] }}"
-                                class="bg-white border border-gray-300 text-[#155748] font-bold text-5xl w-[300px] text-center lg:w-fit lg:text-sm rounded-full px-3 py-1">
+                        </div>
+                    
+                        {{-- bagian --}}
+                        <div class="flex flex-row items-center gap-2">
+                            <label for="countries" class="text-black font-bold text-sm ">
+                                Bagian</label>
 
-                                <option value="1" <?php
-                                if ($_GET['tw'] == 1) {
-                                    echo 'selected';
-                                } else {
-                                }
-                                ?>>Triwulan 1 (Jan, Feb, Mar)</option>
+                            <button id="dropdownDefaultButton" data-dropdown-toggle="dropdownP"
+                                class="flex items-center  bg-[#ffffff] border border-gray-400 font-bold   text-sm rounded-full px-3 py-1"
+                                type="button">Pilih <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2" d="m1 1 4 4 4-4" />
+                                </svg>
+                            </button>
 
-                                <option value="2" <?php
-                                if ($_GET['tw'] == 2) {
-                                    echo 'selected';
-                                } else {
-                                }
-                                ?>>Triwulan 2 (Apr, Mei, Jun)</option>
-
-                                <option value="3" <?php
-                                if ($_GET['tw'] == 3) {
-                                    echo 'selected';
-                                } else {
-                                }
-                                ?>>Triwulan 2 (Jan s/d Jun)</option>
-
-                                <option value="4" <?php
-                                if ($_GET['tw'] == 4) {
-                                    echo 'selected';
-                                } else {
-                                }
-                                ?>>Triwulan 3 (Jul, Agu, Sep)</option>
-
-                                <option value="5" <?php
-                                if ($_GET['tw'] == 5) {
-                                    echo 'selected';
-                                } else {
-                                }
-                                ?>>Triwulan 3 (Jan s/d Sep)</option>
-
-                                <option value="6" <?php
-                                if ($_GET['tw'] == 6) {
-                                    echo 'selected';
-                                } else {
-                                }
-                                ?>>Triwulan 4 (Okt, Nop, Des)</option>
-
-                                <option value="7" <?php
-                                if ($_GET['tw'] == 7) {
-                                    echo 'selected';
-                                } else {
-                                }
-                                ?>>Triwulan 4 (Jan s/d Des)</option>
-                            </select>
-                            <?php
-                    }?>
-
+                            <!-- Dropdown menu -->
+                            <div id="dropdownP"
+                                class="z-10 hidden border bg-[#ffffff] divide-y divide-gray-100 rounded-lg shadow w-[250px] dark:bg-gray-700">
+                                <ul class="py-2 text-sm text-gray-700 dark:text-gray-200"
+                                    aria-labelledby="dropdownDefaultButton">
+                                    <ul class="space-y-2 px-4 py-1  ">
+                                        @foreach($allOptions as $key => $label)
+                @if(in_array($key, $visibleKeys))
+                <li class="flex items-center gap-4 py-1">
+                    <input id="{{ $key }}" type="checkbox" value="{{ $key }}"
+                        {{ str_contains($bagianQuery, $key) ? 'checked' : '' }}
+                        class="w-4 h-4 text-orange-600 border-orange-300 rounded focus:ring-orange-500">
+                    <label for="{{ $key }}" class="text-sm text-gray-700 dark:text-gray-200">
+                    {{ $label }}
+                    </label>
+                </li>
+                @endif
+            @endforeach
+                                    </ul>
+                                    
+                                    <!-- Tombol Tampilkan -->
+                                    <div class="mt-4 px-4 py-1">
+                                        <button onclick="submitCheckboxes()" 
+                                                class="w-full px-4 py-2 text-gray-900 rounded-lg bg-gradient-to-br from-[#EA580C] from-60% font-bold to-[#FDBA74] to-95%">
+                                        Tampilkan
+                                        </button>
+                                    </div>
+                                    
+                                    <script>
+                                    function submitCheckboxes() {
+                                        const checked = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
+                                                        .map(cb => cb.value);
+                                        if (checked.length === 0) {
+                                        alert("Silakan pilih minimal satu bagian!");
+                                        return;
+                                        }
+                                        // Redirect dengan parameter bagian=... (dipisah koma)
+                                        const tw = "{{ $_GET['tw'] }}";
+                                        const tahun = "{{ $_GET['Tahun'] }}";
+                                        const bagian = checked.join(",");
+                                        window.location.href = `/nilaiUnsur?tw=${tw}&Tahun=${tahun}&bagian=${bagian}`;
+                                    }
+                                    </script>
+                                    
+                                    
+                                </ul>
+                            </div>
                         </div>
 
                         {{-- download --}}
-                        <a href="/exportResume?jenkel={{ $_GET['jenkel'] }}&usia={{ $_GET['usia'] }}&pekerjaan={{ $_GET['pekerjaan'] }}&pendidikan={{ $_GET['pendidikan'] }}&tahun={{ $_GET['tahun'] }}"
-                            class="py-1 text-center items-center  bg-[#155748] rounded-full font-bold text-sm px-3  w-full  text-white"
+                        <a href="{{ route('exports.download', ['type' => 'resume', 'jenkel' => $_GET['jenkel'], 'usia' => $_GET['usia'], 'pekerjaan' => $_GET['pekerjaan'], 'pendidikan' => $_GET['pendidikan'], 'tahun' => $_GET['tahun'], 'Tahun' => $_GET['Tahun'] ?? $_GET['tahun'] ?? date('Y'), 'Bulan' => $_GET['Bulan'] ?? null]) }}"
+                            class="py-1 text-center items-center  bg-gradient-to-br from-[#EA580C] from-60%  to-[#FDBA74] to-95% rounded-full font-bold text-sm px-3  w-full  text-gray-900"
                             style="font-family:'Roboto'">
                             <p>DOWNLOAD</p>
                         </a>
@@ -341,51 +291,47 @@ if ($n == 0) {
             <div class="w-full ">
                 <div class="-m-1.5  ">
                     <div class="p-1.5 ">
-                        <div class="border border-[#02A859] rounded-lg overflow-hidden h-[335px]">
+                        <div class="border border-[#EA580C] rounded-lg overflow-hidden h-[335px]">
                             <table class="w-full divide-y divide-gray-200 ">
-                                <thead
-                                    style="background-color: #51a592;
-                                        background-image:
-                                            radial-gradient(at -30% -30%, #02A859, transparent 80%),
-                                            radial-gradient(at 130% 150%, #02A859, transparent 80%);">
+                                <thead class="bg-gradient-to-br from-[#EA580C] from-60%  to-[#FDBA74] to-95%">
                                     <tr>
                                         <th scope="col" rowspan="2"
-                                            class="px-6 py-3 w-[50px] text-center text-xs font-medium text-white uppercase">
+                                            class="px-6 py-3 w-[50px] text-center text-xs font-medium text-gray-900 uppercase">
                                             No.<br>RESPONDEN</th>
                                         <th scope="col" colspan="10"
-                                            class=" px-6 px-6 py-1 w-[50px] text-center text-xs font-medium text-white uppercase ">
+                                            class=" px-6 px-6 py-1 w-[50px] text-center text-xs font-medium text-gray-900 uppercase ">
                                             NILAI UNSUR PELAYANAN</th>
                                     </tr>
                                     <tr>
                                         <th scope="col"
-                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-white uppercase">
+                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-gray-900 uppercase">
                                             U1</th>
                                         <th scope="col"
-                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-white uppercase">
+                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-gray-900 uppercase">
                                             U2</th>
                                         <th scope="col"
-                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-white uppercase">
+                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-gray-900 uppercase">
                                             U3</th>
                                         <th scope="col"
-                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-white uppercase">
+                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-gray-900 uppercase">
                                             U4</th>
                                         <th scope="col"
-                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-white uppercase">
+                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-gray-900 uppercase">
                                             U5</th>
                                         <th scope="col"
-                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-white uppercase">
+                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-gray-900 uppercase">
                                             U6</th>
                                         <th scope="col"
-                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-white uppercase">
+                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-gray-900 uppercase">
                                             U7</th>
                                         <th scope="col"
-                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-white uppercase">
+                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-gray-900 uppercase">
                                             U8</th>
                                         <th scope="col"
-                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-white uppercase">
+                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-gray-900 uppercase">
                                             U9</th>
                                         <th scope="col"
-                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-white uppercase">
+                                            class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-gray-900 uppercase">
                                             HASIL</th>
                                     </tr>
                                 </thead>
@@ -441,15 +387,15 @@ if ($n == 0) {
                         <div class="rounded-lg overflow-hidden  mt-1">
                             <table class="w-full divide-y divide-gray-200 ">
                                 <thead
-                                    style="background-color: #51a592;
+                                    style="background-color: #EA580C;
+    background-image: 
+        radial-gradient(at -30% -30%, #EA580C, transparent 100%),
+        radial-gradient(at 130% 150%, #EA580C, transparent 100%);">
+                                    <tr class="border-b  text-gray-900 font-bold"
+                                        style="background-color: #EA580C;
     background-image:
-        radial-gradient(at -30% -30%, #02A859, transparent 100%),
-        radial-gradient(at 130% 150%, #02A859, transparent 100%);">
-                                    <tr class="border-b  text-white font-bold"
-                                        style="background-color: #51a592;
-    background-image:
-        radial-gradient(at -30% -30%, #02A859, transparent 100%),
-        radial-gradient(at 130% 150%, #02A859, transparent 100%);">
+        radial-gradient(at -30% -30%, #EA580C, transparent 100%),
+        radial-gradient(at 130% 150%, #EA580C, transparent 100%);">
                                         <td class="whitespace-nowrap  px-2 py-2 w-[150px] text-left font-medium">Total
                                             Nilai
                                             Unsur
@@ -485,11 +431,11 @@ if ($n == 0) {
                                             {{ $Ttl_Nilai_Unsur }}
                                         </td>
                                     </tr>
-                                    <tr class="border-b text-white font-bold"
-                                        style="background-color: #51a592;
+                                    <tr class="border-b text-gray-900 font-bold"
+                                        style="background-color: #EA580C;
     background-image:
-        radial-gradient(at -30% -30%, #02A859, transparent 100%),
-        radial-gradient(at 130% 150%, #02A859, transparent 100%);">
+        radial-gradient(at -30% -30%, #EA580C, transparent 100%),
+        radial-gradient(at 130% 150%, #EA580C, transparent 100%);">
                                         <td class="whitespace-nowrap  px-2 py-2 w-[150px] text-left font-medium">
                                             NRR Per Unsur
                                         </td>
@@ -524,11 +470,11 @@ if ($n == 0) {
                                             {{ $nrr }}
                                         </td>
                                     </tr>
-                                    <tr class="border-b text-white font-bold"
-                                        style="background-color: #51a592;
+                                    <tr class="border-b text-gray-900 font-bold"
+                                        style="background-color: #EA580C;
     background-image:
-        radial-gradient(at -30% -30%, #02A859, transparent 100%),
-        radial-gradient(at 130% 150%, #02A859, transparent 100%);">
+        radial-gradient(at -30% -30%, #EA580C, transparent 100%),
+        radial-gradient(at 130% 150%, #EA580C, transparent 100%);">
                                         <td class="whitespace-nowrap  px-2 py-2 w-[150px] text-left font-medium">
                                             NRR
                                             Tertimbang
@@ -583,3 +529,9 @@ if ($n == 0) {
         CKEDITOR.replace('content');
     </script>
 @endsection
+
+
+
+
+
+

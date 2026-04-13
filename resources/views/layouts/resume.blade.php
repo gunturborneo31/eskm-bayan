@@ -4,7 +4,7 @@
             <p class="text-[25px] font-black text-[#01683d]">RESUME / JENIS KELAMIN</p>
             <div class="flex justify-between items-center py-4 ">
                 <div>
-                    <label class="text-white font-bold text-xl"> </label>
+                    <label class="text-gray-900 font-bold text-xl"> </label>
                 </div>
                 <?php
 
@@ -123,19 +123,19 @@
                             <thead class="bg-gradient-to-br from-[#1d6835] to-[#007e3f]">
                                 <tr>
                                     <th scope="col"
-                                        class="px-6 py-3 w-[50px] text-center text-xs font-medium text-white uppercase">
+                                        class="px-6 py-3 w-[50px] text-center text-xs font-medium text-gray-900 uppercase">
                                         NO</th>
                                     <th scope="col"
-                                        class="px-6 py-3 text-center text-xs font-medium text-white uppercase">
+                                        class="px-6 py-3 text-center text-xs font-medium text-gray-900 uppercase">
                                         NIK</th>
                                     <th scope="col"
-                                        class="px-6 py-3 text-center text-xs font-medium text-white uppercase">
+                                        class="px-6 py-3 text-center text-xs font-medium text-gray-900 uppercase">
                                         NAMA</th>
                                     <th scope="col"
-                                        class="px-6 py-3 text-center text-xs font-medium text-white uppercase">
+                                        class="px-6 py-3 text-center text-xs font-medium text-gray-900 uppercase">
                                         PEKERJAAN</th>
                                     <th scope="col"
-                                        class="px-6 py-3 text-center text-xs font-medium text-white uppercase">
+                                        class="px-6 py-3 text-center text-xs font-medium text-gray-900 uppercase">
                                         TANGGAL</th>
                                 </tr>
                             </thead>
@@ -149,7 +149,8 @@
                                                 {{ $row++ }}</td>
                                             <td
                                                 class="px-6 py-3 whitespace-nowrap text-sm text-center text-gray-800 dark:text-gray-200">
-                                                {{ $data->nik }}</td>
+                                                {{-- NIK intentionally left blank --}}
+                                                </td>
                                             <td
                                                 class="px-6 py-3 whitespace-nowrap text-sm text-center text-gray-800 dark:text-gray-200">
                                                 {{ $data->nama }}</td>
@@ -176,3 +177,7 @@
 
     </div>
 </div>
+
+
+
+

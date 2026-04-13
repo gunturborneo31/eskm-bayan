@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Http\Request;
 use Session;
 use App\Models\NilaiUnsur;
+use App\Support\BagianOptions;
 
 
 class RekapTotalController extends Controller
@@ -14,9 +16,15 @@ class RekapTotalController extends Controller
     {
                error_reporting(0);
 
+        $_GET['Tahun'] = $_GET['Tahun'] ?? date('Y');
+        $_GET['tw'] = $_GET['tw'] ?? '';
+        $_GET['bagian'] = $_GET['bagian'] ?? BagianOptions::allCodesCsv();
+
 $startDate = '2024-01-01';
 
 $endDate = '2024-10-03';
+
+$terms = array_values(array_unique(array_filter(array_map('trim', explode(',', $_GET['bagian'])))));
 
 if ($_GET['tw'] == null) {
     $today = date('Y-m-d', strtotime('+1 days'));
@@ -44,14 +52,19 @@ if ($_GET['tw'] == null) {
     $endDate = $_GET['Tahun'] . '-12-31';
 }   
 
-        $selects = DB::table('2024')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->paginate(10);
+        $query = DB::table('survey_responses')
+            ->whereBetween('survey_responses.created_at', [$startDate, $endDate])
+            ->whereIn('survey_responses.jenisPelayanan', $terms)
+            ->where('survey_responses.tahun', $_GET['Tahun'] ?? date('Y'));
 
-        if($_GET['Tahun']==2023 or $_GET['Tahun']==2025){
-            $selects = DB::table('2023')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->paginate(10);}
+        if (Schema::hasTable('sub_jenis')) {
+            $query->leftJoin('sub_jenis', 'survey_responses.id_sub_jenis', '=', 'sub_jenis.id')
+                ->select('survey_responses.*', 'sub_jenis.jenis as sub_jenis_jenis');
+        } else {
+            $query->select('survey_responses.*', DB::raw('NULL as sub_jenis_jenis'));
+        }
+
+        $selects = $query->paginate(10);
 
         return view('RekapTotal.index', compact('selects'));
     }
@@ -67,7 +80,7 @@ if ($_GET['tw'] == null) {
     /**
      * create
      *
-     * @return void
+     * @return mixed
      */
     public function create()
     {
@@ -77,8 +90,7 @@ if ($_GET['tw'] == null) {
     /**
      * store
      *
-     * @param  mixed $request
-     * @return void
+     * @return mixed
      */
     public function store(Request $request)
      {
@@ -124,8 +136,7 @@ if ($_GET['tw'] == null) {
     /**
      * edit
      *
-     * @param  mixed $NilaiUnsur
-     * @return void
+     * @return mixed
      */
     public function edit(request $request)
     {
@@ -142,8 +153,7 @@ if ($_GET['tw'] == null) {
     /**
      * destroy
      *
-     * @param  mixed $id
-     * @return void
+     * @return mixed
      */
     public function destroy(String $id)
     {
@@ -162,9 +172,7 @@ if ($_GET['tw'] == null) {
     /**
      * update
      *
-     * @param  mixed $request
-     * @param  mixed $NilaiUnsur
-     * @return void
+     * @return mixed
      */
     public function update(Request $request, NilaiUnsur $NilaiUnsur)
     {
@@ -177,3 +185,6 @@ if ($_GET['tw'] == null) {
         return redirect()->route('NilaiUnsur.index');
     }
 }
+
+
+

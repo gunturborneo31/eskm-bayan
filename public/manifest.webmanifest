@@ -1,0 +1,23 @@
+{
+    "name": "E-SKM Bayan",
+    "short_name": "E-SKM",
+    "description": "Dashboard dan layanan survei kepuasan masyarakat yang responsif dan siap dipasang sebagai aplikasi.",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "background_color": "#f7f4ed",
+    "theme_color": "#0f766e",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "/assets/logo_mahulu.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/assets/logo_mahulu.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}

@@ -1,13 +1,13 @@
 @extends('layouts.index', ['title' => 'Dashboard'])
 
 @section('content')
-    <div class="absolute top-0 left-[215px] h-screen w-10/12 p-2">
+    <div class="admin-main">
         <div class="bg-white h-full w-full rounded-xl p-3  mb-2">
-            <div class="flex w-full justify-between items-center -mt-3">
+            <div class="admin-toolbar flex w-full justify-between items-start lg:items-center gap-3 flex-wrap lg:flex-nowrap">
                 <p class="text-[25px] font-black text-[#01683d]">RESUME / PENDIDIKAN</p>
                 <div class="flex justify-between items-center py-4 ">
                     <div>
-                        <label class="text-white font-bold text-xl"> </label>
+                        <label class="text-gray-900 font-bold text-xl"> </label>
                     </div>
                     <?php
 
@@ -100,6 +100,10 @@
                                 <option value="2025" <?php if (date('Y') == '2025') {
                                 } else {
                                 } ?>>2025</option>
+
+                                <option value="2026" <?php if (date('Y') == '2026') {
+                                } else {
+                                } ?>>2026</option>
                             </select>
                             <?php  } else {?>
                             <select id="tahun"
@@ -125,6 +129,13 @@
                                 } else {
                                 }
                                 ?>>2025</option>
+
+                                <option value="2026" <?php
+                                if ($_GET['Tahun'] == '2026') {
+                                    echo 'selected';
+                                } else {
+                                }
+                                ?>>2026</option>
                             </select>
                             <?php
                     }?>
@@ -224,8 +235,8 @@
                         </div>
 
                         {{-- download --}}
-                        <a href="/exportPendidikan?filter={{ $_GET['filter'] == null ? 1 : $_GET['filter'] }}&Tahun={{ $_GET['Tahun'] == null ? 1 : $_GET['Tahun'] }}&Bulan={{ $_GET['Bulan'] == null ? 1 : $_GET['Bulan'] }}"
-                            class="py-1 text-center items-center  bg-[#155748] rounded-full font-bold text-sm px-3  w-full  text-white"
+                        <a href="{{ route('exports.download', ['type' => 'pendidikan', 'filter' => $_GET['filter'] == null ? 1 : $_GET['filter'], 'Tahun' => $_GET['Tahun'] == null ? 1 : $_GET['Tahun'], 'Bulan' => $_GET['Bulan'] == null ? 1 : $_GET['Bulan']]) }}"
+                            class="py-1 text-center items-center  bg-gradient-to-br from-[#EA580C] from-60%  to-[#FDBA74] to-95% rounded-full font-bold text-sm px-3  w-full  text-gray-900"
                             style="font-family:'Roboto'">
                             <p>DOWNLOAD</p>
                         </a>
@@ -242,19 +253,19 @@
                                 <thead class="bg-gradient-to-br from-[#1d6835] to-[#007e3f]">
                                     <tr>
                                         <th scope="col"
-                                            class="px-6 py-3 w-[50px] text-center text-xs font-medium text-white uppercase">
+                                            class="px-6 py-3 w-[50px] text-center text-xs font-medium text-gray-900 uppercase">
                                             NO</th>
                                         <th scope="col"
-                                            class="px-6 py-3 text-center text-xs font-medium text-white uppercase">
+                                            class="px-6 py-3 text-center text-xs font-medium text-gray-900 uppercase">
                                             NIK</th>
                                         <th scope="col"
-                                            class="px-6 py-3 text-center text-xs font-medium text-white uppercase">
+                                            class="px-6 py-3 text-center text-xs font-medium text-gray-900 uppercase">
                                             NAMA</th>
                                         <th scope="col"
-                                            class="px-6 py-3 text-center text-xs font-medium text-white uppercase">
+                                            class="px-6 py-3 text-center text-xs font-medium text-gray-900 uppercase">
                                             PENDIDIKAN</th>
                                         <th scope="col"
-                                            class="px-6 py-3 text-center text-xs font-medium text-white uppercase">
+                                            class="px-6 py-3 text-center text-xs font-medium text-gray-900 uppercase">
                                             TANGGAL</th>
                                     </tr>
                                 </thead>
@@ -268,7 +279,8 @@
                                                     {{ $row++ }}</td>
                                                 <td
                                                     class="px-6 py-3 whitespace-nowrap text-sm text-center text-gray-800 dark:text-gray-200">
-                                                    {{ $data->nik }}</td>
+                                                    {{-- NIK intentionally left blank --}}
+                                                    </td>
                                                 <td
                                                     class="px-6 py-3 whitespace-nowrap text-sm text-center text-gray-800 dark:text-gray-200">
                                                     {{ $data->nama }}</td>
@@ -302,3 +314,9 @@
         CKEDITOR.replace('content');
     </script>
 @endsection
+
+
+
+
+
+

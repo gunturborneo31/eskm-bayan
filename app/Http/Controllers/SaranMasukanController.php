@@ -46,14 +46,10 @@ class SaranMasukanController extends Controller
             $endDate = '2024-12-30';
         }
 
-          $selects = DB::table('2024')
+          $selects = DB::table('survey_responses')
             ->whereBetween('created_at', [$startDate, $endDate])
+            ->where('tahun', $_GET['Tahun'] ?? date('Y'))
             ->paginate(10);
-
-        if($_GET['Tahun']==2023 or $_GET['Tahun']==2025){
-            $selects = DB::table('2023')
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->paginate(10);}
 
         return view('SaranMasukan.index', compact('selects'));
 
@@ -70,7 +66,7 @@ class SaranMasukanController extends Controller
     /**
      * create
      *
-     * @return void
+     * @return mixed
      */
     public function create()
     {
@@ -80,8 +76,7 @@ class SaranMasukanController extends Controller
     /**
      * store
      *
-     * @param  mixed $request
-     * @return void
+     * @return mixed
      */
     public function store(Request $request)
      {
@@ -97,11 +92,11 @@ class SaranMasukanController extends Controller
         $store = NilaiUnsur::create([
             'nama' => $request->nama,
             'alamat' => $request->alamat,
-            'SaranMasukan' => $request->SaranMasukan,
+            'pekerjaan' => $request->pekerjaan,
             'jenkel' => $request->jenkel,
-            'SaranMasukan' => $request->SaranMasukan,
+            'usia' => $request->usia,
             'nohp' => $request->nohp,
-            'SaranMasukan' => $request->SaranMasukan,
+            'pendidikan' => $request->pendidikan,
             'nik' => $request->nik,
             'u1' => $request->persyaratan,
             'u2' => $request->kompetensi,
@@ -127,8 +122,7 @@ class SaranMasukanController extends Controller
     /**
      * edit
      *
-     * @param  mixed $NilaiUnsur
-     * @return void
+     * @return mixed
      */
     public function edit(request $request)
     {
@@ -145,8 +139,7 @@ class SaranMasukanController extends Controller
     /**
      * destroy
      *
-     * @param  mixed $id
-     * @return void
+     * @return mixed
      */
     public function destroy($id)
     {
@@ -165,9 +158,7 @@ class SaranMasukanController extends Controller
     /**
      * update
      *
-     * @param  mixed $request
-     * @param  mixed $NilaiUnsur
-     * @return void
+     * @return mixed
      */
     public function update(Request $request, NilaiUnsur $NilaiUnsur)
     {
@@ -180,3 +171,6 @@ class SaranMasukanController extends Controller
         return redirect()->route('NilaiUnsur.index');
     }
 }
+
+
+

