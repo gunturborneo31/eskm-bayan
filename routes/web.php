@@ -83,6 +83,9 @@ Route::middleware('merch.session')->group(function(){
     Route::get('/merch/check', [\App\Http\Controllers\MerchandiseController::class, 'checkView']);
     Route::match(['get','post'], '/merch/api/check', [\App\Http\Controllers\MerchandiseController::class, 'apiCheck']);
     Route::post('/merch/api/redeem', [\App\Http\Controllers\MerchandiseController::class, 'apiRedeem']);
+        Route::get('/merch/api/stats', [\App\Http\Controllers\MerchandiseController::class, 'apiStats']);
+        Route::get('/merch/api/list', [\App\Http\Controllers\MerchandiseController::class, 'apiList']);
+        Route::get('/merch/api/detail', [\App\Http\Controllers\MerchandiseController::class, 'apiDetail']);
     Route::get('/merch/history', [\App\Http\Controllers\MerchandiseController::class, 'history']);
 });
 
