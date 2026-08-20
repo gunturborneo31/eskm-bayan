@@ -301,14 +301,20 @@
                     </div>
                 `;
 
-                // list codes below with simple badges
+                // list codes below with actionable redeem buttons for unredeemed codes
                 const codesHtml = codes.map(c => {
-                    return `<div class="py-1 text-sm">${c.code} ${c.redeemed ? '- (Redeemed: '+formatDateTime(c.redeemed_at)+')' : ''}</div>`;
+                    const redeemedLabel = c.redeemed ? ' - (Redeemed: '+formatDateTime(c.redeemed_at)+')' : '';
+                    const actionBtn = c.redeemed ? '' : `<button class="btn-redeem ml-2 px-2 py-1 bg-blue-600 text-white rounded" data-code="${c.code}">Tukar</button>`;
+                    return `<div class="py-1 text-sm flex items-center justify-between"><span>${c.code}${redeemedLabel}</span>${actionBtn}</div>`;
                 }).join('');
                 const wrapper = document.createElement('div');
                 wrapper.className = 'mt-2 p-3 bg-white border border-slate-200 rounded-xl';
                 wrapper.innerHTML = codesHtml;
                 el.appendChild(wrapper);
+
+                // attach handlers for per-code redeem buttons
+                attachRedeemHandlers();
+
                 // add a clear button for group result as well
                 const rcg = document.createElement('button');
                 rcg.id = 'resultClearGroup';
