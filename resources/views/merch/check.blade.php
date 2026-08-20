@@ -63,7 +63,10 @@
 
                 <div class="flex flex-col sm:flex-row gap-2">
                     <input id="valueInput" class="border border-slate-200 bg-slate-50 p-3 rounded-xl flex-1 w-full text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none" placeholder="Masukkan kode atau URL QR" />
-                    <button id="checkBtn" class="px-4 py-3 bg-blue-600 text-white rounded-xl font-semibold shadow-sm hover:bg-blue-700 transition w-full sm:w-auto">Cek</button>
+                    <div class="flex gap-2 w-full sm:w-auto">
+                        <button id="checkBtn" class="px-4 py-3 bg-blue-600 text-white rounded-xl font-semibold shadow-sm hover:bg-blue-700 transition w-full sm:w-auto">Cek</button>
+                        <button id="clearBtn" class="px-4 py-3 bg-gray-200 text-slate-700 rounded-xl font-semibold shadow-sm hover:bg-gray-300 transition">Bersih</button>
+                    </div>
                 </div>
 
                 <div class="mt-3 flex items-center justify-between gap-3 rounded-xl border border-dashed border-slate-200 bg-slate-50 px-3 py-2">
@@ -221,30 +224,25 @@
                 const r = json.response || {};
                 const redeemed = !!json.redeemed;
                 el.innerHTML = `
-                    <div class="p-3 bg-green-50 rounded-xl border border-green-200">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <div><strong>Kode:</strong> ${json.code}</div>
-                                <div class="text-sm text-slate-600">Status: ${redeemed ? 'Sudah ditukar' : 'Belum'}</div>
-                            </div>
-                            <div>
-                                ${redeemed ? '' : `<button id="doRedeem" data-code="${json.code}" class="px-3 py-2 bg-amber-600 text-white rounded">Tukar Merchandise</button>`}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mt-2 p-3 bg-white border border-slate-200 rounded-xl">
-                        <div><strong>Nama:</strong> ${r.nama || '-'}</div>
+                    <div class="p-3 bg-white border border-slate-200 rounded-xl">
+                        <div><strong>KODE:</strong> ${json.code}</div>
+                        <div><strong>Status:</strong> ${redeemed ? 'Sudah ditukar' : 'Belum'}</div>
+                        <div class="mt-2"><strong>Nama:</strong> ${r.nama || '-'}</div>
                         <div><strong>No. HP:</strong> ${r.no_wa || r.nohp || '-'}</div>
                         <div><strong>Waktu Pengisian SKM:</strong> ${formatDateTime(r.created_at || r.surveyed_at)}</div>
                     </div>
                 `;
 
-                // hook redeem button
-                const doRedeem = document.getElementById('doRedeem');
-                if (doRedeem) {
-                    doRedeem.addEventListener('click', async function () {
-                        const code = this.getAttribute('data-code');
+                // redeem button (if available)
+                if (!redeemed) {
+                    const btn = document.createElement('button');
+                    btn.id = 'doRedeem';
+                    btn.className = 'mt-3 px-3 py-2 bg-amber-600 text-white rounded';
+                    btn.textContent = 'Tukar Merchandise';
+                    el.appendChild(btn);
 
+                    btn.addEventListener('click', async function () {
+                        const code = json.code;
                         try {
                             const res = await fetch('/merch/api/redeem', {
                                 method: 'POST',
@@ -255,14 +253,13 @@
                                 },
                                 body: JSON.stringify({ code })
                             });
-                            const json = await res.json();
-                            if (json && json.ok) {
+                            const jr = await res.json();
+                            if (jr && jr.ok) {
                                 showToast('Data di konfirmasi');
-                                // refresh stats and UI, then return to scanning
                                 fetchStats();
                                 setTimeout(()=> { window.location.href = '/merch/check'; }, 800);
                             } else {
-                                alert('Gagal: ' + (json.message || json.error || 'unknown'));
+                                alert('Gagal: ' + (jr.message || jr.error || 'unknown'));
                             }
                         } catch (err) {
                             alert('Kesalahan jaringan');
@@ -270,24 +267,61 @@
                     });
                 }
 
+                // add a result-level clear button so user can clear after check
+                const rc = document.createElement('button');
+                rc.id = 'resultClear';
+                rc.className = 'ml-2 mt-3 px-3 py-2 bg-gray-200 text-slate-700 rounded';
+                rc.textContent = 'Bersih';
+                el.appendChild(rc);
+                rc.addEventListener('click', function(e){
+                    e.preventDefault();
+                    valueInput.value = '';
+                    lastScannedValue = null;
+                    document.getElementById('result').innerHTML = '';
+                    if (cameraStatus) cameraStatus.classList.add('hidden');
+                });
+
                 return;
             }
 
             if (json.type === 'group') {
                 const r = json.response || {};
-                const codesHtml = (json.codes || []).map(c => {
-                    if (c.redeemed) return `<div class="py-2 flex items-center justify-between text-sm"><span>${c.code}</span><span class="text-green-600 font-semibold">Sudah (${formatDateTime(c.redeemed_at)})</span></div>`;
-                    return `<div class="py-2 flex items-center justify-between gap-2 text-sm"><span>${c.code}</span><button class="ml-2 px-2.5 py-1.5 bg-blue-600 text-white text-xs rounded-full btn-redeem" data-code="${c.code}">Tukar Merchandise</button></div>`;
-                }).join('');
+                const codes = json.codes || [];
+                const anyRedeemed = codes.some(c => c.redeemed);
+                const allRedeemed = codes.length > 0 && codes.every(c => c.redeemed);
+                const status = allRedeemed ? 'Semua sudah ditukar' : (anyRedeemed ? 'Beberapa sudah ditukar' : 'Belum ditukar');
 
                 el.innerHTML = `
-                    <div class="p-3 bg-green-50 rounded-xl border border-green-200">
-                        <div><strong>Group:</strong> ${r.redeem_group || '-'}</div>
-                        <div><strong>Nama:</strong> ${r.nama || '-'}</div>
+                    <div class="p-3 bg-white border border-slate-200 rounded-xl">
+                        <div><strong>KODE:</strong> ${r.redeem_group || '-'}</div>
+                        <div><strong>Status:</strong> ${status}</div>
+                        <div class="mt-2"><strong>Nama:</strong> ${r.nama || '-'}</div>
+                        <div><strong>No. HP:</strong> ${r.no_wa || r.nohp || '-'}</div>
+                        <div><strong>Waktu Pengisian SKM:</strong> ${formatDateTime(r.created_at || r.surveyed_at)}</div>
                     </div>
-                    <div class="mt-2 p-3 bg-white border border-slate-200 rounded-xl">${codesHtml}</div>
                 `;
-                attachRedeemHandlers();
+
+                // list codes below with simple badges
+                const codesHtml = codes.map(c => {
+                    return `<div class="py-1 text-sm">${c.code} ${c.redeemed ? '- (Redeemed: '+formatDateTime(c.redeemed_at)+')' : ''}</div>`;
+                }).join('');
+                const wrapper = document.createElement('div');
+                wrapper.className = 'mt-2 p-3 bg-white border border-slate-200 rounded-xl';
+                wrapper.innerHTML = codesHtml;
+                el.appendChild(wrapper);
+                // add a clear button for group result as well
+                const rcg = document.createElement('button');
+                rcg.id = 'resultClearGroup';
+                rcg.className = 'mt-3 px-3 py-2 bg-gray-200 text-slate-700 rounded';
+                rcg.textContent = 'Bersih';
+                el.appendChild(rcg);
+                rcg.addEventListener('click', function(e){
+                    e.preventDefault();
+                    valueInput.value = '';
+                    lastScannedValue = null;
+                    document.getElementById('result').innerHTML = '';
+                    if (cameraStatus) cameraStatus.classList.add('hidden');
+                });
             }
         }
 
@@ -322,6 +356,15 @@
                 return;
             }
             checkValue(v);
+        });
+
+        // clear input/result
+        document.getElementById('clearBtn').addEventListener('click', function(e){
+            e.preventDefault();
+            valueInput.value = '';
+            lastScannedValue = null;
+            document.getElementById('result').innerHTML = '';
+            if (cameraStatus) cameraStatus.classList.add('hidden');
         });
 
         function attachRedeemHandlers() {
@@ -519,7 +562,7 @@
                 const no = baseIndex + idx + 1;
                 if (type === 'redeemed') {
                     const r = row.response || {};
-                    html += `<tr class="hover:bg-slate-50 cursor-pointer" data-code="${row.code}">`+
+                    html += `<tr class="hover:bg-slate-50" data-code="${row.code}">`+
                         `<td class="p-2">${no}</td>`+
                         `<td class="p-2">${row.code}</td>`+
                         `<td class="p-2">${r.nama || '-'}</td>`+
@@ -530,7 +573,7 @@
                         `</tr>`;
                 } else {
                     const firstCode = (row.codes && row.codes.length) ? row.codes[0].code : '-';
-                    html += `<tr class="hover:bg-slate-50 cursor-pointer" data-id="${row.id}">`+
+                    html += `<tr class="hover:bg-slate-50" data-id="${row.id}">`+
                         `<td class="p-2">${no}</td>`+
                         `<td class="p-2">${firstCode}</td>`+
                         `<td class="p-2">${row.nama || '-'}</td>`+
@@ -588,13 +631,7 @@
                 pag.appendChild(totalInfo);
             }
 
-            // row click -> detail
-            container.querySelectorAll('tr[data-code]').forEach(tr=>{
-                tr.addEventListener('click', ()=> openDetail({code: tr.getAttribute('data-code')}));
-            });
-            container.querySelectorAll('tr[data-id]').forEach(tr=>{
-                tr.addEventListener('click', ()=> openDetail({id: tr.getAttribute('data-id')}));
-            });
+            // row click handlers intentionally removed: rows are non-actionable
         }
 
         async function openDetail(params) {
