@@ -6,7 +6,6 @@
     <title>Merch - Cek Kode</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/html5-qrcode@2.3.8/minified/html5-qrcode.min.js"></script>
     <style>
         body { font-family: Manrope, system-ui, Arial, sans-serif; }
         .scanner-shell { background: linear-gradient(180deg, #f8fafc 0%, #eef6ff 100%); }
@@ -19,11 +18,14 @@
             overflow: hidden;
             background: #0f172a;
             border: 3px solid rgba(59,130,246,0.15);
+            position: relative;
         }
         #reader video, #reader canvas {
+            display: block;
             width: 100% !important;
             height: 100% !important;
             max-height: 360px;
+            min-height: 260px;
             object-fit: cover;
             border-radius: 12px;
             background: #0f172a;
@@ -74,7 +76,9 @@
                     <span id="cameraDot" class="inline-flex h-2.5 w-2.5 rounded-full bg-slate-300"></span>
                 </div>
 
-                <div id="reader" class="w-full" style="display:block;"></div>
+                <div id="reader" class="w-full" style="display:block;">
+                    <video id="kameraPreview" autoplay playsinline muted></video>
+                </div>
                 <div id="cameraHint" class="mt-3 text-xs text-slate-500">Arahkan kamera ke QR code untuk scan otomatis.</div>
             </div>
         </div>
@@ -88,7 +92,6 @@
         const readerEl = document.getElementById('reader');
         const cameraDot = document.getElementById('cameraDot');
         const openCameraBtn = document.getElementById('openCameraBtn');
-        let qrScanner = null;
 
         function setCameraDot(state) {
             if (!cameraDot) return;
@@ -216,70 +219,39 @@
             }
         }
 
-        function hideScanner() {
-            if (readerEl) readerEl.style.display = 'none';
-            if (cameraHint) cameraHint.textContent = 'Kamera tidak tersedia. Gunakan input manual di atas.';
-        }
-
-        function showScanner() {
-            if (readerEl) readerEl.style.display = 'block';
-            if (cameraHint) cameraHint.textContent = 'Arahkan kamera ke QR code untuk scan otomatis.';
-        }
-
-        async function startCameraScanner() {
-            const secure = window.isSecureContext || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-            if (!secure) {
-                setCameraStatus('Harus menggunakan HTTPS atau localhost agar kamera bisa dipakai. Sementara itu, gunakan form manual di atas.', 'warning');
-                hideScanner();
-                return;
-            }
-
+        async function bukaKameraDasar() {
             if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                setCameraStatus('Browser ini tidak mendukung akses kamera. Gunakan form input manual.', 'warning');
-                hideScanner();
+                setCameraStatus('Browser ini tidak mendukung akses kamera. Gunakan input manual.', 'warning');
                 return;
             }
 
             try {
-                showScanner();
-                const cameras = await Html5Qrcode.getCameras();
-                if (!cameras || !cameras.length) {
-                    setCameraStatus('Tidak ada kamera terdeteksi pada perangkat ini. Gunakan input manual.', 'warning');
-                    hideScanner();
-                    return;
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: 'environment'
+                    }
+                });
+
+                const video = document.getElementById('kameraPreview');
+                if (video) {
+                    video.srcObject = stream;
+                    video.play();
                 }
 
-                if (qrScanner) {
-                    try { await qrScanner.stop(); } catch (e) {}
-                }
-
-                qrScanner = new Html5Qrcode('reader');
-                await qrScanner.start(
-                    cameras[0].id,
-                    { fps: 10, qrbox: { width: 220, height: 220 } },
-                    (decodedText) => {
-                        valueInput.value = decodedText;
-                        checkValue(decodedText);
-                    },
-                    () => {}
-                );
-
-                setCameraStatus('Kamera aktif. Arahkan ke QR code untuk scan otomatis.', 'success');
+                setCameraStatus('Kamera berhasil dibuka. Anda bisa scan QR atau gunakan input manual.', 'success');
             } catch (err) {
-                console.warn('QR init failed', err);
-                setCameraStatus('Browser menolak akses kamera. Gunakan input manual untuk melanjutkan.', 'warning');
-                hideScanner();
+                setCameraStatus('Kamera tidak dapat diakses. Silakan izinkan akses kamera atau gunakan input manual.', 'warning');
             }
         }
 
-        openCameraBtn.addEventListener('click', startCameraScanner);
+        openCameraBtn.addEventListener('click', bukaKameraDasar);
 
         if (window.isSecureContext || location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
-            setCameraStatus('Siap digunakan. Tekan tombol “Buka Kamera” untuk memulai scan.', 'info');
+            setCameraStatus('Meminta izin kamera saat halaman dibuka...', 'info');
             setCameraDot('warn');
+            bukaKameraDasar();
         } else {
             setCameraStatus('Kamera diblokir karena situs tidak aman. Gunakan input manual.', 'warning');
-            hideScanner();
         }
     </script>
 </body>
