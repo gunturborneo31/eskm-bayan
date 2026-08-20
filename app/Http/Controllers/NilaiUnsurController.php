@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Session;
 use App\Models\NilaiUnsur;
+use App\Models\SurveyCode;
+use Illuminate\Support\Str;
 
 
 class NilaiUnsurController extends Controller
@@ -122,6 +124,39 @@ $selects = DB::table('survey_responses')
         // $data->save();
         // return redirect()->back();
 
+        // Duplicate checks: nik, nohp, and optional no_pendaftar (if column exists)
+        if ($request->filled('nik')) {
+            $exists = NilaiUnsur::where('nik', $request->nik)->first();
+            if ($exists) {
+                if ($request->wantsJson() || $request->ajax()) {
+                    return response()->json(['exists' => true, 'field' => 'nik']);
+                }
+                return redirect()->back()->withInput()->with('error', 'NIK sudah digunakan');
+            }
+        }
+
+        // Map incoming 'no_wa' (form) to DB column 'nohp' for backward compatibility
+        if ($request->filled('no_wa')) {
+            $exists = NilaiUnsur::where('nohp', $request->no_wa)->first();
+            if ($exists) {
+                if ($request->wantsJson() || $request->ajax()) {
+                    return response()->json(['exists' => true, 'field' => 'no_wa']);
+                }
+                return redirect()->back()->withInput()->with('error', 'No. WA sudah digunakan');
+            }
+        }
+
+        // optional registration number check if column exists in DB
+        if ($request->filled('no_pendaftar') && \Illuminate\Support\Facades\Schema::hasColumn('survey_responses', 'no_pendaftar')) {
+            $exists = NilaiUnsur::where('no_pendaftar', $request->no_pendaftar)->first();
+            if ($exists) {
+                if ($request->wantsJson() || $request->ajax()) {
+                    return response()->json(['exists' => true, 'field' => 'no_pendaftar']);
+                }
+                return redirect()->back()->withInput()->with('error', 'Nomor pendaftaran sudah digunakan');
+            }
+        }
+
         $store = NilaiUnsur::create([
             'jenisPelayanan' => $jenis_pelayanan,
             'tahun' => (int) ($request->input('tahun') ?: date('Y')),
@@ -130,7 +165,9 @@ $selects = DB::table('survey_responses')
             'pekerjaan' => $request->pekerjaan,
             'jenkel' => $request->jenkel['jenkel'],
             'usia' => $request->usia,
-            'nohp' => $request->nohp,
+            // store WhatsApp number into legacy `nohp` column
+            'nohp' => $request->input('no_wa'),
+            'no_wa' => $request->input('no_wa'),
             'pendidikan' => $request->pendidikan,
             'nik' => $request->nik,
             'u1' => $request->u1,
@@ -147,12 +184,63 @@ $selects = DB::table('survey_responses')
         ]);
 
         if ($store) {
-            //redirect dengan pesan sukses
-            return redirect('/terimakasih');
+            // generate a redeem group and six unique codes
+            $group = Str::upper(Str::random(10));
+            $store->redeem_group = $group;
+            $store->save();
+
+            // generate a single unique 6-digit numeric code (zero-padded)
+            do {
+                $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+            } while (SurveyCode::where('code', $code)->exists());
+
+            SurveyCode::create([
+                'survey_response_id' => $store->id,
+                'code' => $code,
+            ]);
+
+            // show thank-you page with single code (passed as array for compatibility)
+            return view('survey.thankyou', ['response' => $store, 'codes' => [$code], 'group' => $group]);
         } else {
-        // //     //redirect dengan pesan error
             return redirect('/terimakasih');
         }
+    }
+
+    /**
+     * AJAX: check whether a given identifier already exists
+     */
+    public function checkUnique(Request $request)
+    {
+        $field = $request->query('field');
+        $value = $request->query('value');
+
+        if (!$field || !$value) {
+            return response()->json(['error' => 'Missing parameters'], 400);
+        }
+
+        $allowed = ['nik', 'no_wa', 'no_pendaftar'];
+        if (!in_array($field, $allowed, true)) {
+            return response()->json(['error' => 'Invalid field'], 400);
+        }
+
+        // if checking registration number but column not present, return not found
+        if ($field === 'no_pendaftar' && !\Illuminate\Support\Facades\Schema::hasColumn('survey_responses', 'no_pendaftar')) {
+            return response()->json(['exists' => false]);
+        }
+
+        // if DB has `no_wa` column, check it directly; otherwise fallback to `nohp`
+        if ($field === 'no_wa') {
+            if (\Illuminate\Support\Facades\Schema::hasColumn('survey_responses', 'no_wa')) {
+                $exists = NilaiUnsur::where('no_wa', $value)->exists();
+            } else {
+                $exists = NilaiUnsur::where('nohp', $value)->exists();
+            }
+            return response()->json(['exists' => $exists]);
+        }
+
+        $exists = NilaiUnsur::where($field, $value)->exists();
+
+        return response()->json(['exists' => $exists]);
     }
 
     /**

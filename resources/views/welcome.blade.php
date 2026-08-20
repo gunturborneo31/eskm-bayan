@@ -366,25 +366,25 @@ $nilaiSkm = json_encode($nilaiSkm);
                     </h1>
                 </div>
 
-                <div class="grid grid-cols-6 gap-4 h-28 shrink-0">
-                    <div class="bg-white pattern-bg-light col-span-4 card-elevated p-4 flex flex-col  relative border border-slate-100 rounded-[1vw] overflow-hidden">
+                <div class="grid grid-cols-2 md:grid-cols-6 gap-4 h-auto md:h-28 shrink-0">
+                    <div class="bg-white pattern-bg-light col-span-1 md:col-span-4 card-elevated p-4 flex flex-col  relative border border-slate-100 rounded-[1vw] overflow-hidden">
                         <div class="flex justify-between items-start">
-                            <p class="font-black text-gray-800 uppercase  text-[10px]">KINERJA</p>
-                            <span class="material-symbols-outlined text-gray-80 text-sm ">speed</span>
+                            <p class="font-black text-gray-800 uppercase text-sm md:text-[10px]">KINERJA</p>
+                            <span class="material-symbols-outlined text-gray-80 text-sm">speed</span>
                         </div>
-                        <p class="font-black text-[#FF8800] leading-tight uppercase text-xl text-center mt-3">{{ $kinerjaLabel }}</p>
+                        <p class="font-black text-[#FF8800] leading-tight uppercase text-2xl md:text-3xl text-center mt-3">{{ $kinerjaLabel }}</p>
                     </div>
 
-                    <div class="bg-white pattern-bg-light col-span-2 card-elevated p-4 flex flex-col  relative border border-slate-100 rounded-[1vw] overflow-hidden items-center">
+                    <div class="bg-white pattern-bg-light col-span-1 md:col-span-2 card-elevated p-4 flex flex-col  relative border border-slate-100 rounded-[1vw] overflow-hidden items-center">
                         <div class="flex justify-between items-start w-full">
-                            <p class="font-black text-gray-800 uppercase  text-[10px]">MUTU</p>
-                            <span class="material-symbols-outlined text-gray-80 text-sm ">verified</span>
+                            <p class="font-black text-gray-800 uppercase text-sm md:text-[10px]">MUTU</p>
+                            <span class="material-symbols-outlined text-gray-80 text-sm">verified</span>
                         </div>
-                        <p class="font-black text-on-surface text-5xl mt-1">{{ $mutuPelayananLabel }}</p>
+                        <p class="font-black text-on-surface text-6xl md:text-5xl mt-1">{{ $mutuPelayananLabel }}</p>
                     </div>
                 </div>
 
-                <div class="flex flex-col gap-3 shrink-0">
+                <div class="hidden md:flex flex-col gap-3 shrink-0">
                     <a class="js-nav" href="dashboard/?Tahun=2024&bagian={{ \App\Support\BagianOptions::allCodesCsv() }}">
                         <button class="w-full bg-white hover:bg-[#ffd6aa] transition-all py-3 rounded-[1vw] flex items-center justify-center gap-2 text-[11px] font-black text-[#FF8800] border border-2 border-[#ffab4c]">
                             <span class="material-symbols-outlined text-xl">group</span>
@@ -511,20 +511,28 @@ $nilaiSkm = json_encode($nilaiSkm);
         </div>
     </main>
 
-    <nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-6 pb-4 md:hidden bg-white/95 backdrop-blur-xl rounded-t-3xl shadow-2xl border-t border-slate-100">
-        <a class="js-nav flex flex-col items-center justify-center bg-[#FF8800] text-white rounded-full p-4 transition-all scale-110 shadow-lg" href="#">
-            <span class="material-symbols-outlined">grid_view</span>
-        </a>
-        <a class="js-nav flex flex-col items-center justify-center text-[#574335] p-3 hover:bg-slate-100 rounded-full transition-colors" href="/dashboard">
-            <span class="material-symbols-outlined">assignment</span>
-        </a>
-        <a class="js-nav flex flex-col items-center justify-center text-[#574335] p-3 hover:bg-slate-100 rounded-full transition-colors" href="/skm#awal">
-            <span class="material-symbols-outlined">database</span>
-        </a>
-        <a class="js-nav flex flex-col items-center justify-center text-[#574335] p-3 hover:bg-slate-100 rounded-full transition-colors" href="/login">
-            <span class="material-symbols-outlined">person</span>
-        </a>
-    </nav>
+    <!-- Mobile stacked action buttons (one per row), visible only on small screens -->
+    <div class="md:hidden w-full px-4 mt-4">
+        <div class="flex flex-col gap-3">
+            <a class="js-nav" href="dashboard/?Tahun=2024&bagian={{ \App\Support\BagianOptions::allCodesCsv() }}">
+                <button class="w-full bg-white hover:bg-[#ffd6aa] transition-all py-3 rounded-[1vw] flex items-center justify-center gap-2 text-[15px] font-black text-[#FF8800] border border-2 border-[#ffab4c]">
+                    <span class="material-symbols-outlined text-lg">group</span>
+                    INFO RESPONDEN
+                </button>
+            </a>
+            <a class="js-nav" href="/skm#awal">
+                <button class="w-full bg-[#FF8800] text-white py-3 rounded-[1vw] flex items-center justify-center gap-3 font-black text-[15px] shadow-lg hover:opacity-95 active:scale-95 transition-all group">
+                    <span class="material-symbols-outlined text-lg" style='font-variation-settings: "FILL" 1;'>description</span>
+                    MULAI SURVEI
+                </button>
+            </a>
+        </div>
+    </div>
+
+    <!-- Mobile menu bar removed as requested -->
+
+    <!-- Bottom spacer to ensure page has padding at very bottom -->
+    <div class="h-24 md:h-12"></div>
 
 @include('partials.filter-ui-script', [
     'enableLoadingOverlay' => true,

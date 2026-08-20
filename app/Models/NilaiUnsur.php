@@ -63,6 +63,7 @@ class NilaiUnsur extends Model
             'jenkel' ,
             'usia' ,
             'nohp' ,
+            'no_wa',
             'pendidikan' ,
             'nik' ,
             'u1' ,

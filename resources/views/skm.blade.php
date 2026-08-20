@@ -5,8 +5,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="dns-prefetch" href="//fonts.bunny.net">
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
     <script type="text/javascript" src="{{ asset('js/app.js') }}"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
@@ -32,18 +34,34 @@
             }
         }
     </script>
+    <script>
+            (function () {
+                try {
+                    if (typeof window !== 'undefined' && window.location) {
+                        var h = window.location.hash;
+                        if (!h) {
+                            try { history.replaceState(null, '', window.location.pathname + window.location.search + '#awal'); } catch (e) { }
+                        }
+                    }
+                } catch (e) {
+                    // ignore
+                }
+            })();
+    </script>
     <style>
         html {
             scroll-behavior: smooth;
             overflow-x: hidden;
-            overflow-y: hidden;
+            overflow-y: auto;
+            /* Ensure browser scrolls account for fixed header when using fragment/hash */
+            scroll-padding-top: calc(var(--survey-header-height) + 3rem);
         }
 
         body {
             font-family: 'Manrope', sans-serif;
             min-height: 100vh;
             overflow-x: hidden;
-            overflow-y: hidden;
+            overflow-y: auto;
             color: #191c1d;
             background: linear-gradient(135deg, #ff8800 0%, #ff9e3d 52%, #ffb366 100%);
         }
@@ -73,7 +91,7 @@
             position: fixed;
             left: 0;
             right: 0;
-            z-index: 40;
+            z-index: 20;
             pointer-events: auto;
             padding-left: 1rem;
             padding-right: 1rem;
@@ -90,8 +108,13 @@
             left: 0;
             right: 0;
             bottom: 0;
-            padding-top: 0.35rem;
-            padding-bottom: 0.35rem;
+            height: 3.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-left: env(safe-area-inset-left, 0.75rem);
+            padding-right: env(safe-area-inset-right, 0.75rem);
+            z-index: 60;
         }
 
         .survey-header-inner,
@@ -102,6 +125,61 @@
             align-items: center;
             justify-content: flex-start;
             gap: 1rem;
+        }
+
+        /* Reserve space at the bottom so fixed footer doesn't overlap content */
+        :root {
+            --survey-footer-height: 3.5rem;
+            --survey-header-height: 3.5rem;
+        }
+
+        .survey-shell {
+            padding-bottom: calc(var(--survey-footer-height) + 1rem);
+        }
+
+        /* Ensure anchored sections aren't hidden behind the fixed header */
+        .survey-track>div[id] {
+            scroll-margin-top: calc(var(--survey-header-height) + 3.25rem) !important;
+        }
+
+        .survey-footer-inner {
+            justify-content: center !important;
+            gap: 0.5rem;
+        }
+
+        @media (max-width: 640px) {
+            /* Mobile-specific: reduce large desktop offsets so slides sit closer to header */
+            html {
+                scroll-padding-top: calc(var(--survey-header-height) + 0.5rem) !important;
+            }
+
+            .survey-track>div[id] {
+                /* less top padding on mobile to avoid double spacing */
+                padding: calc(var(--survey-header-height) + 0.8rem) 0.35rem 2.3rem !important;
+                scroll-margin-top: calc(var(--survey-header-height) + 0.6rem) !important;
+            }
+
+            .survey-track>div[id]>div:first-child {
+                /* card sits just below the sticky header on mobile */
+                margin-top: calc(var(--survey-header-height) + 0.6rem) !important;
+                padding: 0.8rem !important;
+                z-index: 80;
+            }
+
+            /* specific for #kedua on mobile */
+            #kedua>div:first-child {
+                margin-top: calc(var(--survey-header-height) + 0.6rem) !important;
+                padding-bottom: calc(var(--survey-footer-height) + 1rem) !important;
+            }
+
+            /* mobile: reduce identitas top gap */
+            #identitas>div:first-child {
+                margin-top: calc(var(--survey-header-height) + 0.45rem) !important;
+                padding-top: 0.5rem !important;
+            }
+            .survey-shell {
+                padding-bottom: calc(var(--survey-footer-height) + 2rem);
+            }
         }
 
         .survey-brand,
@@ -162,9 +240,10 @@
         .survey-track {
             position: relative;
             z-index: 10;
-            height: 100dvh;
+            min-height: 100dvh;
+            height: auto;
             display: block;
-            overflow: hidden;
+            overflow: visible;
             scroll-snap-type: none;
             scroll-behavior: smooth;
             touch-action: auto;
@@ -176,24 +255,24 @@
             display: none;
         }
 
-        .survey-track > div[id] {
-            min-width: 100%;
-            min-height: 100dvh;
-            height: 100dvh;
-            padding: 3.6rem 0.9rem 3.2rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            scroll-snap-align: none;
-            background: transparent !important;
-            box-shadow: none !important;
-        }
+            .survey-track>div[id] {
+                min-width: 100%;
+                min-height: 100dvh;
+                height: auto;
+                padding: calc(var(--survey-header-height) + 3.25rem) 0.9rem 3.2rem !important;
+                display: flex;
+                justify-content: center;
+                align-items: stretch;
+                scroll-snap-align: none;
+                background: transparent !important;
+                box-shadow: none !important;
+            }
 
-        .survey-track > div[id] > div:first-child {
+        .survey-track>div[id]>div:first-child {
             width: min(1320px, 100%);
             height: auto;
-            max-height: calc(100dvh - 7.2rem);
-            overflow: hidden;
+            max-height: none;
+            overflow: visible;
             border-radius: 2rem;
             border: 1px solid rgba(255, 255, 255, 0.55);
             background: rgba(255, 255, 255, 0.94);
@@ -204,25 +283,79 @@
             margin: 0 auto;
         }
 
-        .survey-track > div[id] > div:first-child > div {
+        /* Push the card down so the rounded top isn't hidden by the fixed header
+           and ensure the card can layer above fixed header/footer when needed */
+        .survey-track>div[id]>div:first-child {
+            margin-top: calc(var(--survey-header-height) + 3rem) !important;
+            position: relative;
+            z-index: 80;
+        }
+
+        .survey-track>div[id]>div:first-child>div {
             height: auto;
             min-height: 100%;
         }
 
-        .survey-track > div[id] > div:first-child::-webkit-scrollbar {
+        .survey-track>div[id]>div:first-child::-webkit-scrollbar {
             width: 8px;
         }
 
-        .survey-track > div[id] > div:first-child::-webkit-scrollbar-thumb {
+        .survey-track>div[id]>div:first-child::-webkit-scrollbar-thumb {
             background: #ffb781;
             border-radius: 9999px;
         }
 
-        #awal > div:first-child,
-        #jenisProgram > div:first-child,
-        #identitas > div:first-child,
-        #saran > div:first-child {
+        #awal>div:first-child,
+        #jenisProgram>div:first-child,
+        #identitas>div:first-child,
+        #kedua>div:first-child,
+        #saran>div:first-child {
             max-width: 1100px;
+        }
+
+        /* Specific offsets for #kedua to ensure top rounded corner and bottom space are visible */
+        #kedua>div:first-child {
+            margin-top: calc(var(--survey-header-height) + 2.5rem) !important;
+            padding-bottom: calc(var(--survey-footer-height) + 2.25rem) !important;
+            position: relative;
+            z-index: 80;
+        }
+
+        /* Reduce top spacing for identitas so it sits closer to header */
+        #identitas>div:first-child {
+            margin-top: calc(var(--survey-header-height) + 0.9rem) !important;
+            padding-top: 0.6rem !important;
+            position: relative;
+            z-index: 80;
+        }
+
+        /* Make the slide container itself leaner for #identitas (override global slide padding) */
+        .survey-track>div#identitas {
+            padding-top: calc(var(--survey-header-height) + 0.4rem) !important;
+            scroll-margin-top: calc(var(--survey-header-height) + 0.45rem) !important;
+        }
+
+        .survey-track>div#identitas>div:first-child {
+            margin-top: calc(var(--survey-header-height) + 0.45rem) !important;
+            padding-top: 0.45rem !important;
+        }
+
+        /* Strong override: remove extra card offset so identitas sits right below header */
+        .survey-track>div#identitas>div:first-child {
+            margin-top: 0 !important;
+        }
+
+        /* Also reduce outer slide padding to avoid duplicated spacing */
+        .survey-track>div#identitas {
+            padding-top: calc(var(--survey-header-height) + 0.15rem) !important;
+        }
+
+        /* Aggressive override: zero out any remaining top padding/margin inside identitas */
+        #identitas,
+        #identitas>div,
+        #identitas>div>* {
+            padding-top: 0 !important;
+            margin-top: 0 !important;
         }
 
         #awal {
@@ -230,11 +363,11 @@
             padding-top: 0.6rem !important;
         }
 
-        #awal > div:first-child {
+        #awal>div:first-child {
             overflow: visible !important;
         }
 
-        #awal > div:first-child > div {
+        #awal>div:first-child>div {
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -243,7 +376,7 @@
             padding-bottom: 0.55rem !important;
         }
 
-        #awal > div:first-child > div .step-actions {
+        #awal>div:first-child>div .step-actions {
             margin-top: auto !important;
             position: static;
             background: transparent;
@@ -255,27 +388,27 @@
             justify-content: flex-end !important;
         }
 
-        #kedua > div:first-child,
-        #satu > div:first-child,
-        #dua > div:first-child,
-        #tiga > div:first-child,
-        #empat > div:first-child,
-        #lima > div:first-child,
-        #enam > div:first-child,
-        #tujuh > div:first-child,
-        #delapan > div:first-child,
-        #sembilan > div:first-child {
+        #kedua>div:first-child,
+        #satu>div:first-child,
+        #dua>div:first-child,
+        #tiga>div:first-child,
+        #empat>div:first-child,
+        #lima>div:first-child,
+        #enam>div:first-child,
+        #tujuh>div:first-child,
+        #delapan>div:first-child,
+        #sembilan>div:first-child {
             display: grid !important;
             grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
             gap: 0.75rem;
             align-items: start;
         }
 
-        #kedua > div:first-child {
+        #kedua>div:first-child {
             grid-template-rows: minmax(0, 1fr) auto;
         }
 
-        #kedua > div:first-child > .step-actions {
+        #kedua>div:first-child>.step-actions {
             align-self: end;
         }
 
@@ -396,7 +529,7 @@
             outline: none;
         }
 
-        .survey-track input.peer + label {
+        .survey-track input.peer+label {
             width: 100%;
             align-items: center !important;
             gap: 0.75rem;
@@ -411,7 +544,7 @@
             overflow: hidden;
         }
 
-        .survey-track input.peer + label::before {
+        .survey-track input.peer+label::before {
             content: '';
             width: 0.78rem;
             height: 0.78rem;
@@ -423,7 +556,7 @@
             box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.55);
         }
 
-        .survey-track input.peer + label .font-semibold {
+        .survey-track input.peer+label .font-semibold {
             font-size: clamp(0.95rem, 1.08vw, 1.12rem) !important;
             line-height: 1.35 !important;
             letter-spacing: 0.005em;
@@ -434,14 +567,14 @@
             height: 1.2rem !important;
         }
 
-        .survey-track input.peer + label:hover {
+        .survey-track input.peer+label:hover {
             transform: translateY(-1px);
             box-shadow: 0 14px 28px rgba(146, 76, 0, 0.08);
             border-color: #ffb781 !important;
             background: #fff7f0 !important;
         }
 
-        .survey-track input.peer:checked + label {
+        .survey-track input.peer:checked+label {
             background: linear-gradient(135deg, #ff8800 0%, #ff9e3d 100%) !important;
             border-color: #ff8800 !important;
             color: #ffffff !important;
@@ -449,13 +582,13 @@
             transform: translateY(-1px);
         }
 
-        .survey-track input.peer:checked + label::before {
+        .survey-track input.peer:checked+label::before {
             border-color: rgba(255, 255, 255, 0.9);
             background: #ffffff;
             box-shadow: inset 0 0 0 4px #ff8800;
         }
 
-        .survey-track input.peer:checked + label * {
+        .survey-track input.peer:checked+label * {
             color: #ffffff !important;
         }
 
@@ -477,13 +610,13 @@
             font-weight: 700 !important;
         }
 
-        #awal #bagianRadios input.peer:checked + label {
+        #awal #bagianRadios input.peer:checked+label {
             background: linear-gradient(135deg, #ff8800 0%, #ff9e3d 100%) !important;
             border-color: #ff8800 !important;
             color: #ffffff !important;
         }
 
-        #awal #bagianRadios input.peer:checked + label * {
+        #awal #bagianRadios input.peer:checked+label * {
             color: #ffffff !important;
         }
 
@@ -570,18 +703,21 @@
             backdrop-filter: blur(10px);
         }
 
-        #popup #modal > div {
-            max-width: 860px;
+        #popup #modal>div {
+            max-width: 640px;
             border: 1px solid rgba(255, 255, 255, 0.55) !important;
-            border-radius: 2rem !important;
+            border-radius: 1rem !important;
             background: rgba(255, 255, 255, 0.96) !important;
-            box-shadow: 0 30px 80px rgba(25, 28, 29, 0.2);
-            padding: 2rem !important;
+            box-shadow: 0 18px 40px rgba(25, 28, 29, 0.12);
+            padding: 1rem !important;
+            max-height: calc(100vh - 4rem);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         #popup h3 {
             color: #924c00 !important;
-            font-size: clamp(1.05rem, 1.7vw, 1.6rem) !important;
+            font-size: clamp(0.95rem, 1.4vw, 1.15rem) !important;
             font-weight: 800 !important;
             line-height: 1.05 !important;
             letter-spacing: -0.03em;
@@ -589,8 +725,8 @@
 
         #popup .text-4xl,
         #popup .lg\:text-2xl {
-            font-size: clamp(0.95rem, 1.25vw, 1.15rem) !important;
-            line-height: 1.35 !important;
+            font-size: clamp(0.85rem, 1.05vw, 1rem) !important;
+            line-height: 1.25 !important;
         }
 
         #popup .lg\:text-sm,
@@ -608,7 +744,31 @@
             line-height: 1.7;
         }
 
-        #jenisContainer > div {
+        /* Tidy popup typography and spacing */
+        #popup table td {
+            padding: 0.45rem 0.6rem;
+            vertical-align: top;
+        }
+
+        #popup .text-4xl,
+        #popup .text-5xl {
+            font-size: 1rem !important;
+            line-height: 1.25 !important;
+        }
+
+        #popup .popup-instructions {
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            color: #374151;
+        }
+
+        #popup .step-actions {
+            padding: 0.5rem 0.75rem;
+            gap: 0.5rem;
+        }
+
+        #jenisContainer>div {
             border-radius: 1.5rem;
             border: 1px solid #dec1ae !important;
             background: #fff7f0 !important;
@@ -617,6 +777,7 @@
         }
 
         @media (max-width: 1024px) {
+
             .survey-header,
             .survey-footer {
                 padding-left: 0.55rem;
@@ -628,29 +789,30 @@
                 gap: 0.45rem;
             }
 
-            .survey-track > div[id] {
+                .survey-track>div[id] {
                 min-height: 100dvh;
                 height: 100dvh;
-                padding: 3.4rem 0.4rem 3rem;
+                padding: calc(var(--survey-header-height) + 1rem) 0.4rem 3rem;
                 align-items: center;
             }
 
-            .survey-track > div[id] > div:first-child {
+            .survey-track>div[id]>div:first-child {
                 height: auto;
                 max-height: calc(100dvh - 6.6rem);
                 padding: 0.8rem;
+                margin-top: calc(var(--survey-header-height) - 0.6rem);
             }
 
-            #kedua > div:first-child,
-            #satu > div:first-child,
-            #dua > div:first-child,
-            #tiga > div:first-child,
-            #empat > div:first-child,
-            #lima > div:first-child,
-            #enam > div:first-child,
-            #tujuh > div:first-child,
-            #delapan > div:first-child,
-            #sembilan > div:first-child {
+            #kedua>div:first-child,
+            #satu>div:first-child,
+            #dua>div:first-child,
+            #tiga>div:first-child,
+            #empat>div:first-child,
+            #lima>div:first-child,
+            #enam>div:first-child,
+            #tujuh>div:first-child,
+            #delapan>div:first-child,
+            #sembilan>div:first-child {
                 grid-template-columns: 1fr;
             }
 
@@ -662,7 +824,7 @@
                 font-size: 0.95rem !important;
             }
 
-            #awal > div:first-child > div {
+            #awal>div:first-child>div {
                 padding-top: 0.55rem !important;
                 padding-bottom: 0.4rem !important;
             }
@@ -671,7 +833,13 @@
                 align-items: center !important;
             }
 
-            #awal > div:first-child > div .step-actions {
+            /* Mobile-specific adjustments for #kedua */
+            #kedua>div:first-child {
+                margin-top: calc(var(--survey-header-height) + 1.2rem) !important;
+                padding-bottom: calc(var(--survey-footer-height) + 2rem) !important;
+            }
+
+            #awal>div:first-child>div .step-actions {
                 background: rgba(255, 255, 255, 0.96);
             }
 
@@ -719,87 +887,126 @@
             text-transform: uppercase;
         }
 
-        #identitas .identity-copy {
+        #identitas .identity-copy,
+        #kedua .identity-copy {
             margin-bottom: 0.9rem;
         }
 
-        #identitas .identity-copy p {
+        #identitas .identity-copy p,
+        #kedua .identity-copy p {
             color: #7a4a19;
             font-size: 0.92rem;
             line-height: 1.45;
             margin-top: 0.25rem;
         }
 
-        #identitas .identity-radio-grid {
+        #identitas .identity-radio-grid,
+        #kedua .identity-radio-grid {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 0.6rem;
         }
 
-        #identitas textarea {
+        #identitas textarea,
+        #kedua textarea {
             min-height: 6.8rem;
         }
 
         @media (max-width: 1024px) {
+
             .biodataIdentity,
-            #identitas .identity-radio-grid {
+            #identitas .identity-radio-grid,
+            #kedua .identity-radio-grid {
                 grid-template-columns: 1fr;
             }
         }
 
         /* ─── Mobile: 9 question steps ─────────────────────────── */
         @media (max-width: 640px) {
-            /* Tighten outer section vertical padding so card has more room */
-            .survey-track > div[id] {
-                padding: 2.8rem 0.35rem 2.5rem !important;
+
+            html,
+            body {
+                overflow-y: auto;
             }
 
-            /* Expand card max-height to match tighter outer padding */
-            .survey-track > div[id] > div:first-child {
-                max-height: calc(100dvh - 5.5rem) !important;
-                padding: 0.85rem !important;
+            .survey-shell {
+                min-height: 100vh;
             }
 
-            /* Reduce gap between question-card and options panel */
-            :is(#satu, #dua, #tiga, #empat, #lima, #enam, #tujuh, #delapan, #sembilan) > div:first-child {
+            .survey-header {
+                position: sticky;
+                top: 0;
+                left: auto;
+                right: auto;
+                padding-left: 0.35rem;
+                padding-right: 0.35rem;
+                padding-top: 0.35rem !important;
+                padding-bottom: 0.2rem !important;
+            }
+
+            /* Keep progress footer fixed to viewport bottom on mobile */
+            .survey-footer {
+                position: fixed;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                height: 3.5rem;
+                padding-left: 0.35rem;
+                padding-right: 0.35rem;
+                padding-top: 0.2rem !important;
+                padding-bottom: 0.2rem !important;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 70;
+            }
+
+            .survey-track>div[id] {
+                min-height: auto;
+                height: auto;
+                padding: 2.4rem 0.35rem 2.3rem !important;
+            }
+
+            .survey-track>div[id]>div:first-child {
+                max-height: none !important;
+                padding: 0.8rem !important;
+                border-radius: 1.25rem !important;
+                overflow: visible;
+            }
+
+            :is(#satu, #dua, #tiga, #empat, #lima, #enam, #tujuh, #delapan, #sembilan)>div:first-child {
                 gap: 0.45rem !important;
             }
 
-            /* Reduce inner question card padding */
-            :is(#satu, #dua, #tiga, #empat, #lima, #enam, #tujuh, #delapan, #sembilan) > div:first-child > div:first-child {
+            :is(#satu, #dua, #tiga, #empat, #lima, #enam, #tujuh, #delapan, #sembilan)>div:first-child>div:first-child {
                 padding: 0.65rem !important;
                 border-radius: 1rem !important;
             }
 
-            /* Shrink icon box */
-            :is(#satu, #dua, #tiga, #empat, #lima, #enam, #tujuh, #delapan, #sembilan) > div:first-child > div:first-child > div:first-child {
+            :is(#satu, #dua, #tiga, #empat, #lima, #enam, #tujuh, #delapan, #sembilan)>div:first-child>div:first-child>div:first-child {
                 width: 1.85rem !important;
                 height: 1.85rem !important;
                 border-radius: 0.45rem !important;
                 margin-bottom: 0.3rem !important;
             }
 
-            :is(#satu, #dua, #tiga, #empat, #lima, #enam, #tujuh, #delapan, #sembilan) > div:first-child > div:first-child > div:first-child .material-symbols-outlined {
+            :is(#satu, #dua, #tiga, #empat, #lima, #enam, #tujuh, #delapan, #sembilan)>div:first-child>div:first-child>div:first-child .material-symbols-outlined {
                 font-size: 1.15rem !important;
             }
 
-            /* Reduce h2 extra padding */
             :is(#satu, #dua, #tiga, #empat, #lima, #enam, #tujuh, #delapan, #sembilan) h2 {
                 padding: 0.55rem 0.7rem !important;
                 font-size: 0.9rem !important;
             }
 
-            /* Reduce gap between individual option cards */
-            :is(#satu, #dua, #tiga, #empat, #lima, #enam, #tujuh, #delapan, #sembilan) > div:first-child > div:last-child {
+            :is(#satu, #dua, #tiga, #empat, #lima, #enam, #tujuh, #delapan, #sembilan)>div:first-child>div:last-child {
                 gap: 0.3rem !important;
             }
 
-            /* Option label: tighter vertical padding */
-            .survey-track input.peer + label {
+            .survey-track input.peer+label {
                 padding: 0.48rem 0.7rem !important;
             }
 
-            /* Step-actions: keep horizontal row to save vertical space */
             .survey-track .step-actions {
                 flex-direction: row !important;
                 gap: 0.4rem !important;
@@ -807,7 +1014,6 @@
                 padding-top: 0.3rem !important;
             }
 
-            /* Both nav buttons: equal-width halves */
             .survey-track a[onclick*="window.location='#"],
             .survey-track a[onclick="lanjutKeBiodata()"],
             .survey-track button[type='submit'] {
@@ -820,11 +1026,111 @@
                 font-size: 0.82rem !important;
             }
 
-            /* Header/footer: tighter on small screens */
-            .survey-header { padding-top: 0.3rem !important; padding-bottom: 0.15rem !important; }
-            .survey-footer { padding-top: 0.25rem !important; padding-bottom: 0.25rem !important; }
-            .survey-brand img { width: 1.65rem !important; height: 1.65rem !important; }
-            .survey-brand > div > p:first-child { display: none !important; }
+            .survey-brand {
+                padding: 0.28rem 0.45rem;
+            }
+
+            .survey-brand img {
+                width: 1.65rem !important;
+                height: 1.65rem !important;
+            }
+
+            .survey-brand>div>p:first-child {
+                display: none !important;
+            }
+
+            .survey-progress {
+                padding: 0.2rem 0.5rem;
+            }
+
+            .survey-progress-copy {
+                display: none;
+            }
+
+            .biodataIdentity,
+            #identitas .identity-radio-grid,
+            .survey-track .grid-cols-2,
+            .survey-track .lg\:grid-cols-2,
+            .survey-track .lg\:grid-cols-5,
+            .survey-track .grid-cols-5,
+            .survey-track .grid-cols-6,
+            .survey-track .grid-cols-4 {
+                grid-template-columns: 1fr !important;
+            }
+
+            /* Ensure #kedua uses a single column layout on mobile for tidy appearance */
+            #kedua>div:first-child {
+                display: block !important;
+                grid-template-columns: 1fr !important;
+                padding: 0.8rem !important;
+            }
+
+            #kedua .biodataIdentity,
+            #kedua .identity-radio-grid,
+            #kedua .w-full>.grid,
+            #kedua .grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            /* hide any small side column that might exist */
+            #kedua .w-1\/6 {
+                display: none !important;
+            }
+
+            #identitas .identity-copy p,
+            #kedua .identity-copy p {
+                font-size: 0.82rem;
+            }
+
+            #identitas .step-actions,
+            #kedua .step-actions,
+            .survey-track li.flex.justify-between.mt-5,
+            .survey-track li.col-span-2.flex.justify-between.mt-5.w-full {
+                flex-direction: column !important;
+                gap: 0.5rem;
+            }
+
+            #popup #modal>div {
+                width: min(92vw, 640px) !important;
+                padding: 1rem !important;
+            }
+        }
+
+        /* Final mobile-specific overrides for #identitas to remove remaining top space */
+        @media (max-width: 640px) {
+            .survey-track>div#identitas {
+                padding-top: 0 !important;
+                padding-bottom: 1.2rem !important;
+            }
+
+            .survey-track>div#identitas>div:first-child {
+                margin-top: 0 !important;
+                padding-top: 0 !important;
+            }
+
+            #identitas {
+                padding-top: 0 !important;
+                margin-top: 0 !important;
+            }
+        }
+        
+        /* Debug + aggressive pull-up for mobile: temporary */
+        @media (max-width: 640px) {
+            .survey-header { outline: none !important; }
+            .survey-track>div[id] { padding-top: 0 !important; margin-top: 0 !important; }
+            .survey-track>div[id]>div:first-child { margin-top: 0 !important; }
+            /* pull the identitas block slightly upward to remove any remaining gap */
+            #identitas { margin-top: -0.9rem !important; padding-top: 0 !important; }
+            /* visually mark identitas during debug */
+            #identitas { outline: 2px dashed magenta !important; }
+        }
+
+        /* Aggressive mobile pull: translate the card up by header height minus small offset */
+        @media (max-width: 640px) {
+            .survey-track>div#identitas>div:first-child {
+                transform: translateY(calc(-1 * var(--survey-header-height) + 0.45rem)) !important;
+                -webkit-transform: translateY(calc(-1 * var(--survey-header-height) + 0.45rem)) !important;
+            }
         }
     </style>
 </head>
@@ -851,8 +1157,8 @@ if (empty($bagianList)) {
 }
 
 $bagianList = collect($bagianList)
-    ->filter(fn ($label) => filled(trim((string) $label)))
-    ->map(fn ($label) => strtoupper(trim((string) $label)))
+    ->filter(fn($label) => filled(trim((string) $label)))
+    ->map(fn($label) => strtoupper(trim((string) $label)))
     ->toArray();
 if (empty($bagianList)) {
     $bagianList = $legacyBagianList;
@@ -864,9 +1170,11 @@ if (empty($bagianList)) {
         <header class="survey-header">
             <div class="survey-header-inner">
                 <div class="survey-brand">
-                    <img src="{{ asset('assets/logo-bayan.png') }}" alt="Logo Bayan" class="h-11 w-11 rounded-2xl bg-white p-1">
+                    <img src="{{ asset('assets/logo-bayan.png') }}" alt="Logo Bayan"
+                        class="h-11 w-11 rounded-2xl bg-white p-1">
                     <div>
-                        <p class="text-xs font-extrabold uppercase tracking-[0.22em] text-white/75">E-SKM PPM Bayan Group</p>
+                        <p class="text-xs font-extrabold uppercase tracking-[0.22em] text-white/75">E-SKM PPM Bayan
+                            Group</p>
                         <p class="text-xs font-extrabold tracking-tight text-white">Survei Kepuasan Masyarakat</p>
                     </div>
                 </div>
@@ -879,7 +1187,8 @@ if (empty($bagianList)) {
                     <div class="survey-progress-dots" id="surveyProgressDots"></div>
                     <div class="survey-progress-copy">
                         <p class="text-[11px] font-extrabold uppercase tracking-[0.22em] text-white/75">Progress</p>
-                        <p class="text-sm font-bold text-white"><span id="surveyStepLabel">Pilih bagian layanan</span> • <span id="surveyStepCount">1 / 13</span></p>
+                        <p class="text-sm font-bold text-white"><span id="surveyStepLabel">Pilih bagian layanan</span> •
+                            <span id="surveyStepCount">1 / 13</span></p>
                     </div>
                 </div>
             </div>
@@ -891,18 +1200,24 @@ if (empty($bagianList)) {
                 <div class="fixed z-30 bg-opacity-50 overflow-y-auto w-full" id="modal">
                     <div class="relative mx-auto p-5 border lg:w-1/2 w-5/6 shadow-lg rounded-md bg-white">
                         <div class="mt-3 text-center">
-                            <h3 class="lg:text-lg lg:text-2xl  text-4xl  lg:leading-6 font-medium mb-4 text-gray-900 ">
+                            <h3 class="text-lg lg:text-2xl leading-6 font-medium mb-4 text-gray-900">
                                 SELAMAT
                                 DATANG DI
                                 SURVEI KEPUASAN
                                 MASYARAKAT
                             </h3>
-                            <label class="text-black font-black lg:text-sm text-4xl">PERHATIAN:</label>
-                            <div class="px-7 items-start mt-4 text-left justify-start">
-                                <table class="border-separate font-bold border-spacing-y-3 lg:text-sm text-4xl">
+                            <p class="popup-instructions text-sm text-gray-700 mb-2 px-4">
+                                Isi form identitas terlebih dahulu: <strong>Nama</strong>, <strong>No. WA</strong>, dan
+                                <strong>Alamat</strong>. Pastikan data benar karena akan digunakan untuk verifikasi dan
+                                penukaran kode.
+                            </p>
+                            <label class="text-sm lg:text-base font-black text-black">PERHATIAN:</label>
+                            <div class="px-6 items-start mt-4 text-left justify-start">
+                                <table class="border-separate font-bold border-spacing-y-3 lg:text-sm text-sm w-full">
                                     <tr>
                                         <td class="items-start flex">1. </td>
-                                        <td class="text-justify">Tujuan survei ini adalah untuk memperoleh gambaran secara
+                                        <td class="text-justify">Tujuan survei ini adalah untuk memperoleh gambaran
+                                            secara
                                             objektif mengenai kepuasan
                                             masyarakat terhadap pelayanan publik</td>
                                     </tr>
@@ -914,7 +1229,8 @@ if (empty($bagianList)) {
                                     </tr>
                                     <tr>
                                         <td class="items-start flex">3. </td>
-                                        <td class="text-justify">Hasil survei ini akan digunakan sebagai bahan penyusunan
+                                        <td class="text-justify">Hasil survei ini akan digunakan sebagai bahan
+                                            penyusunan
                                             Laporan
                                             Survei Kepuasan
                                             Masyarakat terhadap pelayanan publik yang sangat bermanfaat bagi pemerintah
@@ -930,16 +1246,10 @@ if (empty($bagianList)) {
                                 </table>
                             </div>
                             <div class="step-actions flex justify-between items-center px-4 py-3">
-                                <button type="button" onclick="window.location='#awal'; closePopup()"
-                                    class="px-4 py-2 bg-gray-800 text-white 
-                                lg:text-base font-medium rounded-md text-4xl
-                                shadow-sm hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-300">
+                                <button type="button" onclick="window.location='#awal'; closePopup()" class="px-4 py-2 bg-gray-800 text-white text-sm lg:text-base font-medium rounded-md shadow-sm hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-300">
                                     SEBELUM
                                 </button>
-                                <button type="button" onclick="closePopup()" id="ok-btn"
-                                    class="px-4 py-2 bg-gray-800 text-white 
-                                lg:text-base font-medium rounded-md text-4xl
-                                shadow-sm hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-300">
+                                <button type="button" onclick="closePopup()" id="ok-btn" class="px-4 py-2 bg-gray-800 text-white text-sm lg:text-base font-medium rounded-md shadow-sm hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-300">
                                     LANJUT
                                 </button>
                             </div>
@@ -951,13 +1261,13 @@ if (empty($bagianList)) {
             <form action="{{ route('nilaiUnsur.store') }}" method="POST" enctype="multipart/form-data"
                 class="survey-track h-screen flex">
                 @csrf
-                <div id="awal"
-                class=" items-center relative isolate  min-w-full h-screen px-6 shadow-2xl sm:px-16 lg:px-24 bg-gradient-to-br from-[#18bdde] from-60%  to-[#fffb61] to-95%">
+                <!-- <div id="awal"
+                class="items-start relative isolate min-w-full min-h-screen overflow-auto px-6 shadow-2xl sm:px-16 lg:px-24 bg-gradient-to-br from-[#18bdde] from-60%  to-[#fffb61] to-95%">
 
                 <div class="text-left flex flex-col lg:py-14 lg:px-12 py-8 px-6 lg:text-left w-full justify-between">
                     <label
                         class=" max-w-md  text-left font-bold tracking-tight mb-2 whitespace-nowrap mb-3 text-gray-900 lg:text-2xl  text-4xl  drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)]">
-                        Silakan memilih bagian <br class="lg:hidden">yang akan Anda berikan penilaian
+                        Silakan memilih Desa <br class="lg:hidden">yang akan Anda berikan penilaian
                     </label>
                     <div class="h-3"></div>
                     <div class="lg:flex w-full justify-between gap-4">
@@ -966,7 +1276,7 @@ if (empty($bagianList)) {
                                 Pilihan bagian belum tersedia. Silakan refresh halaman atau hubungi admin.
                             </div>
                         @endif
-                        <ul id="bagianRadios" class="grid w-full gap-2 lg:grid-cols-5 grid-cols-1">
+                        <ul id="bagianRadios" class="grid w-full gap-2 lg:grid-cols-4 grid-cols-1">
                         @foreach ($bagianList as $id => $label)
                             <li>
                             <input type="radio"
@@ -1000,109 +1310,120 @@ if (empty($bagianList)) {
                         </a>
                     </div>
                 </div>
-                </div>
-                {{-- <div  id="jenisProgram"
-                class="hidden items-center relative isolate  min-w-full h-screen px-6 shadow-2xl sm:px-16 lg:px-24 bg-gradient-to-br from-[#18bdde] from-60%  to-[#fffb61] to-95%">
+                </div> -->
+                {{-- <div id="jenisProgram"
+                    class="hidden items-center relative isolate  min-w-full h-screen px-6 shadow-2xl sm:px-16 lg:px-24 bg-gradient-to-br from-[#18bdde] from-60%  to-[#fffb61] to-95%">
 
-                <div class="  text-left   lg:py-32 py-12 lg:text-left  w-full justify-between">
-                    <label
-                        class=" max-w-md  text-left font-bold tracking-tight mb-2 whitespace-nowrap mb-3 text-gray-900 lg:text-2xl  text-4xl  drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)]">
-                        Silakan memilih jenis program
-                    </label>
-                    <div class="h-3"></div>
-                    <div class="lg:flex w-full justify-between gap-4">
-                        <ul id="jenisContainer" class="grid w-full gap-2 lg:grid-cols-2 grid-cols-1"></ul>
-                    </div>
-                    <div class="step-actions flex justify-between mt-5">
-                        <a type="button" onclick="window.location='#awal'" 
-                            class="flex items-center gap-2 cursor-pointer drop-shadow-[0_3px_3px_rgba(0,0,0,0.3)]">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                                class="w-8 h-8 text-gray-900">
-                                <path fill-rule="evenodd"
-                                    d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-4.28 9.22a.75.75 0 000 1.06l3 3a.75.75 0 101.06-1.06l-1.72-1.72h5.69a.75.75 0 000-1.5h-5.69l1.72-1.72a.75.75 0 00-1.06-1.06l-3 3z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                            <label class="text-gray-900 font-medium lg:text-xl text-4xl cursor-pointer">SEBELUM</label>
+                    <div class="  text-left   lg:py-32 py-12 lg:text-left  w-full justify-between">
+                        <label
+                            class=" max-w-md  text-left font-bold tracking-tight mb-2 whitespace-nowrap mb-3 text-gray-900 lg:text-2xl  text-4xl  drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)]">
+                            Silakan memilih jenis program
+                        </label>
+                        <div class="h-3"></div>
+                        <div class="lg:flex w-full justify-between gap-4">
+                            <ul id="jenisContainer" class="grid w-full gap-2 lg:grid-cols-2 grid-cols-1"></ul>
+                        </div>
+                        <div class="step-actions flex justify-between mt-5">
+                            <a type="button" onclick="window.location='#awal'"
+                                class="flex items-center gap-2 cursor-pointer drop-shadow-[0_3px_3px_rgba(0,0,0,0.3)]">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                    class="w-8 h-8 text-gray-900">
+                                    <path fill-rule="evenodd"
+                                        d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-4.28 9.22a.75.75 0 000 1.06l3 3a.75.75 0 101.06-1.06l-1.72-1.72h5.69a.75.75 0 000-1.5h-5.69l1.72-1.72a.75.75 0 00-1.06-1.06l-3 3z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                <label
+                                    class="text-gray-900 font-medium lg:text-xl text-4xl cursor-pointer">SEBELUM</label>
 
-                        </a>
-                        <a type="button" onclick="lanjutKeBiodata()"
-                            class="flex items-center gap-2 cursor-pointer drop-shadow-[0_3px_3px_rgba(0,0,0,0.3)]">
-                            <label class="text-gray-900 font-medium lg:text-xl text-4xl cursor-pointer ">LANJUT</label>
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                                class="w-8 h-8 text-gray-900">
-                                <path fill-rule="evenodd"
-                                    d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm4.28 10.28a.75.75 0 000-1.06l-3-3a.75.75 0 10-1.06 1.06l1.72 1.72H8.25a.75.75 0 000 1.5h5.69l-1.72 1.72a.75.75 0 101.06 1.06l3-3z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                        </a>
+                            </a>
+                            <a type="button" onclick="lanjutKeBiodata()"
+                                class="flex items-center gap-2 cursor-pointer drop-shadow-[0_3px_3px_rgba(0,0,0,0.3)]">
+                                <label
+                                    class="text-gray-900 font-medium lg:text-xl text-4xl cursor-pointer ">LANJUT</label>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                    class="w-8 h-8 text-gray-900">
+                                    <path fill-rule="evenodd"
+                                        d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm4.28 10.28a.75.75 0 000-1.06l-3-3a.75.75 0 10-1.06 1.06l1.72 1.72H8.25a.75.75 0 000 1.5h5.69l-1.72 1.72a.75.75 0 101.06 1.06l3-3z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </a>
+                        </div>
                     </div>
-                </div>
                 </div> --}}
 
                 <div id="identitas"
-                class=" items-center relative isolate  min-w-full h-screen px-6 shadow-2xl sm:px-16 lg:px-24 bg-gradient-to-br from-[#18bdde] from-60%  to-[#fffb61] to-95%">
-
-                <div class="text-left flex flex-col lg:py-14 lg:px-12 py-8 px-6 lg:text-left w-full justify-between">
-                    <div class="identity-copy">
-                        <label
-                            class="max-w-md text-left font-bold tracking-tight mb-2 whitespace-nowrap mb-3 text-gray-900 lg:text-2xl text-4xl drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)]">
-                            Lengkapi data identitas Anda
-                        </label>
-                        <p>Masukkan nama, nomor telepon, jenis kelamin, dan alamat sebelum lanjut ke biodata lainnya.</p>
-                    </div>
-
-                    <div class="biodataIdentity">
-                        <!-- NIK input removed as per request -->
-                        <div>
-                            <label for="nama">Nama</label>
-                            <input type="text" id="nama" name="nama" value="{{ old('nama') }}" placeholder="Masukkan nama lengkap" required>
+                    class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:px-24 bg-gradient-to-br from-[#18bdde] from-60%  to-[#fffb61] to-95% rounded rounded-2xl">
+                    
+                    <div
+                        class="text-left flex flex-col lg:px-12 px-6 pt-0 pb-4 lg:pb-6 lg:text-left w-full justify-between">
+                        
+                        <div class="identity-copy">
+                            <label
+                                class="max-w-md text-left font-bold tracking-tight my-2 whitespace-nowrap mb-3 text-gray-900 lg:text-2xl text-4xl drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)]">
+                                Lengkapi data identitas Anda
+                            </label>
+                            <p>Masukkan nama, nomor WhatsApp, dan nomor peserta sebelum lanjut ke biodata lainnya.</p>
                         </div>
-                        <div style="display:none"></div>
-                    </div>
 
-                    <div class="biodataIdentity">
-                        <div>
-                            <label for="nohp">No. Telp</label>
-                            <input type="text" id="nohp" name="nohp" value="{{ old('nohp') }}" placeholder="Masukkan nomor telepon" required>
+                        <div class="biodataIdentity">
+                            <div>
+                                <label for="nama">Nama</label>
+                                <input type="text" id="nama" name="nama" value="{{ old('nama') }}"
+                                    placeholder="Masukkan nama lengkap" required>
+                            </div>
+                            <div>
+                                <label for="no_wa">No. WA</label>
+                                <input type="text" id="no_wa" name="no_wa" value="{{ old('no_wa') }}"
+                                    placeholder="Masukkan nomor WhatsApp (contoh: 62812...)" inputmode="tel">
+                            </div>
                         </div>
-                        <div>
-                            <label>Jenis Kelamin</label>
-                            <div class="identity-radio-grid">
-                                <div>
-                                    <input type="radio" id="identitas-laki" name="jenkel[jenkel]" value="Laki - Laki"
-                                        {{ old('jenkel.jenkel', 'Laki - Laki') == 'Laki - Laki' ? 'checked' : '' }}
-                                        class="hidden scroll-btn peer">
-                                    <label for="identitas-laki"
-                                        class="inline-flex items-center justify-between w-full p-3 text-gray-900 bg-transparent border-2 drop-shadow-[0_3px_3px_rgba(0,0,0,0.3)] border-white rounded-lg cursor-pointer peer-checked:border-white peer-checked:bg-white peer-checked:text-gray-800 hover:text-gray-900 hover:bg-white">
-                                        <div class="block">
-                                            <div class="w-full lg:text-lg lg:text-2xl text-4xl font-semibold">Laki - Laki</div>
-                                        </div>
-                                    </label>
-                                </div>
-                                <div>
-                                    <input type="radio" id="identitas-perempuan" name="jenkel[jenkel]" value="Perempuan"
-                                        {{ old('jenkel.jenkel') == 'Perempuan' ? 'checked' : '' }}
-                                        class="hidden scroll-btn peer">
-                                    <label for="identitas-perempuan"
-                                        class="inline-flex items-center justify-between w-full p-3 text-gray-900 bg-transparent border-2 drop-shadow-[0_3px_3px_rgba(0,0,0,0.3)] border-white rounded-lg cursor-pointer peer-checked:border-white peer-checked:bg-white peer-checked:text-gray-800 hover:text-gray-900 hover:bg-white">
-                                        <div class="block">
-                                            <div class="w-full lg:text-lg lg:text-2xl text-4xl font-semibold">Perempuan</div>
-                                        </div>
-                                    </label>
+
+                        <div class="biodataIdentity">
+                            <div>
+                                <label for="no_peserta">No. Peserta</label>
+                                <input type="text" id="no_peserta" name="no_peserta" value="{{ old('no_peserta') }}"
+                                    placeholder="Masukkan nomor peserta" inputmode="numeric">
+                            </div>
+                            <div>
+                                <label>Jenis Kelamin</label>
+                                <div class="identity-radio-grid">
+                                    <div>
+                                        <input type="radio" id="identitas-laki" name="jenkel[jenkel]"
+                                            value="Laki - Laki" {{ old('jenkel.jenkel', 'Laki - Laki') == 'Laki - Laki' ? 'checked' : '' }} class="hidden scroll-btn peer">
+                                        <label for="identitas-laki"
+                                            class="inline-flex items-center justify-between w-full p-3 text-gray-900 bg-transparent border-2 drop-shadow-[0_3px_3px_rgba(0,0,0,0.3)] border-white rounded-lg cursor-pointer peer-checked:border-white peer-checked:bg-white peer-checked:text-gray-800 hover:text-gray-900 hover:bg-white">
+                                            <div class="block">
+                                                <div class="w-full lg:text-lg lg:text-2xl text-4xl font-semibold">Laki -
+                                                    Laki</div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="identitas-perempuan" name="jenkel[jenkel]"
+                                            value="Perempuan" {{ old('jenkel.jenkel') == 'Perempuan' ? 'checked' : '' }}
+                                            class="hidden scroll-btn peer">
+                                        <label for="identitas-perempuan"
+                                            class="inline-flex items-center justify-between w-full p-3 text-gray-900 bg-transparent border-2 drop-shadow-[0_3px_3px_rgba(0,0,0,0.3)] border-white rounded-lg cursor-pointer peer-checked:border-white peer-checked:bg-white peer-checked:text-gray-800 hover:text-gray-900 hover:bg-white">
+                                            <div class="block">
+                                                <div class="w-full lg:text-lg lg:text-2xl text-4xl font-semibold">
+                                                    Perempuan</div>
+                                            </div>
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="biodataIdentity biodataIdentity--single">
-                        <div>
-                            <label for="alamat">Alamat</label>
-                            <textarea id="alamat" name="alamat" placeholder="Masukkan alamat lengkap" required>{{ old('alamat') }}</textarea>
+                        <div class="biodataIdentity biodataIdentity--single">
+                            <div>
+                                <label for="alamat">Alamat</label>
+                                <textarea id="alamat" name="alamat" placeholder="Masukkan alamat lengkap"
+                                    required>{{ old('alamat') }}</textarea>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="step-actions flex justify-between mt-5">
-                        <a type="button" onclick="window.location='#awal'"
+                        <div class="step-actions flex justify-between mt-5">
+                            <!-- <a type="button" onclick="window.location='#awal'"
                             class="flex items-center gap-2 cursor-pointer drop-shadow-[0_3px_3px_rgba(0,0,0,0.3)]">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                 class="w-8 h-8 text-gray-900">
@@ -1111,870 +1432,980 @@ if (empty($bagianList)) {
                                     clip-rule="evenodd" />
                             </svg>
                             <label class="text-gray-900 font-medium lg:text-xl text-4xl cursor-pointer">SEBELUM</label>
-                        </a>
-                        <a type="button" onclick="lanjutDariIdentitas()"
-                            class="flex items-center gap-2 cursor-pointer drop-shadow-[0_3px_3px_rgba(0,0,0,0.3)]">
-                            <label class="text-gray-900 font-medium lg:text-xl text-4xl cursor-pointer">LANJUT</label>
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                                class="w-8 h-8 text-gray-900">
-                                <path fill-rule="evenodd"
-                                    d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm4.28 10.28a.75.75 0 000-1.06l-3-3a.75.75 0 10-1.06 1.06l1.72 1.72H8.25a.75.75 0 000 1.5h5.69l-1.72 1.72a.75.75 0 101.06 1.06l3-3z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                        </a>
+                        </a> -->
+                            <a role="button" type="button" onclick="lanjutDariIdentitas()"
+                                class="inline-flex flex justify-center items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#ff8800] to-[#ff9e3d] text-white font-bold rounded-full shadow-md hover:from-[#e07200] hover:to-[#ff8a00] transition-colors cursor-pointer">
+                                <span class="lg:text-lg text-base">LANJUT</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                    class="w-5 h-5">
+                                    <path fill-rule="evenodd"
+                                        d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm4.28 10.28a.75.75 0 000-1.06l-3-3a.75.75 0 10-1.06 1.06l1.72 1.72H8.25a.75.75 0 000 1.5h5.69l-1.72 1.72a.75.75 0 101.06 1.06l3-3z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </a>
+                        </div>
                     </div>
                 </div>
-                </div>
-            <div id="kedua"
-                class="lg:pt-0 pt-16 items-center relative isolate overflow-hidden min-w-full h-screen
-                px-6 shadow-2xl sm:px-16 lg:flex lg:px-24 bg-gradient-to-br from-[#18bdde] from-60%  to-[#fffb61] to-95%">
-                <div class=" text-center  lg:flex lg:py-32 lg:text-left   w-full justify-between">
-                    <div class="gap-4 w-full ">
-                        <div class="flex justify-between">
-                            <h1
-                                class=" max-w-md  font-bold tracking-tight mb-2 text-gray-900 lg:text-2xl  text-4xl  drop-shadow-[0_3px_3px_rgba(0,0,0,0.3)]">
-                                Usia (Tahun)
-                            </h1>
-                            <h1 id="errorusia" class="{{ $error }}">
-                            </h1>
-                            @error('usia')
-                                <div class="{{ $error }}">Harus Diisi</div>
-                            @enderror
-                        </div>
-                        <ul class="grid w-full gap-2 grid-cols-2">
-                            <li>
-                                <input type="radio" id="29" name="usia" value="29" checked
-                                    class="hidden scroll-btn peer">
-                                <label for="29"
-                                    class="inline-flex items-center justify-between w-full p-3 text-gray-900 bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-gray-800  peer-checked:text-white hover:text-gray-900 hover:bg-gray-400 ">
-                                    <div class="block">
-                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Kurang dari
-                                            30 Tahun
+                <div id="kedua"
+class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:px-24 bg-gradient-to-br from-[#18bdde] from-60%  to-[#fffb61] to-95% rounded rounded-2xl">
+                    <div class=" text-center  lg:flex lg:py-32 lg:text-left w-full ">
+                        <div class="gap-4 w-full ">
+                            <div class="flex justify-between">
+                                <h1
+                                    class=" max-w-md  font-bold tracking-tight mb-2 text-gray-900 lg:text-2xl  text-4xl  drop-shadow-[0_3px_3px_rgba(0,0,0,0.3)]">
+                                    Usia (Tahun)
+                                </h1>
+                                <h1 id="errorusia" class="{{ $error }}">
+                                </h1>
+                                @error('usia')
+                                    <div class="{{ $error }}">Harus Diisi</div>
+                                @enderror
+                            </div>
+                            <ul class="grid w-full gap-2 grid-cols-2">
+                                <li>
+                                    <input type="radio" id="29" name="usia" value="29" checked
+                                        class="hidden scroll-btn peer">
+                                    <label for="29"
+                                        class="inline-flex items-center justify-between w-full p-3 text-gray-900 bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-gray-800  peer-checked:text-white hover:text-gray-900 hover:bg-gray-400 ">
+                                        <div class="block">
+                                            <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Kurang
+                                                dari
+                                                30 Tahun
+                                            </div>
                                         </div>
-                                    </div>
-                                </label>
-                            </li>
-                            <li>
-                                <input type="radio" id="30" name="usia" value="30"
-                                    class="hidden scroll-btn peer">
-                                <label for="30"
-                                    class="inline-flex items-center justify-between w-full p-3 text-gray-900 bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-gray-800  peer-checked:text-white hover:text-gray-900 hover:bg-gray-400 ">
-                                    <div class="block">
-                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">30 s/d 40
-                                            Tahun</div>
-                                    </div>
-                                </label>
-                            </li>
-                            <li>
-                                <input type="radio" id="41" name="usia" value="41"
-                                    class="hidden scroll-btn peer">
-                                <label for="41"
-                                    class="inline-flex items-center justify-between w-full p-3 text-gray-900 bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-gray-800  peer-checked:text-white hover:text-gray-900 hover:bg-gray-400 ">
-                                    <div class="block">
-                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">41 s/d 50
-                                            Tahun</div>
-                                    </div>
-                                </label>
-                            </li>
-                            <li>
-                                <input type="radio" id="51" name="usia" value="51 "
-                                    class="hidden scroll-btn peer">
-                                <label for="51"
-                                    class="inline-flex items-center justify-between w-full p-3 text-gray-900 bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-gray-800  peer-checked:text-white hover:text-gray-900 hover:bg-gray-400 ">
-                                    <div class="block">
-                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Lebih dari
-                                            50 Tahun</div>
-                                    </div>
-                                </label>
-                            </li>
-                        </ul>
-                        
-                    </div>
-                    <div class="w-1/6"></div>
-                    <div class="gap-4 w-full lg:mt-0">
-                        <div class="flex justify-between ">
-                            <h1
-                                class=" max-w-md  font-bold tracking-tight mb-2 text-gray-900 lg:text-2xl  text-4xl  drop-shadow-[0_3px_3px_rgba(0,0,0,0.3)]">
-                                Pendidikan
-                            </h1>
-                            @error('pendidikan')
-                                <div class="{{ $error }}">Pendidikan</div>
-                            @enderror
-                        </div>
-                        <ul class="grid w-full gap-2 grid-cols-2">
-                            <li>
-                                <input type="radio" id="sd" name="pendidikan" value="SD"
-                                    class="hidden scroll-btn peer">
-                                <label for="sd"
-                                    class="inline-flex items-center justify-between w-full p-3 text-gray-900 bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-gray-800  peer-checked:text-white hover:text-gray-900 hover:bg-gray-400 ">
-                                    <div class="block">
-                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">SD</div>
-                                    </div>
-                                </label>
-                            </li>
-                            <li>
-                                <input type="radio" id="smp" name="pendidikan" value="SMP"
-                                    class="hidden scroll-btn peer">
-                                <label for="smp"
-                                    class="inline-flex items-center justify-between w-full p-3 text-gray-900 bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-gray-800  peer-checked:text-white hover:text-gray-900 hover:bg-gray-400 ">
-                                    <div class="block">
-                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">SMP</div>
-                                    </div>
-                                </label>
-                            </li>
-                            <li>
-                                <input type="radio" id="sma/smk" name="pendidikan" value="SMA / SMK" checked
-                                    class="hidden scroll-btn peer">
-                                <label for="sma/smk"
-                                    class="inline-flex items-center justify-between w-full p-3 text-gray-900 bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-gray-800  peer-checked:text-white hover:text-gray-900 hover:bg-gray-400 ">
-                                    <div class="block">
-                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">SMA / SMK
+                                    </label>
+                                </li>
+                                <li>
+                                    <input type="radio" id="30" name="usia" value="30" class="hidden scroll-btn peer">
+                                    <label for="30"
+                                        class="inline-flex items-center justify-between w-full p-3 text-gray-900 bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-gray-800  peer-checked:text-white hover:text-gray-900 hover:bg-gray-400 ">
+                                        <div class="block">
+                                            <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">30 s/d
+                                                40
+                                                Tahun</div>
                                         </div>
-                                    </div>
-                                </label>
-                            </li>
-                            <li>
-                                <input type="radio" id="d1/d3" name="pendidikan" value="D-I / D-III"
-                                    class="hidden scroll-btn peer">
-                                <label for="d1/d3"
-                                    class="inline-flex items-center justify-between w-full p-3 text-gray-900 bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-gray-800  peer-checked:text-white hover:text-gray-900 hover:bg-gray-400 ">
-                                    <div class="block">
-                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">D-I / D-III
+                                    </label>
+                                </li>
+                                <li>
+                                    <input type="radio" id="41" name="usia" value="41" class="hidden scroll-btn peer">
+                                    <label for="41"
+                                        class="inline-flex items-center justify-between w-full p-3 text-gray-900 bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-gray-800  peer-checked:text-white hover:text-gray-900 hover:bg-gray-400 ">
+                                        <div class="block">
+                                            <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">41 s/d
+                                                50
+                                                Tahun</div>
                                         </div>
-                                    </div>
-                                </label>
-                            </li>
-                            <li>
-                                <input type="radio" id="s1/setara" name="pendidikan" value="S1 / Setara"
-                                    class="hidden scroll-btn peer">
-                                <label for="s1/setara"
-                                    class="inline-flex items-center justify-between w-full p-3 text-gray-900 bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-gray-800  peer-checked:text-white hover:text-gray-900 hover:bg-gray-400 ">
-                                    <div class="block">
-                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">S1 / Setara
+                                    </label>
+                                </li>
+                                <li>
+                                    <input type="radio" id="51" name="usia" value="51 " class="hidden scroll-btn peer">
+                                    <label for="51"
+                                        class="inline-flex items-center justify-between w-full p-3 text-gray-900 bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-gray-800  peer-checked:text-white hover:text-gray-900 hover:bg-gray-400 ">
+                                        <div class="block">
+                                            <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Lebih
+                                                dari
+                                                50 Tahun</div>
                                         </div>
-                                    </div>
-                                </label>
-                            </li>
-                            <li>
-                                <input type="radio" id="s2/s3" name="pendidikan" value="S2 / S3"
-                                    class="hidden scroll-btn peer">
-                                <label for="s2/s3"
-                                    class="inline-flex items-center justify-between w-full p-3 text-gray-900 bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-gray-800  peer-checked:text-white hover:text-gray-900 hover:bg-gray-400 ">
-                                    <div class="block">
-                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">S2 / S3
-                                        </div>
-                                    </div>
-                                </label>
-                            </li>
-                        </ul>
+                                    </label>
+                                </li>
+                            </ul>
 
-                        <div class="flex justify-between mt-3">
-                            <h1
-                                class=" max-w-md capitalize  font-bold tracking-tight mb-2 text-gray-900 lg:text-2xl  text-4xl  drop-shadow-[0_3px_3px_rgba(0,0,0,0.3)]">
-                                pekerjaan
-                            </h1>
-                            @error('pekerjaan')
-                                <div class="{{ $error }} capitalize">Harus Diisi</div>
-                            @enderror
                         </div>
-                        <ul class="grid w-full gap-2 md:grid-cols-2">
-                            <li>
-                                <input type="radio" id="asn" name="pekerjaan" value="ASN"
-                                    class="hidden scroll-btn peer">
-                                <label for="asn"
-                                    class="inline-flex items-center justify-between w-full p-3 text-gray-900 bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-gray-800  peer-checked:text-white hover:text-gray-900 hover:bg-gray-400 ">
-                                    <div class="block">
-                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">ASN</div>
-                                    </div>
-                                </label>
-                            </li>
-                            <li>
-                                <input type="radio" id="tni/polri" name="pekerjaan" value="TNI / POLRI"
-                                    class="hidden scroll-btn peer">
-                                <label for="tni/polri"
-                                    class="inline-flex items-center justify-between w-full p-3 text-gray-900 bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-gray-800  peer-checked:text-white hover:text-gray-900 hover:bg-gray-400 ">
-                                    <div class="block">
-                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">TNI / POLRI
+                        <div class="gap-4 w-full lg:mt-0">
+                            <div class="flex justify-between ">
+                                <h1
+                                    class=" max-w-md  font-bold tracking-tight mb-2 text-gray-900 lg:text-2xl  text-4xl  drop-shadow-[0_3px_3px_rgba(0,0,0,0.3)]">
+                                    Pendidikan
+                                </h1>
+                                @error('pendidikan')
+                                    <div class="{{ $error }}">Pendidikan</div>
+                                @enderror
+                            </div>
+                            <ul class="grid w-full gap-2 grid-cols-2">
+                                <li>
+                                    <input type="radio" id="sd" name="pendidikan" value="SD"
+                                        class="hidden scroll-btn peer">
+                                    <label for="sd"
+                                        class="inline-flex items-center justify-between w-full p-3 text-gray-900 bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-gray-800  peer-checked:text-white hover:text-gray-900 hover:bg-gray-400 ">
+                                        <div class="block">
+                                            <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">SD</div>
                                         </div>
-                                    </div>
-                                </label>
-                            </li>
-                            <li>
-                                <input type="radio" id="swasta" name="pekerjaan" value="Swasta" checked
-                                    class="hidden scroll-btn peer">
-                                <label for="swasta"
-                                    class="inline-flex items-center justify-between w-full p-3 text-gray-900 bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-gray-800  peer-checked:text-white hover:text-gray-900 hover:bg-gray-400 ">
-                                    <div class="block">
-                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Swasta
+                                    </label>
+                                </li>
+                                <li>
+                                    <input type="radio" id="smp" name="pendidikan" value="SMP"
+                                        class="hidden scroll-btn peer">
+                                    <label for="smp"
+                                        class="inline-flex items-center justify-between w-full p-3 text-gray-900 bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-gray-800  peer-checked:text-white hover:text-gray-900 hover:bg-gray-400 ">
+                                        <div class="block">
+                                            <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">SMP
+                                            </div>
                                         </div>
-                                    </div>
-                                </label>
-                            </li>
-                            <li>
-                                <input type="radio" id="pengusaha" name="pekerjaan" value="Pengusaha"
-                                    class="hidden scroll-btn peer">
-                                <label for="pengusaha"
-                                    class="inline-flex items-center justify-between w-full p-3 text-gray-900 bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-gray-800  peer-checked:text-white hover:text-gray-900 hover:bg-gray-400 ">
-                                    <div class="block">
-                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Pengusaha
+                                    </label>
+                                </li>
+                                <li>
+                                    <input type="radio" id="sma/smk" name="pendidikan" value="SMA / SMK" checked
+                                        class="hidden scroll-btn peer">
+                                    <label for="sma/smk"
+                                        class="inline-flex items-center justify-between w-full p-3 text-gray-900 bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-gray-800  peer-checked:text-white hover:text-gray-900 hover:bg-gray-400 ">
+                                        <div class="block">
+                                            <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">SMA /
+                                                SMK
+                                            </div>
                                         </div>
-                                    </div>
-                                </label>
-                            </li>
-                            <li>
-                                <input type="radio" id="pelajar" name="pekerjaan" value="Pelajar"
-                                    class="hidden scroll-btn peer">
-                                <label for="pelajar"
-                                    class="inline-flex items-center justify-between w-full p-3 text-gray-900 bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-gray-800  peer-checked:text-white hover:text-gray-900 hover:bg-gray-400 ">
-                                    <div class="block">
-                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Pelajar
+                                    </label>
+                                </li>
+                                <li>
+                                    <input type="radio" id="d1/d3" name="pendidikan" value="D-I / D-III"
+                                        class="hidden scroll-btn peer">
+                                    <label for="d1/d3"
+                                        class="inline-flex items-center justify-between w-full p-3 text-gray-900 bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-gray-800  peer-checked:text-white hover:text-gray-900 hover:bg-gray-400 ">
+                                        <div class="block">
+                                            <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">D-I /
+                                                D-III
+                                            </div>
                                         </div>
-                                    </div>
-                                </label>
-                            </li>
-                            <li>
-                                <input type="radio" id="lyn" name="pekerjaan" value="Lainnya"
-                                    class="hidden scroll-btn peer">
-                                <label for="lyn"
-                                    class="inline-flex items-center justify-between w-full p-3 text-gray-900 bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-gray-800  peer-checked:text-white hover:text-gray-900 hover:bg-gray-400 ">
-                                    <div class="block">
-                                        <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Lainnya
+                                    </label>
+                                </li>
+                                <li>
+                                    <input type="radio" id="s1/setara" name="pendidikan" value="S1 / Setara"
+                                        class="hidden scroll-btn peer">
+                                    <label for="s1/setara"
+                                        class="inline-flex items-center justify-between w-full p-3 text-gray-900 bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-gray-800  peer-checked:text-white hover:text-gray-900 hover:bg-gray-400 ">
+                                        <div class="block">
+                                            <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">S1 /
+                                                Setara
+                                            </div>
                                         </div>
-                                    </div>
-                                </label>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="step-actions col-span-2 flex justify-between mt-5 w-full">
-                        <a type="button" onclick="window.location='#identitas'"
-                            class="flex items-center gap-2 cursor-pointer drop-shadow-[0_3px_3px_rgba(0,0,0,0.3)]">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                                class="w-8 h-8 text-gray-900">
-                                <path fill-rule="evenodd"
-                                    d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-4.28 9.22a.75.75 0 000 1.06l3 3a.75.75 0 101.06-1.06l-1.72-1.72h5.69a.75.75 0 000-1.5h-5.69l1.72-1.72a.75.75 0 00-1.06-1.06l-3 3z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                            <label class="text-gray-900 font-medium lg:text-xl text-4xl cursor-pointer">SEBELUM</label>
-                        </a>
-                        <a type="button" onclick="window.location='#satu'"
-                            class="flex items-center gap-2 cursor-pointer drop-shadow-[0_3px_3px_rgba(0,0,0,0.3)]">
-                            <label class="text-gray-900 font-medium lg:text-xl text-4xl cursor-pointer">LANJUT</label>
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                                class="w-8 h-8 text-gray-900">
-                                <path fill-rule="evenodd"
-                                    d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm4.28 10.28a.75.75 0 000-1.06l-3-3a.75.75 0 10-1.06 1.06l1.72 1.72H8.25a.75.75 0 000 1.5h5.69l-1.72 1.72a.75.75 0 101.06 1.06l3-3z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div id="satu"
-                class="items-center relative isolate min-w-full h-screen px-4 sm:px-6 lg:px-16
-                bg-gradient-to-br from-[#fff5e6] via-[#ffecd6] to-[#ffd9b0]">
-                <div class="flex flex-col items-stretch gap-4 w-full h-full py-[72px] max-w-2xl mx-auto justify-center">
-                    <div class="w-full flex flex-col p-6 bg-white rounded-2xl shadow-[0_8px_32px_rgba(146,76,0,0.12)] justify-center">
-                        <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4">
-                            <span class="material-symbols-outlined text-[#ff8800] text-3xl">checklist</span>
+                                    </label>
+                                </li>
+                                <li>
+                                    <input type="radio" id="s2/s3" name="pendidikan" value="S2 / S3"
+                                        class="hidden scroll-btn peer">
+                                    <label for="s2/s3"
+                                        class="inline-flex items-center justify-between w-full p-3 text-gray-900 bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-gray-800  peer-checked:text-white hover:text-gray-900 hover:bg-gray-400 ">
+                                        <div class="block">
+                                            <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">S2 / S3
+                                            </div>
+                                        </div>
+                                    </label>
+                                </li>
+                            </ul>
+
+                            <div class="flex justify-between mt-3">
+                                <h1
+                                    class=" max-w-md capitalize  font-bold tracking-tight mb-2 text-gray-900 lg:text-2xl  text-4xl  drop-shadow-[0_3px_3px_rgba(0,0,0,0.3)]">
+                                    pekerjaan
+                                </h1>
+                                @error('pekerjaan')
+                                    <div class="{{ $error }} capitalize">Harus Diisi</div>
+                                @enderror
+                            </div>
+                            <ul class="grid w-full gap-2 md:grid-cols-2">
+                                <li>
+                                    <input type="radio" id="asn" name="pekerjaan" value="ASN"
+                                        class="hidden scroll-btn peer">
+                                    <label for="asn"
+                                        class="inline-flex items-center justify-between w-full p-3 text-gray-900 bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-gray-800  peer-checked:text-white hover:text-gray-900 hover:bg-gray-400 ">
+                                        <div class="block">
+                                            <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">ASN
+                                            </div>
+                                        </div>
+                                    </label>
+                                </li>
+                                <li>
+                                    <input type="radio" id="tni/polri" name="pekerjaan" value="TNI / POLRI"
+                                        class="hidden scroll-btn peer">
+                                    <label for="tni/polri"
+                                        class="inline-flex items-center justify-between w-full p-3 text-gray-900 bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-gray-800  peer-checked:text-white hover:text-gray-900 hover:bg-gray-400 ">
+                                        <div class="block">
+                                            <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">TNI /
+                                                POLRI
+                                            </div>
+                                        </div>
+                                    </label>
+                                </li>
+                                <li>
+                                    <input type="radio" id="swasta" name="pekerjaan" value="Swasta" checked
+                                        class="hidden scroll-btn peer">
+                                    <label for="swasta"
+                                        class="inline-flex items-center justify-between w-full p-3 text-gray-900 bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-gray-800  peer-checked:text-white hover:text-gray-900 hover:bg-gray-400 ">
+                                        <div class="block">
+                                            <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Swasta
+                                            </div>
+                                        </div>
+                                    </label>
+                                </li>
+                                <li>
+                                    <input type="radio" id="pengusaha" name="pekerjaan" value="Pengusaha"
+                                        class="hidden scroll-btn peer">
+                                    <label for="pengusaha"
+                                        class="inline-flex items-center justify-between w-full p-3 text-gray-900 bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-gray-800  peer-checked:text-white hover:text-gray-900 hover:bg-gray-400 ">
+                                        <div class="block">
+                                            <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">
+                                                Pengusaha
+                                            </div>
+                                        </div>
+                                    </label>
+                                </li>
+                                <li>
+                                    <input type="radio" id="pelajar" name="pekerjaan" value="Pelajar"
+                                        class="hidden scroll-btn peer">
+                                    <label for="pelajar"
+                                        class="inline-flex items-center justify-between w-full p-3 text-gray-900 bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-gray-800  peer-checked:text-white hover:text-gray-900 hover:bg-gray-400 ">
+                                        <div class="block">
+                                            <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Pelajar
+                                            </div>
+                                        </div>
+                                    </label>
+                                </li>
+                                <li>
+                                    <input type="radio" id="lyn" name="pekerjaan" value="Lainnya"
+                                        class="hidden scroll-btn peer">
+                                    <label for="lyn"
+                                        class="inline-flex items-center justify-between w-full p-3 text-gray-900 bg-white border-2 border-white rounded-lg cursor-pointer  peer-checked:bg-gray-800  peer-checked:text-white hover:text-gray-900 hover:bg-gray-400 ">
+                                        <div class="block">
+                                            <div class="w-full lg:text-lg lg:text-2xl  text-4xl  font-semibold">Lainnya
+                                            </div>
+                                        </div>
+                                    </label>
+                                </li>
+                            </ul>
                         </div>
-                        <p class="font-bold uppercase tracking-widest text-xs text-[#924c00] mb-2">Pertanyaan 1 dari 9</p>
-                        <h2 class="text-lg xl:text-xl font-semibold leading-snug text-[#191c1d]">Bagaimana pendapat Saudara tentang kesesuaian persyaratan pelayanan dengan jenis pelayanannya?</h2>
-                    </div>
-                    <div class="w-full flex flex-col gap-3">
-                        <div>
-                            <input type="radio" id="u1-1" name="u1" value="1" class="hidden scroll-btn peer">
-                            <label for="u1-1"
-                                class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                <span class="font-semibold text-base lg:text-lg">Tidak Sesuai</span>
-                            </label>
-                        </div>
-                        <div>
-                            <input type="radio" id="u1-2" name="u1" value="2" class="hidden scroll-btn peer">
-                            <label for="u1-2"
-                                class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                <span class="font-semibold text-base lg:text-lg">Kurang Sesuai</span>
-                            </label>
-                        </div>
-                        <div>
-                            <input type="radio" id="u1-3" name="u1" value="3" class="hidden scroll-btn peer">
-                            <label for="u1-3"
-                                class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                <span class="font-semibold text-base lg:text-lg">Sesuai</span>
-                            </label>
-                        </div>
-                        <div>
-                            <input type="radio" id="u1-4" name="u1" value="4" checked class="hidden scroll-btn peer">
-                            <label for="u1-4"
-                                class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                <span class="font-semibold text-base lg:text-lg">Sangat Sesuai</span>
-                            </label>
-                        </div>
-                        <div class="step-actions flex justify-between mt-3">
-                            <a type="button" onclick="window.location='#kedua'"
-                                class="flex items-center gap-2 cursor-pointer text-[#924c00] font-semibold text-sm hover:text-[#ff8800] transition-colors">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                                    <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-4.28 9.22a.75.75 0 000 1.06l3 3a.75.75 0 101.06-1.06l-1.72-1.72h5.69a.75.75 0 000-1.5h-5.69l1.72-1.72a.75.75 0 00-1.06-1.06l-3 3z" clip-rule="evenodd" />
+                        <div class="step-actions col-span-2 flex justify-between mt-5 w-full">
+                            <a type="button" onclick="window.location='#identitas'"
+                                class="flex items-center gap-2 cursor-pointer drop-shadow-[0_3px_3px_rgba(0,0,0,0.3)]">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                    class="w-8 h-8 text-gray-900">
+                                    <path fill-rule="evenodd"
+                                        d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-4.28 9.22a.75.75 0 000 1.06l3 3a.75.75 0 101.06-1.06l-1.72-1.72h5.69a.75.75 0 000-1.5h-5.69l1.72-1.72a.75.75 0 00-1.06-1.06l-3 3z"
+                                        clip-rule="evenodd" />
                                 </svg>
-                                Kembali
+                                <label
+                                    class="text-gray-900 font-medium lg:text-xl text-4xl cursor-pointer">SEBELUM</label>
                             </a>
-                            <a type="button" onclick="window.location='#dua'"
-                                class="flex items-center gap-2 cursor-pointer bg-[#ff8800] text-white px-5 py-2 rounded-xl font-semibold text-sm hover:bg-[#e07200] transition-colors shadow-md">
-                                Lanjut
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                                    <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm4.28 10.28a.75.75 0 000-1.06l-3-3a.75.75 0 10-1.06 1.06l1.72 1.72H8.25a.75.75 0 000 1.5h5.69l-1.72 1.72a.75.75 0 101.06 1.06l3-3z" clip-rule="evenodd" />
-                                </svg>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div id="dua"
-                class="items-center relative isolate min-w-full h-screen px-4 sm:px-6 lg:px-16
-                bg-gradient-to-br from-[#fff5e6] via-[#ffecd6] to-[#ffd9b0]">
-                <div class="flex flex-col items-stretch gap-4 w-full h-full py-[72px] max-w-2xl mx-auto justify-center">
-                    <div class="w-full flex flex-col p-6 bg-white rounded-2xl shadow-[0_8px_32px_rgba(146,76,0,0.12)] justify-center">
-                        <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4">
-                            <span class="material-symbols-outlined text-[#ff8800] text-3xl">account_tree</span>
-                        </div>
-                        <p class="font-bold uppercase tracking-widest text-xs text-[#924c00] mb-2">Pertanyaan 2 dari 9</p>
-                        <h2 class="text-lg xl:text-xl font-semibold leading-snug text-[#191c1d]">Bagaimana pendapat Saudara tentang kemudahan prosedur pelayanan pada unit layanan ini?</h2>
-                    </div>
-                    <div class="w-full flex flex-col gap-3">
-                        <div>
-                            <input type="radio" id="u2-1" name="u2" value="1" class="hidden scroll-btn peer">
-                            <label for="u2-1"
-                                class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                <span class="font-semibold text-base lg:text-lg">Tidak Mudah</span>
-                            </label>
-                        </div>
-                        <div>
-                            <input type="radio" id="u2-2" name="u2" value="2" class="hidden scroll-btn peer">
-                            <label for="u2-2"
-                                class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                <span class="font-semibold text-base lg:text-lg">Kurang Mudah</span>
-                            </label>
-                        </div>
-                        <div>
-                            <input type="radio" id="u2-3" name="u2" value="3" class="hidden scroll-btn peer">
-                            <label for="u2-3"
-                                class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                <span class="font-semibold text-base lg:text-lg">Mudah</span>
-                            </label>
-                        </div>
-                        <div>
-                            <input type="radio" id="u2-4" name="u2" value="4" checked class="hidden scroll-btn peer">
-                            <label for="u2-4"
-                                class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                <span class="font-semibold text-base lg:text-lg">Sangat Mudah</span>
-                            </label>
-                        </div>
-                        <div class="step-actions flex justify-between mt-3">
                             <a type="button" onclick="window.location='#satu'"
-                                class="flex items-center gap-2 cursor-pointer text-[#924c00] font-semibold text-sm hover:text-[#ff8800] transition-colors">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                                    <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-4.28 9.22a.75.75 0 000 1.06l3 3a.75.75 0 101.06-1.06l-1.72-1.72h5.69a.75.75 0 000-1.5h-5.69l1.72-1.72a.75.75 0 00-1.06-1.06l-3 3z" clip-rule="evenodd" />
-                                </svg>
-                                Kembali
-                            </a>
-                            <a type="button" onclick="window.location='#tiga'"
-                                class="flex items-center gap-2 cursor-pointer bg-[#ff8800] text-white px-5 py-2 rounded-xl font-semibold text-sm hover:bg-[#e07200] transition-colors shadow-md">
-                                Lanjut
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                                    <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm4.28 10.28a.75.75 0 000-1.06l-3-3a.75.75 0 10-1.06 1.06l1.72 1.72H8.25a.75.75 0 000 1.5h5.69l-1.72 1.72a.75.75 0 101.06 1.06l3-3z" clip-rule="evenodd" />
+                                class="flex items-center gap-2 cursor-pointer drop-shadow-[0_3px_3px_rgba(0,0,0,0.3)]">
+                                <label
+                                    class="text-gray-900 font-medium lg:text-xl text-4xl cursor-pointer">LANJUT</label>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                    class="w-8 h-8 text-gray-900">
+                                    <path fill-rule="evenodd"
+                                        d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm4.28 10.28a.75.75 0 000-1.06l-3-3a.75.75 0 10-1.06 1.06l1.72 1.72H8.25a.75.75 0 000 1.5h5.69l-1.72 1.72a.75.75 0 101.06 1.06l3-3z"
+                                        clip-rule="evenodd" />
                                 </svg>
                             </a>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div id="tiga"
-                class="items-center relative isolate min-w-full h-screen px-4 sm:px-6 lg:px-16
+                <div id="satu" class="items-center relative isolate min-w-full h-screen px-4 sm:px-6 lg:px-16
                 bg-gradient-to-br from-[#fff5e6] via-[#ffecd6] to-[#ffd9b0]">
-                <div class="flex flex-col items-stretch gap-4 w-full h-full py-[72px] max-w-2xl mx-auto justify-center">
-                    <div class="w-full flex flex-col p-6 bg-white rounded-2xl shadow-[0_8px_32px_rgba(146,76,0,0.12)] justify-center">
-                        <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4">
-                            <span class="material-symbols-outlined text-[#ff8800] text-3xl">schedule</span>
+                    <div
+                        class="flex flex-col items-stretch gap-4 w-full h-full py-[72px] max-w-2xl mx-auto justify-center">
+                        <div
+                            class="w-full flex flex-col p-6 bg-white rounded-2xl shadow-[0_8px_32px_rgba(146,76,0,0.12)] y-center">
+                            <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4 gap-3">
+                                <span class="material-symbols-outlined text-[#ff8800] text-2xl">people</span>
+                            </div>
+                            <p class="font-bold uppercase tracking-widest text-xs text-[#924c00] mb-2">pelatihan dan
+                                kemandirian masyarakat</p>
+                            <h2 class="text-lg xl:text-xl font-semibold leading-snug text-[#191c1d]">Sejauh mana materi
+                                pelatihan yang diberikan sesuai dengan kebutuhan keterampilan atau potensi ekonomi di
+                                wilayah Anda?</h2>
                         </div>
-                        <p class="font-bold uppercase tracking-widest text-xs text-[#924c00] mb-2">Pertanyaan 3 dari 9</p>
-                        <h2 class="text-lg xl:text-xl font-semibold leading-snug text-[#191c1d]">Bagaimana pendapat Saudara tentang kecepatan waktu pelayanan pada unit layanan ini?</h2>
-                    </div>
-                    <div class="w-full flex flex-col gap-3">
-                        <div>
-                            <input type="radio" id="u3-1" name="u3" value="1" class="hidden scroll-btn peer">
-                            <label for="u3-1"
-                                class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                <span class="font-semibold text-base lg:text-lg">Tidak Cepat</span>
-                            </label>
-                        </div>
-                        <div>
-                            <input type="radio" id="u3-2" name="u3" value="2" class="hidden scroll-btn peer">
-                            <label for="u3-2"
-                                class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                <span class="font-semibold text-base lg:text-lg">Kurang Cepat</span>
-                            </label>
-                        </div>
-                        <div>
-                            <input type="radio" id="u3-3" name="u3" value="3" class="hidden scroll-btn peer">
-                            <label for="u3-3"
-                                class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                <span class="font-semibold text-base lg:text-lg">Cepat</span>
-                            </label>
-                        </div>
-                        <div>
-                            <input type="radio" id="u3-4" name="u3" value="4" checked class="hidden scroll-btn peer">
-                            <label for="u3-4"
-                                class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                <span class="font-semibold text-base lg:text-lg">Sangat Cepat</span>
-                            </label>
-                        </div>
-                        <div class="step-actions flex justify-between mt-3">
-                            <a type="button" onclick="window.location='#dua'"
-                                class="flex items-center gap-2 cursor-pointer text-[#924c00] font-semibold text-sm hover:text-[#ff8800] transition-colors">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                                    <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-4.28 9.22a.75.75 0 000 1.06l3 3a.75.75 0 101.06-1.06l-1.72-1.72h5.69a.75.75 0 000-1.5h-5.69l1.72-1.72a.75.75 0 00-1.06-1.06l-3 3z" clip-rule="evenodd" />
-                                </svg>
-                                Kembali
-                            </a>
-                            <a type="button" onclick="window.location='#empat'"
-                                class="flex items-center gap-2 cursor-pointer bg-[#ff8800] text-white px-5 py-2 rounded-xl font-semibold text-sm hover:bg-[#e07200] transition-colors shadow-md">
-                                Lanjut
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                                    <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm4.28 10.28a.75.75 0 000-1.06l-3-3a.75.75 0 10-1.06 1.06l1.72 1.72H8.25a.75.75 0 000 1.5h5.69l-1.72 1.72a.75.75 0 101.06 1.06l3-3z" clip-rule="evenodd" />
-                                </svg>
-                            </a>
+                        <div class="w-full flex flex-col gap-3">
+                            <div>
+                                <input type="radio" id="u1-1" name="u1" value="1" class="hidden scroll-btn peer">
+                                <label for="u1-1"
+                                    class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
+                                    <span class="font-semibold text-base lg:text-lg">Tidak Relevan</span>
+                                </label>
+                            </div>
+                            <div>
+                                <input type="radio" id="u1-2" name="u1" value="2" class="hidden scroll-btn peer">
+                                <label for="u1-2"
+                                    class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
+                                    <span class="font-semibold text-base lg:text-lg">Kurang Relevan</span>
+                                </label>
+                            </div>
+                            <div>
+                                <input type="radio" id="u1-3" name="u1" value="3" class="hidden scroll-btn peer">
+                                <label for="u1-3"
+                                    class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
+                                    <span class="font-semibold text-base lg:text-lg">Relevan</span>
+                                </label>
+                            </div>
+                            <div>
+                                <input type="radio" id="u1-4" name="u1" value="4" checked
+                                    class="hidden scroll-btn peer">
+                                <label for="u1-4"
+                                    class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
+                                    <span class="font-semibold text-base lg:text-lg">Sangat Relevan</span>
+                                </label>
+                            </div>
+                            <div class="step-actions flex justify-between mt-3">
+                                <a type="button" onclick="window.location='#kedua'"
+                                    class="flex items-center gap-2 cursor-pointer text-[#924c00] font-semibold text-sm hover:text-[#ff8800] transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                        class="w-6 h-6">
+                                        <path fill-rule="evenodd"
+                                            d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-4.28 9.22a.75.75 0 000 1.06l3 3a.75.75 0 101.06-1.06l-1.72-1.72h5.69a.75.75 0 000-1.5h-5.69l1.72-1.72a.75.75 0 00-1.06-1.06l-3 3z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                    Kembali
+                                </a>
+                                <a type="button" onclick="window.location='#dua'"
+                                    class="flex items-center gap-2 cursor-pointer bg-[#ff8800] text-white px-5 py-2 rounded-xl font-semibold text-sm hover:bg-[#e07200] transition-colors shadow-md">
+                                    Lanjut
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                        class="w-6 h-6">
+                                        <path fill-rule="evenodd"
+                                            d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm4.28 10.28a.75.75 0 000-1.06l-3-3a.75.75 0 10-1.06 1.06l1.72 1.72H8.25a.75.75 0 000 1.5h5.69l-1.72 1.72a.75.75 0 101.06 1.06l3-3z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div id="empat"
-                class="items-center relative isolate min-w-full h-screen px-4 sm:px-6 lg:px-16
+                <div id="dua" class="items-center relative isolate min-w-full h-screen px-4 sm:px-6 lg:px-16
                 bg-gradient-to-br from-[#fff5e6] via-[#ffecd6] to-[#ffd9b0]">
-                <div class="flex flex-col items-stretch gap-4 w-full h-full py-[72px] max-w-2xl mx-auto justify-center">
-                    <div class="w-full flex flex-col p-6 bg-white rounded-2xl shadow-[0_8px_32px_rgba(146,76,0,0.12)] justify-center">
-                        <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4">
-                            <span class="material-symbols-outlined text-[#ff8800] text-3xl">payments</span>
+                    <div
+                        class="flex flex-col items-stretch gap-4 w-full h-full py-[72px] max-w-2xl mx-auto justify-center">
+                        <div
+                            class="w-full flex flex-col p-6 bg-white rounded-2xl shadow-[0_8px_32px_rgba(146,76,0,0.12)] justify-center">
+                            <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4 gap-3">
+                                <span class="material-symbols-outlined text-[#ff8800] text-2xl">school</span>
+                            </div>
+                            <!-- <p class="font-bold uppercase tracking-widest text-xs text-[#924c00] mb-2">Pertanyaan 2 dari 9</p> -->
+                            <h2 class="text-lg xl:text-xl font-semibold leading-snug text-[#191c1d]">Bagaimana penilaian
+                                Anda terhadap kemudahan proses birokrasi atau administrasi dalam pengajuan bantuan
+                                pendidikan ini?</h2>
                         </div>
-                        <p class="font-bold uppercase tracking-widest text-xs text-[#924c00] mb-2">Pertanyaan 4 dari 9</p>
-                        <h2 class="text-lg xl:text-xl font-semibold leading-snug text-[#191c1d]">Bagaimana pendapat Saudara tentang kewajaran biaya/tarif untuk mendapatkan pelayanan?</h2>
-                    </div>
-                    <div class="w-full flex flex-col gap-3">
-                        <div>
-                            <input type="radio" id="u4-1" name="u4" value="1" class="hidden scroll-btn peer">
-                            <label for="u4-1"
-                                class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                <span class="font-semibold text-base lg:text-lg">Sangat Mahal</span>
-                            </label>
-                        </div>
-                        <div>
-                            <input type="radio" id="u4-2" name="u4" value="2" class="hidden scroll-btn peer">
-                            <label for="u4-2"
-                                class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                <span class="font-semibold text-base lg:text-lg">Cukup Mahal</span>
-                            </label>
-                        </div>
-                        <div>
-                            <input type="radio" id="u4-3" name="u4" value="3" class="hidden scroll-btn peer">
-                            <label for="u4-3"
-                                class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                <span class="font-semibold text-base lg:text-lg">Murah</span>
-                            </label>
-                        </div>
-                        <div>
-                            <input type="radio" id="u4-4" name="u4" value="4" checked class="hidden scroll-btn peer">
-                            <label for="u4-4"
-                                class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                <span class="font-semibold text-base lg:text-lg">Gratis</span>
-                            </label>
-                        </div>
-                        <div class="step-actions flex justify-between mt-3">
-                            <a type="button" onclick="window.location='#tiga'"
-                                class="flex items-center gap-2 cursor-pointer text-[#924c00] font-semibold text-sm hover:text-[#ff8800] transition-colors">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                                    <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-4.28 9.22a.75.75 0 000 1.06l3 3a.75.75 0 101.06-1.06l-1.72-1.72h5.69a.75.75 0 000-1.5h-5.69l1.72-1.72a.75.75 0 00-1.06-1.06l-3 3z" clip-rule="evenodd" />
-                                </svg>
-                                Kembali
-                            </a>
-                            <a type="button" onclick="window.location='#lima'"
-                                class="flex items-center gap-2 cursor-pointer bg-[#ff8800] text-white px-5 py-2 rounded-xl font-semibold text-sm hover:bg-[#e07200] transition-colors shadow-md">
-                                Lanjut
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                                    <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm4.28 10.28a.75.75 0 000-1.06l-3-3a.75.75 0 10-1.06 1.06l1.72 1.72H8.25a.75.75 0 000 1.5h5.69l-1.72 1.72a.75.75 0 101.06 1.06l3-3z" clip-rule="evenodd" />
-                                </svg>
-                            </a>
+                        <div class="w-full flex flex-col gap-3">
+                            <div>
+                                <input type="radio" id="u2-1" name="u2" value="1" class="hidden scroll-btn peer">
+                                <label for="u2-1"
+                                    class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
+                                    <span class="font-semibold text-base lg:text-lg">Tidak Sulit</span>
+                                </label>
+                            </div>
+                            <div>
+                                <input type="radio" id="u2-2" name="u2" value="2" class="hidden scroll-btn peer">
+                                <label for="u2-2"
+                                    class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
+                                    <span class="font-semibold text-base lg:text-lg">Kurang Sulit</span>
+                                </label>
+                            </div>
+                            <div>
+                                <input type="radio" id="u2-3" name="u2" value="3" class="hidden scroll-btn peer">
+                                <label for="u2-3"
+                                    class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
+                                    <span class="font-semibold text-base lg:text-lg">Sulit</span>
+                                </label>
+                            </div>
+                            <div>
+                                <input type="radio" id="u2-4" name="u2" value="4" checked
+                                    class="hidden scroll-btn peer">
+                                <label for="u2-4"
+                                    class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
+                                    <span class="font-semibold text-base lg:text-lg">Sangat Sulit</span>
+                                </label>
+                            </div>
+                            <div class="step-actions flex justify-between mt-3">
+                                <a type="button" onclick="window.location='#satu'"
+                                    class="flex items-center gap-2 cursor-pointer text-[#924c00] font-semibold text-sm hover:text-[#ff8800] transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                        class="w-6 h-6">
+                                        <path fill-rule="evenodd"
+                                            d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-4.28 9.22a.75.75 0 000 1.06l3 3a.75.75 0 101.06-1.06l-1.72-1.72h5.69a.75.75 0 000-1.5h-5.69l1.72-1.72a.75.75 0 00-1.06-1.06l-3 3z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                    Kembali
+                                </a>
+                                <a type="button" onclick="window.location='#tiga'"
+                                    class="flex items-center gap-2 cursor-pointer bg-[#ff8800] text-white px-5 py-2 rounded-xl font-semibold text-sm hover:bg-[#e07200] transition-colors shadow-md">
+                                    Lanjut
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                        class="w-6 h-6">
+                                        <path fill-rule="evenodd"
+                                            d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm4.28 10.28a.75.75 0 000-1.06l-3-3a.75.75 0 10-1.06 1.06l1.72 1.72H8.25a.75.75 0 000 1.5h5.69l-1.72 1.72a.75.75 0 101.06 1.06l3-3z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div id="lima"
-                class="items-center relative isolate min-w-full h-screen px-4 sm:px-6 lg:px-16
+                <div id="tiga" class="items-center relative isolate min-w-full h-screen px-4 sm:px-6 lg:px-16
                 bg-gradient-to-br from-[#fff5e6] via-[#ffecd6] to-[#ffd9b0]">
-                <div class="flex flex-col items-stretch gap-4 w-full h-full py-[72px] max-w-2xl mx-auto justify-center">
-                    <div class="w-full flex flex-col p-6 bg-white rounded-2xl shadow-[0_8px_32px_rgba(146,76,0,0.12)] justify-center">
-                        <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4">
-                            <span class="material-symbols-outlined text-[#ff8800] text-3xl">verified</span>
+                    <div
+                        class="flex flex-col items-stretch gap-4 w-full h-full py-[72px] max-w-2xl mx-auto justify-center">
+                        <div
+                            class="w-full flex flex-col p-6 bg-white rounded-2xl shadow-[0_8px_32px_rgba(146,76,0,0.12)] justify-center">
+                            <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4 gap-3">
+                                <span class="material-symbols-outlined text-[#ff8800] text-2xl">people</span>p>
+                            </div>
+                            <h2 class="text-lg xl:text-xl font-semibold leading-snug text-[#191c1d]">Sejauh m<p
+                                    class="font-bold uppercase tracking-widest text-xs text-[#924c00] mb-2">pelatihan
+                                    dan kemandirian masyarakat</ana materi pelatihan yang diberikan sesuai dengan
+                                        kebutuhan keterampilan atau potensi ekonomi di wilayah Anda?</h2>
                         </div>
-                        <p class="font-bold uppercase tracking-widest text-xs text-[#924c00] mb-2">Pertanyaan 5 dari 9</p>
-                        <h2 class="text-lg xl:text-xl font-semibold leading-snug text-[#191c1d]">Bagaimana pendapat Saudara tentang kesesuaian produk pelayanan antara yang tercantum dalam standar pelayanan dengan hasil yang diberikan?</h2>
-                    </div>
-                    <div class="w-full flex flex-col gap-3">
-                        <div>
-                            <input type="radio" id="u5-1" name="u5" value="1" class="hidden scroll-btn peer">
-                            <label for="u5-1"
-                                class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                <span class="font-semibold text-base lg:text-lg">Tidak Sesuai</span>
-                            </label>
-                        </div>
-                        <div>
-                            <input type="radio" id="u5-2" name="u5" value="2" class="hidden scroll-btn peer">
-                            <label for="u5-2"
-                                class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                <span class="font-semibold text-base lg:text-lg">Kurang Sesuai</span>
-                            </label>
-                        </div>
-                        <div>
-                            <input type="radio" id="u5-3" name="u5" value="3" class="hidden scroll-btn peer">
-                            <label for="u5-3"
-                                class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                <span class="font-semibold text-base lg:text-lg">Sesuai</span>
-                            </label>
-                        </div>
-                        <div>
-                            <input type="radio" id="u5-4" name="u5" value="4" checked class="hidden scroll-btn peer">
-                            <label for="u5-4"
-                                class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                <span class="font-semibold text-base lg:text-lg">Sangat Sesuai</span>
-                            </label>
-                        </div>
-                        <div class="step-actions flex justify-between mt-3">
-                            <a type="button" onclick="window.location='#empat'"
-                                class="flex items-center gap-2 cursor-pointer text-[#924c00] font-semibold text-sm hover:text-[#ff8800] transition-colors">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                                    <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-4.28 9.22a.75.75 0 000 1.06l3 3a.75.75 0 101.06-1.06l-1.72-1.72h5.69a.75.75 0 000-1.5h-5.69l1.72-1.72a.75.75 0 00-1.06-1.06l-3 3z" clip-rule="evenodd" />
-                                </svg>
-                                Kembali
-                            </a>
-                            <a type="button" onclick="window.location='#enam'"
-                                class="flex items-center gap-2 cursor-pointer bg-[#ff8800] text-white px-5 py-2 rounded-xl font-semibold text-sm hover:bg-[#e07200] transition-colors shadow-md">
-                                Lanjut
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                                    <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm4.28 10.28a.75.75 0 000-1.06l-3-3a.75.75 0 10-1.06 1.06l1.72 1.72H8.25a.75.75 0 000 1.5h5.69l-1.72 1.72a.75.75 0 101.06 1.06l3-3z" clip-rule="evenodd" />
-                                </svg>
-                            </a>
+                        <div class="w-full flex flex-col gap-3">
+                            <div>
+                                <input type="radio" id="u3-1" name="u3" value="1" class="hidden scroll-btn peer">
+                                <label for="u3-1"
+                                    class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
+                                    <span class="font-semibold text-base lg:text-lg">Tidak Relevan</span>
+                                </label>
+                            </div>
+                            <div>
+                                <input type="radio" id="u3-2" name="u3" value="2" class="hidden scroll-btn peer">
+                                <label for="u3-2"
+                                    class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
+                                    <span class="font-semibold text-base lg:text-lg">Kurang Relevan</span>
+                                </label>
+                            </div>
+                            <div>
+                                <input type="radio" id="u3-3" name="u3" value="3" class="hidden scroll-btn peer">
+                                <label for="u3-3"
+                                    class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
+                                    <span class="font-semibold text-base lg:text-lg">Relevan</span>
+                                </label>
+                            </div>
+                            <div>
+                                <input type="radio" id="u3-4" name="u3" value="4" checked
+                                    class="hidden scroll-btn peer">
+                                <label for="u3-4"
+                                    class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
+                                    <span class="font-semibold text-base lg:text-lg">Sangat Relevan</span>
+                                </label>
+                            </div>
+                            <div class="step-actions flex justify-between mt-3">
+                                <a type="button" onclick="window.location='#dua'"
+                                    class="flex items-center gap-2 cursor-pointer text-[#924c00] font-semibold text-sm hover:text-[#ff8800] transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                        class="w-6 h-6">
+                                        <path fill-rule="evenodd"
+                                            d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-4.28 9.22a.75.75 0 000 1.06l3 3a.75.75 0 101.06-1.06l-1.72-1.72h5.69a.75.75 0 000-1.5h-5.69l1.72-1.72a.75.75 0 00-1.06-1.06l-3 3z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                    Kembali
+                                </a>
+                                <a type="button" onclick="window.location='#empat'"
+                                    class="flex items-center gap-2 cursor-pointer bg-[#ff8800] text-white px-5 py-2 rounded-xl font-semibold text-sm hover:bg-[#e07200] transition-colors shadow-md">
+                                    Lanjut
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                        class="w-6 h-6">
+                                        <path fill-rule="evenodd"
+                                            d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm4.28 10.28a.75.75 0 000-1.06l-3-3a.75.75 0 10-1.06 1.06l1.72 1.72H8.25a.75.75 0 000 1.5h5.69l-1.72 1.72a.75.75 0 101.06 1.06l3-3z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div id="enam"
-                class="items-center relative isolate min-w-full h-screen px-4 sm:px-6 lg:px-16
+                <div id="empat" class="items-center relative isolate min-w-full h-screen px-4 sm:px-6 lg:px-16
                 bg-gradient-to-br from-[#fff5e6] via-[#ffecd6] to-[#ffd9b0]">
-                <div class="flex flex-col items-stretch gap-4 w-full h-full py-[72px] max-w-2xl mx-auto justify-center">
-                    <div class="w-full flex flex-col p-6 bg-white rounded-2xl shadow-[0_8px_32px_rgba(146,76,0,0.12)] justify-center">
-                        <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4">
-                            <span class="material-symbols-outlined text-[#ff8800] text-3xl">school</span>
+                    <div
+                        class="flex flex-col items-stretch gap-4 w-full h-full py-[72px] max-w-2xl mx-auto justify-center">
+                        <div
+                            class="w-full flex flex-col p-6 bg-white rounded-2xl shadow-[0_8px_32px_rgba(146,76,0,0.12)] justify-center">
+                            <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4 gap-3">
+                                <span class="material-symbols-outlined text-[#ff8800] text-2xl">payments</span>
+                            </div>
+                            <!-- <p class="font-bold uppercase tracking-widest text-xs text-[#924c00] mb-2">Pertanyaan 4 dari 9</p> -->
+                            <h2 class="text-lg xl:text-xl font-semibold leading-snug text-[#191c1d]">Bagaimana pendapat
+                                Saudara tentang kewajaran biaya/tarif untuk mendapatkan pelayanan?</h2>
                         </div>
-                        <p class="font-bold uppercase tracking-widest text-xs text-[#924c00] mb-2">Pertanyaan 6 dari 9</p>
-                        <h2 class="text-lg xl:text-xl font-semibold leading-snug text-[#191c1d]">Bagaimana pendapat Saudara tentang kompetensi/ kemampuan petugas dalam pelayanan?</h2>
-                    </div>
-                    <div class="w-full flex flex-col gap-3">
-                        <div>
-                            <input type="radio" id="u6-1" name="u6" value="1" class="hidden scroll-btn peer">
-                            <label for="u6-1"
-                                class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                <span class="font-semibold text-base lg:text-lg">Tidak Kompeten</span>
-                            </label>
-                        </div>
-                        <div>
-                            <input type="radio" id="u6-2" name="u6" value="2" class="hidden scroll-btn peer">
-                            <label for="u6-2"
-                                class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                <span class="font-semibold text-base lg:text-lg">Kurang Kompeten</span>
-                            </label>
-                        </div>
-                        <div>
-                            <input type="radio" id="u6-3" name="u6" value="3" class="hidden scroll-btn peer">
-                            <label for="u6-3"
-                                class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                <span class="font-semibold text-base lg:text-lg">Kompeten</span>
-                            </label>
-                        </div>
-                        <div>
-                            <input type="radio" id="u6-4" name="u6" value="4" checked class="hidden scroll-btn peer">
-                            <label for="u6-4"
-                                class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                <span class="font-semibold text-base lg:text-lg">Sangat Kompeten</span>
-                            </label>
-                        </div>
-                        <div class="step-actions flex justify-between mt-3">
-                            <a type="button" onclick="window.location='#lima'"
-                                class="flex items-center gap-2 cursor-pointer text-[#924c00] font-semibold text-sm hover:text-[#ff8800] transition-colors">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                                    <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-4.28 9.22a.75.75 0 000 1.06l3 3a.75.75 0 101.06-1.06l-1.72-1.72h5.69a.75.75 0 000-1.5h-5.69l1.72-1.72a.75.75 0 00-1.06-1.06l-3 3z" clip-rule="evenodd" />
-                                </svg>
-                                Kembali
-                            </a>
-                            <a type="button" onclick="window.location='#tujuh'"
-                                class="flex items-center gap-2 cursor-pointer bg-[#ff8800] text-white px-5 py-2 rounded-xl font-semibold text-sm hover:bg-[#e07200] transition-colors shadow-md">
-                                Lanjut
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                                    <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm4.28 10.28a.75.75 0 000-1.06l-3-3a.75.75 0 10-1.06 1.06l1.72 1.72H8.25a.75.75 0 000 1.5h5.69l-1.72 1.72a.75.75 0 101.06 1.06l3-3z" clip-rule="evenodd" />
-                                </svg>
-                            </a>
+                        <div class="w-full flex flex-col gap-3">
+                            <div>
+                                <input type="radio" id="u4-1" name="u4" value="1" class="hidden scroll-btn peer">
+                                <label for="u4-1"
+                                    class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
+                                    <span class="font-semibold text-base lg:text-lg">Sangat Mahal</span>
+                                </label>
+                            </div>
+                            <div>
+                                <input type="radio" id="u4-2" name="u4" value="2" class="hidden scroll-btn peer">
+                                <label for="u4-2"
+                                    class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
+                                    <span class="font-semibold text-base lg:text-lg">Cukup Mahal</span>
+                                </label>
+                            </div>
+                            <div>
+                                <input type="radio" id="u4-3" name="u4" value="3" class="hidden scroll-btn peer">
+                                <label for="u4-3"
+                                    class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
+                                    <span class="font-semibold text-base lg:text-lg">Murah</span>
+                                </label>
+                            </div>
+                            <div>
+                                <input type="radio" id="u4-4" name="u4" value="4" checked
+                                    class="hidden scroll-btn peer">
+                                <label for="u4-4"
+                                    class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
+                                    <span class="font-semibold text-base lg:text-lg">Gratis</span>
+                                </label>
+                            </div>
+                            <div class="step-actions flex justify-between mt-3">
+                                <a type="button" onclick="window.location='#tiga'"
+                                    class="flex items-center gap-2 cursor-pointer text-[#924c00] font-semibold text-sm hover:text-[#ff8800] transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                        class="w-6 h-6">
+                                        <path fill-rule="evenodd"
+                                            d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-4.28 9.22a.75.75 0 000 1.06l3 3a.75.75 0 101.06-1.06l-1.72-1.72h5.69a.75.75 0 000-1.5h-5.69l1.72-1.72a.75.75 0 00-1.06-1.06l-3 3z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                    Kembali
+                                </a>
+                                <a type="button" onclick="window.location='#lima'"
+                                    class="flex items-center gap-2 cursor-pointer bg-[#ff8800] text-white px-5 py-2 rounded-xl font-semibold text-sm hover:bg-[#e07200] transition-colors shadow-md">
+                                    Lanjut
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                        class="w-6 h-6">
+                                        <path fill-rule="evenodd"
+                                            d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm4.28 10.28a.75.75 0 000-1.06l-3-3a.75.75 0 10-1.06 1.06l1.72 1.72H8.25a.75.75 0 000 1.5h5.69l-1.72 1.72a.75.75 0 101.06 1.06l3-3z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div id="tujuh"
-                class="items-center relative isolate min-w-full h-screen px-4 sm:px-6 lg:px-16
+                <div id="lima" class="items-center relative isolate min-w-full h-screen px-4 sm:px-6 lg:px-16
                 bg-gradient-to-br from-[#fff5e6] via-[#ffecd6] to-[#ffd9b0]">
-                <div class="flex flex-col items-stretch gap-4 w-full h-full py-[72px] max-w-2xl mx-auto justify-center">
-                    <div class="w-full flex flex-col p-6 bg-white rounded-2xl shadow-[0_8px_32px_rgba(146,76,0,0.12)] justify-center">
-                        <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4">
-                            <span class="material-symbols-outlined text-[#ff8800] text-3xl">sentiment_satisfied</span>
+                    <div
+                        class="flex flex-col items-stretch gap-4 w-full h-full py-[72px] max-w-2xl mx-auto justify-center">
+                        <div
+                            class="w-full flex flex-col p-6 bg-white rounded-2xl shadow-[0_8px_32px_rgba(146,76,0,0.12)] justify-center">
+                            <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4 gap-3">
+                                <span class="material-symbols-outlined text-[#ff8800] text-2xl">verified</span>
+                            </div>
+                            <!-- <p class="font-bold uppercase tracking-widest text-xs text-[#924c00] mb-2">Pertanyaan 5 dari 9</p> -->
+                            <h2 class="text-lg xl:text-xl font-semibold leading-snug text-[#191c1d]">Bagaimana pendapat
+                                Saudara tentang kesesuaian produk pelayanan antara yang tercantum dalam standar
+                                pelayanan dengan hasil yang diberikan?</h2>
                         </div>
-                        <p class="font-bold uppercase tracking-widest text-xs text-[#924c00] mb-2">Pertanyaan 7 dari 9</p>
-                        <h2 class="text-lg xl:text-xl font-semibold leading-snug text-[#191c1d]">Bagaimana pendapat Saudara tentang perilaku petugas dalam pelayanan terkait kesopanan dan keramahan?</h2>
-                    </div>
-                    <div class="w-full flex flex-col gap-3">
-                        <div>
-                            <input type="radio" id="u7-1" name="u7" value="1" class="hidden scroll-btn peer">
-                            <label for="u7-1"
-                                class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                <span class="font-semibold text-base lg:text-lg">Tidak Sopan dan Ramah</span>
-                            </label>
-                        </div>
-                        <div>
-                            <input type="radio" id="u7-2" name="u7" value="2" class="hidden scroll-btn peer">
-                            <label for="u7-2"
-                                class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                <span class="font-semibold text-base lg:text-lg">Kurang Sopan dan Ramah</span>
-                            </label>
-                        </div>
-                        <div>
-                            <input type="radio" id="u7-3" name="u7" value="3" class="hidden scroll-btn peer">
-                            <label for="u7-3"
-                                class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                <span class="font-semibold text-base lg:text-lg">Sopan dan Ramah</span>
-                            </label>
-                        </div>
-                        <div>
-                            <input type="radio" id="u7-4" name="u7" value="4" checked class="hidden scroll-btn peer">
-                            <label for="u7-4"
-                                class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                <span class="font-semibold text-base lg:text-lg">Sangat Sopan dan Ramah</span>
-                            </label>
-                        </div>
-                        <div class="step-actions flex justify-between mt-3">
-                            <a type="button" onclick="window.location='#enam'"
-                                class="flex items-center gap-2 cursor-pointer text-[#924c00] font-semibold text-sm hover:text-[#ff8800] transition-colors">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                                    <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-4.28 9.22a.75.75 0 000 1.06l3 3a.75.75 0 101.06-1.06l-1.72-1.72h5.69a.75.75 0 000-1.5h-5.69l1.72-1.72a.75.75 0 00-1.06-1.06l-3 3z" clip-rule="evenodd" />
-                                </svg>
-                                Kembali
-                            </a>
-                            <a type="button" onclick="window.location='#delapan'"
-                                class="flex items-center gap-2 cursor-pointer bg-[#ff8800] text-white px-5 py-2 rounded-xl font-semibold text-sm hover:bg-[#e07200] transition-colors shadow-md">
-                                Lanjut
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                                    <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm4.28 10.28a.75.75 0 000-1.06l-3-3a.75.75 0 10-1.06 1.06l1.72 1.72H8.25a.75.75 0 000 1.5h5.69l-1.72 1.72a.75.75 0 101.06 1.06l3-3z" clip-rule="evenodd" />
-                                </svg>
-                            </a>
+                        <div class="w-full flex flex-col gap-3">
+                            <div>
+                                <input type="radio" id="u5-1" name="u5" value="1" class="hidden scroll-btn peer">
+                                <label for="u5-1"
+                                    class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
+                                    <span class="font-semibold text-base lg:text-lg">Tidak Sesuai</span>
+                                </label>
+                            </div>
+                            <div>
+                                <input type="radio" id="u5-2" name="u5" value="2" class="hidden scroll-btn peer">
+                                <label for="u5-2"
+                                    class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
+                                    <span class="font-semibold text-base lg:text-lg">Kurang Sesuai</span>
+                                </label>
+                            </div>
+                            <div>
+                                <input type="radio" id="u5-3" name="u5" value="3" class="hidden scroll-btn peer">
+                                <label for="u5-3"
+                                    class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
+                                    <span class="font-semibold text-base lg:text-lg">Sesuai</span>
+                                </label>
+                            </div>
+                            <div>
+                                <input type="radio" id="u5-4" name="u5" value="4" checked
+                                    class="hidden scroll-btn peer">
+                                <label for="u5-4"
+                                    class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
+                                    <span class="font-semibold text-base lg:text-lg">Sangat Sesuai</span>
+                                </label>
+                            </div>
+                            <div class="step-actions flex justify-between mt-3">
+                                <a type="button" onclick="window.location='#empat'"
+                                    class="flex items-center gap-2 cursor-pointer text-[#924c00] font-semibold text-sm hover:text-[#ff8800] transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                        class="w-6 h-6">
+                                        <path fill-rule="evenodd"
+                                            d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-4.28 9.22a.75.75 0 000 1.06l3 3a.75.75 0 101.06-1.06l-1.72-1.72h5.69a.75.75 0 000-1.5h-5.69l1.72-1.72a.75.75 0 00-1.06-1.06l-3 3z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                    Kembali
+                                </a>
+                                <a type="button" onclick="window.location='#enam'"
+                                    class="flex items-center gap-2 cursor-pointer bg-[#ff8800] text-white px-5 py-2 rounded-xl font-semibold text-sm hover:bg-[#e07200] transition-colors shadow-md">
+                                    Lanjut
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                        class="w-6 h-6">
+                                        <path fill-rule="evenodd"
+                                            d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm4.28 10.28a.75.75 0 000-1.06l-3-3a.75.75 0 10-1.06 1.06l1.72 1.72H8.25a.75.75 0 000 1.5h5.69l-1.72 1.72a.75.75 0 101.06 1.06l3-3z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div id="delapan"
-                class="items-center relative isolate min-w-full h-screen px-4 sm:px-6 lg:px-16
+                <div id="enam" class="items-center relative isolate min-w-full h-screen px-4 sm:px-6 lg:px-16
                 bg-gradient-to-br from-[#fff5e6] via-[#ffecd6] to-[#ffd9b0]">
-                <div class="flex flex-col items-stretch gap-4 w-full h-full py-[72px] max-w-2xl mx-auto justify-center">
-                    <div class="w-full flex flex-col p-6 bg-white rounded-2xl shadow-[0_8px_32px_rgba(146,76,0,0.12)] justify-center">
-                        <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4">
-                            <span class="material-symbols-outlined text-[#ff8800] text-3xl">apartment</span>
+                    <div
+                        class="flex flex-col items-stretch gap-4 w-full h-full py-[72px] max-w-2xl mx-auto justify-center">
+                        <div
+                            class="w-full flex flex-col p-6 bg-white rounded-2xl shadow-[0_8px_32px_rgba(146,76,0,0.12)] justify-center">
+                            <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4 gap-3">
+                                <span class="material-symbols-outlined text-[#ff8800] text-2xl">school</span>
+                            </div>
+                            <p class="font-bold uppercase tracking-widest text-xs text-[#924c00] mb-2">Beasiswa</p>
+                            <h2 class="text-lg xl:text-xl font-semibold leading-snug text-[#191c1d]">Bagaimana pendapat
+                                Saudara tentang kompetensi/ kemampuan petugas dalam pelayanan?</h2>
                         </div>
-                        <p class="font-bold uppercase tracking-widest text-xs text-[#924c00] mb-2">Pertanyaan 8 dari 9</p>
-                        <h2 class="text-lg xl:text-xl font-semibold leading-snug text-[#191c1d]">Bagaimana pendapat Saudara tentang kualitas sarana dan prasarana?</h2>
-                    </div>
-                    <div class="w-full flex flex-col gap-3">
-                        <div>
-                            <input type="radio" id="u8-1" name="u8" value="1" class="hidden scroll-btn peer">
-                            <label for="u8-1"
-                                class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                <span class="font-semibold text-base lg:text-lg">Buruk</span>
-                            </label>
-                        </div>
-                        <div>
-                            <input type="radio" id="u8-2" name="u8" value="2" class="hidden scroll-btn peer">
-                            <label for="u8-2"
-                                class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                <span class="font-semibold text-base lg:text-lg">Cukup</span>
-                            </label>
-                        </div>
-                        <div>
-                            <input type="radio" id="u8-3" name="u8" value="3" class="hidden scroll-btn peer">
-                            <label for="u8-3"
-                                class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                <span class="font-semibold text-base lg:text-lg">Baik</span>
-                            </label>
-                        </div>
-                        <div>
-                            <input type="radio" id="u8-4" name="u8" value="4" checked class="hidden scroll-btn peer">
-                            <label for="u8-4"
-                                class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                <span class="font-semibold text-base lg:text-lg">Sangat Baik</span>
-                            </label>
-                        </div>
-                        <div class="step-actions flex justify-between mt-3">
-                            <a type="button" onclick="window.location='#tujuh'"
-                                class="flex items-center gap-2 cursor-pointer text-[#924c00] font-semibold text-sm hover:text-[#ff8800] transition-colors">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                                    <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-4.28 9.22a.75.75 0 000 1.06l3 3a.75.75 0 101.06-1.06l-1.72-1.72h5.69a.75.75 0 000-1.5h-5.69l1.72-1.72a.75.75 0 00-1.06-1.06l-3 3z" clip-rule="evenodd" />
-                                </svg>
-                                Kembali
-                            </a>
-                            <a type="button" onclick="window.location='#sembilan'"
-                                class="flex items-center gap-2 cursor-pointer bg-[#ff8800] text-white px-5 py-2 rounded-xl font-semibold text-sm hover:bg-[#e07200] transition-colors shadow-md">
-                                Lanjut
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                                    <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm4.28 10.28a.75.75 0 000-1.06l-3-3a.75.75 0 10-1.06 1.06l1.72 1.72H8.25a.75.75 0 000 1.5h5.69l-1.72 1.72a.75.75 0 101.06 1.06l3-3z" clip-rule="evenodd" />
-                                </svg>
-                            </a>
+                        <div class="w-full flex flex-col gap-3">
+                            <div>
+                                <input type="radio" id="u6-1" name="u6" value="1" class="hidden scroll-btn peer">
+                                <label for="u6-1"
+                                    class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
+                                    <span class="font-semibold text-base lg:text-lg">Tidak Kompeten</span>
+                                </label>
+                            </div>
+                            <div>
+                                <input type="radio" id="u6-2" name="u6" value="2" class="hidden scroll-btn peer">
+                                <label for="u6-2"
+                                    class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
+                                    <span class="font-semibold text-base lg:text-lg">Kurang Kompeten</span>
+                                </label>
+                            </div>
+                            <div>
+                                <input type="radio" id="u6-3" name="u6" value="3" class="hidden scroll-btn peer">
+                                <label for="u6-3"
+                                    class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
+                                    <span class="font-semibold text-base lg:text-lg">Kompeten</span>
+                                </label>
+                            </div>
+                            <div>
+                                <input type="radio" id="u6-4" name="u6" value="4" checked
+                                    class="hidden scroll-btn peer">
+                                <label for="u6-4"
+                                    class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
+                                    <span class="font-semibold text-base lg:text-lg">Sangat Kompeten</span>
+                                </label>
+                            </div>
+                            <div class="step-actions flex justify-between mt-3">
+                                <a type="button" onclick="window.location='#lima'"
+                                    class="flex items-center gap-2 cursor-pointer text-[#924c00] font-semibold text-sm hover:text-[#ff8800] transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                        class="w-6 h-6">
+                                        <path fill-rule="evenodd"
+                                            d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-4.28 9.22a.75.75 0 000 1.06l3 3a.75.75 0 101.06-1.06l-1.72-1.72h5.69a.75.75 0 000-1.5h-5.69l1.72-1.72a.75.75 0 00-1.06-1.06l-3 3z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                    Kembali
+                                </a>
+                                <a type="button" onclick="window.location='#tujuh'"
+                                    class="flex items-center gap-2 cursor-pointer bg-[#ff8800] text-white px-5 py-2 rounded-xl font-semibold text-sm hover:bg-[#e07200] transition-colors shadow-md">
+                                    Lanjut
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                        class="w-6 h-6">
+                                        <path fill-rule="evenodd"
+                                            d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm4.28 10.28a.75.75 0 000-1.06l-3-3a.75.75 0 10-1.06 1.06l1.72 1.72H8.25a.75.75 0 000 1.5h5.69l-1.72 1.72a.75.75 0 101.06 1.06l3-3z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div id="sembilan"
-                class="items-center relative isolate min-w-full h-screen px-4 sm:px-6 lg:px-16
+                <div id="tujuh" class="items-center relative isolate min-w-full h-screen px-4 sm:px-6 lg:px-16
                 bg-gradient-to-br from-[#fff5e6] via-[#ffecd6] to-[#ffd9b0]">
-                <div class="flex flex-col items-stretch gap-4 w-full h-full py-[72px] max-w-2xl mx-auto justify-center">
-                    <div class="w-full flex flex-col p-6 bg-white rounded-2xl shadow-[0_8px_32px_rgba(146,76,0,0.12)] justify-center">
-                        <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4">
-                            <span class="material-symbols-outlined text-[#ff8800] text-3xl">support_agent</span>
+                    <div
+                        class="flex flex-col items-stretch gap-4 w-full h-full py-[72px] max-w-2xl mx-auto justify-center">
+                        <div
+                            class="w-full flex flex-col p-6 bg-white rounded-2xl shadow-[0_8px_32px_rgba(146,76,0,0.12)] justify-center">
+                            <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4 gap-3">
+                                <span
+                                    class="material-symbols-outlined text-[#ff8800] text-2xl">sentiment_satisfied</span>
+                            </div>
+                            <!-- <p class="font-bold uppercase tracking-widest text-xs text-[#924c00] mb-2">Pertanyaan 7 dari 9</p> -->
+                            <h2 class="text-lg xl:text-xl font-semibold leading-snug text-[#191c1d]">Bagaimana pendapat
+                                Saudara tentang perilaku petugas dalam pelayanan terkait kesopanan dan keramahan?</h2>
                         </div>
-                        <p class="font-bold uppercase tracking-widest text-xs text-[#924c00] mb-2">Pertanyaan 9 dari 9</p>
-                        <h2 class="text-lg xl:text-xl font-semibold leading-snug text-[#191c1d]">Bagaimana pendapat Saudara tentang penanganan pengaduan pengguna layanan?</h2>
-                    </div>
-                    <div class="w-full flex flex-col gap-3">
-                        <div>
-                            <input type="radio" id="u9-1" name="u9" value="1" class="hidden scroll-btn peer">
-                            <label for="u9-1"
-                                class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                <span class="font-semibold text-base lg:text-lg">Tidak Ada</span>
-                            </label>
-                        </div>
-                        <div>
-                            <input type="radio" id="u9-2" name="u9" value="2" class="hidden scroll-btn peer">
-                            <label for="u9-2"
-                                class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                <span class="font-semibold text-base lg:text-lg">Ada Tetapi Tidak Berfungsi</span>
-                            </label>
-                        </div>
-                        <div>
-                            <input type="radio" id="u9-3" name="u9" value="3" class="hidden scroll-btn peer">
-                            <label for="u9-3"
-                                class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                <span class="font-semibold text-base lg:text-lg">Berfungsi Kurang Maksimal</span>
-                            </label>
-                        </div>
-                        <div>
-                            <input type="radio" id="u9-4" name="u9" value="4" checked class="hidden scroll-btn peer">
-                            <label for="u9-4"
-                                class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                <span class="font-semibold text-base lg:text-lg">Dikelola Dengan Baik</span>
-                            </label>
-                        </div>
-                        <div class="step-actions flex justify-between mt-3">
-                            <a type="button" onclick="window.location='#delapan'"
-                                class="flex items-center gap-2 cursor-pointer text-[#924c00] font-semibold text-sm hover:text-[#ff8800] transition-colors">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                                    <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-4.28 9.22a.75.75 0 000 1.06l3 3a.75.75 0 101.06-1.06l-1.72-1.72h5.69a.75.75 0 000-1.5h-5.69l1.72-1.72a.75.75 0 00-1.06-1.06l-3 3z" clip-rule="evenodd" />
-                                </svg>
-                                Kembali
-                            </a>
-                            <a type="button" onclick="window.location='#saran'"
-                                class="flex items-center gap-2 cursor-pointer bg-[#ff8800] text-white px-5 py-2 rounded-xl font-semibold text-sm hover:bg-[#e07200] transition-colors shadow-md">
-                                Lanjut
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                                    <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm4.28 10.28a.75.75 0 000-1.06l-3-3a.75.75 0 10-1.06 1.06l1.72 1.72H8.25a.75.75 0 000 1.5h5.69l-1.72 1.72a.75.75 0 101.06 1.06l3-3z" clip-rule="evenodd" />
-                                </svg>
-                            </a>
+                        <div class="w-full flex flex-col gap-3">
+                            <div>
+                                <input type="radio" id="u7-1" name="u7" value="1" class="hidden scroll-btn peer">
+                                <label for="u7-1"
+                                    class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
+                                    <span class="font-semibold text-base lg:text-lg">Tidak Sopan dan Ramah</span>
+                                </label>
+                            </div>
+                            <div>
+                                <input type="radio" id="u7-2" name="u7" value="2" class="hidden scroll-btn peer">
+                                <label for="u7-2"
+                                    class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
+                                    <span class="font-semibold text-base lg:text-lg">Kurang Sopan dan Ramah</span>
+                                </label>
+                            </div>
+                            <div>
+                                <input type="radio" id="u7-3" name="u7" value="3" class="hidden scroll-btn peer">
+                                <label for="u7-3"
+                                    class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
+                                    <span class="font-semibold text-base lg:text-lg">Sopan dan Ramah</span>
+                                </label>
+                            </div>
+                            <div>
+                                <input type="radio" id="u7-4" name="u7" value="4" checked
+                                    class="hidden scroll-btn peer">
+                                <label for="u7-4"
+                                    class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
+                                    <span class="font-semibold text-base lg:text-lg">Sangat Sopan dan Ramah</span>
+                                </label>
+                            </div>
+                            <div class="step-actions flex justify-between mt-3">
+                                <a type="button" onclick="window.location='#enam'"
+                                    class="flex items-center gap-2 cursor-pointer text-[#924c00] font-semibold text-sm hover:text-[#ff8800] transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                        class="w-6 h-6">
+                                        <path fill-rule="evenodd"
+                                            d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-4.28 9.22a.75.75 0 000 1.06l3 3a.75.75 0 101.06-1.06l-1.72-1.72h5.69a.75.75 0 000-1.5h-5.69l1.72-1.72a.75.75 0 00-1.06-1.06l-3 3z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                    Kembali
+                                </a>
+                                <a type="button" onclick="window.location='#delapan'"
+                                    class="flex items-center gap-2 cursor-pointer bg-[#ff8800] text-white px-5 py-2 rounded-xl font-semibold text-sm hover:bg-[#e07200] transition-colors shadow-md">
+                                    Lanjut
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                        class="w-6 h-6">
+                                        <path fill-rule="evenodd"
+                                            d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm4.28 10.28a.75.75 0 000-1.06l-3-3a.75.75 0 10-1.06 1.06l1.72 1.72H8.25a.75.75 0 000 1.5h5.69l-1.72 1.72a.75.75 0 101.06 1.06l3-3z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+                <div id="delapan" class="items-center relative isolate min-w-full h-screen px-4 sm:px-6 lg:px-16
+                bg-gradient-to-br from-[#fff5e6] via-[#ffecd6] to-[#ffd9b0]">
+                    <div
+                        class="flex flex-col items-stretch gap-4 w-full h-full py-[72px] max-w-2xl mx-auto justify-center">
+                        <div
+                            class="w-full flex flex-col p-6 bg-white rounded-2xl shadow-[0_8px_32px_rgba(146,76,0,0.12)] justify-center">
+                            <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4 gap-3">
+                                <span class="material-symbols-outlined text-[#ff8800] text-2xl">apartment</span>
+                            </div>
+                            <!-- <p class="font-bold uppercase tracking-widest text-xs text-[#924c00] mb-2">Pertanyaan 8 dari 9</p> -->
+                            <h2 class="text-lg xl:text-xl font-semibold leading-snug text-[#191c1d]">Bagaimana pendapat
+                                Saudara tentang kualitas sarana dan prasarana?</h2>
+                        </div>
+                        <div class="w-full flex flex-col gap-3">
+                            <div>
+                                <input type="radio" id="u8-1" name="u8" value="1" class="hidden scroll-btn peer">
+                                <label for="u8-1"
+                                    class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
+                                    <span class="font-semibold text-base lg:text-lg">Buruk</span>
+                                </label>
+                            </div>
+                            <div>
+                                <input type="radio" id="u8-2" name="u8" value="2" class="hidden scroll-btn peer">
+                                <label for="u8-2"
+                                    class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
+                                    <span class="font-semibold text-base lg:text-lg">Cukup</span>
+                                </label>
+                            </div>
+                            <div>
+                                <input type="radio" id="u8-3" name="u8" value="3" class="hidden scroll-btn peer">
+                                <label for="u8-3"
+                                    class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
+                                    <span class="font-semibold text-base lg:text-lg">Baik</span>
+                                </label>
+                            </div>
+                            <div>
+                                <input type="radio" id="u8-4" name="u8" value="4" checked
+                                    class="hidden scroll-btn peer">
+                                <label for="u8-4"
+                                    class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
+                                    <span class="font-semibold text-base lg:text-lg">Sangat Baik</span>
+                                </label>
+                            </div>
+                            <div class="step-actions flex justify-between mt-3">
+                                <a type="button" onclick="window.location='#tujuh'"
+                                    class="flex items-center gap-2 cursor-pointer text-[#924c00] font-semibold text-sm hover:text-[#ff8800] transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                        class="w-6 h-6">
+                                        <path fill-rule="evenodd"
+                                            d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-4.28 9.22a.75.75 0 000 1.06l3 3a.75.75 0 101.06-1.06l-1.72-1.72h5.69a.75.75 0 000-1.5h-5.69l1.72-1.72a.75.75 0 00-1.06-1.06l-3 3z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                    Kembali
+                                </a>
+                                <a type="button" onclick="window.location='#sembilan'"
+                                    class="flex items-center gap-2 cursor-pointer bg-[#ff8800] text-white px-5 py-2 rounded-xl font-semibold text-sm hover:bg-[#e07200] transition-colors shadow-md">
+                                    Lanjut
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                        class="w-6 h-6">
+                                        <path fill-rule="evenodd"
+                                            d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm4.28 10.28a.75.75 0 000-1.06l-3-3a.75.75 0 10-1.06 1.06l1.72 1.72H8.25a.75.75 0 000 1.5h5.69l-1.72 1.72a.75.75 0 101.06 1.06l3-3z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="sembilan" class="items-center relative isolate min-w-full h-screen px-4 sm:px-6 lg:px-16
+                bg-gradient-to-br from-[#fff5e6] via-[#ffecd6] to-[#ffd9b0]">
+                    <div
+                        class="flex flex-col items-stretch gap-4 w-full h-full py-[72px] max-w-2xl mx-auto justify-center">
+                        <div
+                            class="w-full flex flex-col p-6 bg-white rounded-2xl shadow-[0_8px_32px_rgba(146,76,0,0.12)] justify-center">
+                            <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4 gap-3">
+                                <span class="material-symbols-outlined text-[#ff8800] text-2xl">support_agent</span>
+                            </div>
+                            <!-- <p class="font-bold uppercase tracking-widest text-xs text-[#924c00] mb-2">Pertanyaan 9 dari 9</p> -->
+                            <h2 class="text-lg xl:text-xl font-semibold leading-snug text-[#191c1d]">Bagaimana pendapat
+                                Saudara tentang penanganan pengaduan pengguna layanan?</h2>
+                        </div>
+                        <div class="w-full flex flex-col gap-3">
+                            <div>
+                                <input type="radio" id="u9-1" name="u9" value="1" class="hidden scroll-btn peer">
+                                <label for="u9-1"
+                                    class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
+                                    <span class="font-semibold text-base lg:text-lg">Tidak Ada</span>
+                                </label>
+                            </div>
+                            <div>
+                                <input type="radio" id="u9-2" name="u9" value="2" class="hidden scroll-btn peer">
+                                <label for="u9-2"
+                                    class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
+                                    <span class="font-semibold text-base lg:text-lg">Ada Tetapi Tidak Berfungsi</span>
+                                </label>
+                            </div>
+                            <div>
+                                <input type="radio" id="u9-3" name="u9" value="3" class="hidden scroll-btn peer">
+                                <label for="u9-3"
+                                    class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
+                                    <span class="font-semibold text-base lg:text-lg">Berfungsi Kurang Maksimal</span>
+                                </label>
+                            </div>
+                            <div>
+                                <input type="radio" id="u9-4" name="u9" value="4" checked
+                                    class="hidden scroll-btn peer">
+                                <label for="u9-4"
+                                    class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
+                                    <span class="font-semibold text-base lg:text-lg">Dikelola Dengan Baik</span>
+                                </label>
+                            </div>
+                            <div class="step-actions flex justify-between mt-3">
+                                <a type="button" onclick="window.location='#delapan'"
+                                    class="flex items-center gap-2 cursor-pointer text-[#924c00] font-semibold text-sm hover:text-[#ff8800] transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                        class="w-6 h-6">
+                                        <path fill-rule="evenodd"
+                                            d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-4.28 9.22a.75.75 0 000 1.06l3 3a.75.75 0 101.06-1.06l-1.72-1.72h5.69a.75.75 0 000-1.5h-5.69l1.72-1.72a.75.75 0 00-1.06-1.06l-3 3z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                    Kembali
+                                </a>
+                                <a type="button" onclick="window.location='#saran'"
+                                    class="flex items-center gap-2 cursor-pointer bg-[#ff8800] text-white px-5 py-2 rounded-xl font-semibold text-sm hover:bg-[#e07200] transition-colors shadow-md">
+                                    Lanjut
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                        class="w-6 h-6">
+                                        <path fill-rule="evenodd"
+                                            d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm4.28 10.28a.75.75 0 000-1.06l-3-3a.75.75 0 10-1.06 1.06l1.72 1.72H8.25a.75.75 0 000 1.5h5.69l-1.72 1.72a.75.75 0 101.06 1.06l3-3z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-            <div id="saran"
-                class="lg:pt-0 pt-16 items-center relative isolate overflow-hidden min-w-full h-screen
-                px-6 shadow-2xl sm:px-16 lg:flex lg:px-24 bg-[#92e0f0] "
-                style="background-image:
+                <div id="saran" class="lg:pt-0 pt-16 items-center relative isolate overflow-hidden min-w-full h-screen
+                px-6 shadow-2xl sm:px-16 lg:flex lg:px-24 bg-[#92e0f0] " style="background-image:
                     radial-gradient(at -10% -10%, #18bdde, transparent 35%),
                     radial-gradient(at 110% 110%, #18bdde, transparent 35%);">
-                <div class=" text-left  lg:py-32 lg:text-left items-center  w-full justify-between">
-                    <h2 class=" font-bold tracking-tight text-gray-900 text-5xl lg:text-3xl mb-6">Saran
-                        perbaikan, masukan, dan harapan:</h2>
-                    <textarea type="text" id="saran" name="saran"
-                        class="block w-full p-4 pl-10 text-xl text-gray-900 border border-2 border-white rounded-lg bg-white focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-900 dark:placeholder-gray-400 dark:text-gray-900 dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-6"></textarea>
-                    <div class="step-actions flex justify-between mt-5">
-                        <a type="button" onclick="window.location='#sembilan'"
-                            class="flex items-center gap-2 cursor-pointer">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                                class="w-8 h-8 text-gray-900">
-                                <path fill-rule="evenodd"
-                                    d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-4.28 9.22a.75.75 0 000 1.06l3 3a.75.75 0 101.06-1.06l-1.72-1.72h5.69a.75.75 0 000-1.5h-5.69l1.72-1.72a.75.75 0 00-1.06-1.06l-3 3z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                            <label class="text-gray-900 font-medium lg:text-xl text-4xl cursor-pointer">SEBELUM</label>
-                        </a>
-                        <button for="kesesuaian-ad" type="submit"
-                        class="font-bold items-center justify- px-8 py-3 text-white bg-gray-800 border-white border-2 rounded-lg cursor-pointer peer-checked:bg-white peer-checked:text-white hover:text-white hover:bg-gray-400">
-                            LANJUT
-                        </button>
+                    <div class=" text-left  lg:py-32 lg:text-left items-center  w-full justify-between">
+                        <h2 class=" font-bold tracking-tight text-gray-900 text-5xl lg:text-3xl mb-6">Saran
+                            perbaikan, masukan, dan harapan:</h2>
+                        <textarea type="text" id="saran" name="saran"
+                            class="block w-full p-4 pl-10 text-xl text-gray-900 border border-2 border-white rounded-lg bg-white focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-900 dark:placeholder-gray-400 dark:text-gray-900 dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-6"></textarea>
+                        <div class="step-actions flex justify-between mt-5">
+                            <a type="button" onclick="window.location='#sembilan'"
+                                class="flex items-center gap-2 cursor-pointer">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                    class="w-8 h-8 text-gray-900">
+                                    <path fill-rule="evenodd"
+                                        d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-4.28 9.22a.75.75 0 000 1.06l3 3a.75.75 0 101.06-1.06l-1.72-1.72h5.69a.75.75 0 000-1.5h-5.69l1.72-1.72a.75.75 0 00-1.06-1.06l-3 3z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                <label
+                                    class="text-gray-900 font-medium lg:text-xl text-4xl cursor-pointer">SEBELUM</label>
+                            </a>
+                            <button for="kesesuaian-ad" type="submit"
+                                class="font-bold items-center justify- px-8 py-3 text-white bg-gray-800 border-white border-2 rounded-lg cursor-pointer peer-checked:bg-white peer-checked:text-white hover:text-white hover:bg-gray-400">
+                                LANJUT
+                            </button>
+                        </div>
                     </div>
-                </div>
 
-            </div>
-        </form>
+                </div>
+            </form>
         </div>
     </div>
-<script>
-    let hasSubJenis = false;
-
-    function escapeHtml(s){
-        return String(s ?? '').replace(/[&<>"']/g, m => ({
-            '&':'&amp;',
-            '<':'&lt;',
-            '>':'&gt;',
-            '"':'&quot;',
-            "'":'&#39;'
-        }[m]));
-    }
-
-    function renderJenisButtons(groups){
-        const el = document.getElementById('jenisContainer');
-        // Data bisa berupa array of group (lama) atau array of program (baru)
-        let data = Array.isArray(groups) ? groups : [];
-        // Jika data[0] punya 'items', berarti format lama (group by bidang), ambil semua items
-        if (data.length && data[0].items) {
-            data = data.flatMap(g => g.items || []);
+    <!-- Mobile fixed navigation: show Prev at top and Next at bottom on small screens -->
+    <style>
+        @media (max-width: 640px) {
+            #mobile-nav-top, #mobile-nav-bottom { position: fixed; left: 0; right: 0; z-index: 120; display: none; padding: 0.35rem; }
+            #mobile-nav-top { top: calc(var(--survey-header-height) + 0.25rem); justify-content: flex-start; padding-left: 1rem; }
+            #mobile-nav-bottom { bottom: calc(var(--survey-footer-height) + 0.6rem); justify-content: center; }
+            #mobile-nav-top button, #mobile-nav-bottom button { background: #ffffff; color: #6f3800; border: 1px solid #ffb781; padding: 0.55rem 0.9rem; border-radius: 9999px; font-weight: 800; box-shadow: 0 10px 20px rgba(0,0,0,0.08); }
         }
-        hasSubJenis = data.length > 0;
+    </style>
 
-        if(!hasSubJenis){
-            el.innerHTML = `
+    <div id="mobile-nav-top">
+        <button id="mobile-prev" type="button" onclick="mobilePrev()">SEBELUM</button>
+    </div>
+    <div id="mobile-nav-bottom">
+        <button id="mobile-next" type="button" onclick="mobileNext()">LANJUT</button>
+    </div>
+    <script>
+        let hasSubJenis = false;
+
+        function escapeHtml(s) {
+            return String(s ?? '').replace(/[&<>"']/g, m => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[m]));
+        }
+
+        function renderJenisButtons(groups) {
+            const el = document.getElementById('jenisContainer');
+            // Data bisa berupa array of group (lama) atau array of program (baru)
+            let data = Array.isArray(groups) ? groups : [];
+            // Jika data[0] punya 'items', berarti format lama (group by bidang), ambil semua items
+            if (data.length && data[0].items) {
+                data = data.flatMap(g => g.items || []);
+            }
+            hasSubJenis = data.length > 0;
+
+            if (!hasSubJenis) {
+                el.innerHTML = `
                 <div class="px-3 py-2 text-sm text-gray-600 bg-white rounded-2xl border border-orange-200 font-semibold">
                     Bagian ini belum memiliki data program. Anda akan langsung diarahkan ke pengisian biodata.
                 </div>
             `;
-            setTimeout(function() {
-                window.location = '#identitas';
-            }, 600);
-            return;
-        }
+                setTimeout(function () {
+                    window.location = '#identitas';
+                }, 600);
+                return;
+            }
 
-        let index = 0;
-        const html = data.map((it) => {
-            const inputId = `jenis${it.id}`;
-            const checked = index === 0 ? 'checked' : '';
-            index++;
-            return `
+            let index = 0;
+            const html = data.map((it) => {
+                const inputId = `jenis${it.id}`;
+                const checked = index === 0 ? 'checked' : '';
+                index++;
+                return `
                 <li>
                     <input type="radio"
                         id="${inputId}"
@@ -1992,181 +2423,303 @@ if (empty($bagianList)) {
                     </label>
                 </li>
             `;
-        }).join('');
-        el.innerHTML = `<ul class="grid w-full gap-2 lg:grid-cols-2 grid-cols-1">${html}</ul>`;
-    }
+            }).join('');
+            el.innerHTML = `<ul class="grid w-full gap-2 lg:grid-cols-2 grid-cols-1">${html}</ul>`;
+        }
 
-    function loadJenisFlat(bagianId){
-        const el = document.getElementById('jenisContainer');
-        el.innerHTML = '<div class="px-3 py-2 text-sm text-gray-500">Memuat data…</div>';
+        function loadJenisFlat(bagianId) {
+            const el = document.getElementById('jenisContainer');
+            el.innerHTML = '<div class="px-3 py-2 text-sm text-gray-500">Memuat data…</div>';
 
-        // Debug: tampilkan bagianId yang dikirim
-        console.log('[DEBUG] Memuat sub_jenis untuk bagianId:', bagianId);
+            // Debug: tampilkan bagianId yang dikirim
+            console.log('[DEBUG] Memuat sub_jenis untuk bagianId:', bagianId);
 
-        fetch(`/sub-jenis/list?bagian=${encodeURIComponent(bagianId)}`)
-            .then(async r => {
-                let json;
-                try {
-                    json = await r.json();
-                } catch (e) {
-                    throw new Error('Respon bukan JSON');
-                }
-                // Debug: tampilkan hasil fetch ke console
-                console.log('[DEBUG] Hasil fetch /sub-jenis/list:', json);
-                if(!json.ok) {
-                    // Tampilkan pesan error dari backend
-                    throw new Error(json.message || 'Gagal memuat data');
-                }
-                if(!json.data || !Array.isArray(json.data) || json.data.length === 0) {
-                    el.innerHTML = `<div class='px-3 py-2 text-sm text-red-600 bg-white rounded-2xl border border-orange-200 font-semibold'>Tidak ada data program untuk bagian ini.<br>Silakan cek data di admin atau hubungi admin.</div>`;
+            fetch(`/sub-jenis/list?bagian=${encodeURIComponent(bagianId)}`)
+                .then(async r => {
+                    let json;
+                    try {
+                        json = await r.json();
+                    } catch (e) {
+                        throw new Error('Respon bukan JSON');
+                    }
+                    // Debug: tampilkan hasil fetch ke console
+                    console.log('[DEBUG] Hasil fetch /sub-jenis/list:', json);
+                    if (!json.ok) {
+                        // Tampilkan pesan error dari backend
+                        throw new Error(json.message || 'Gagal memuat data');
+                    }
+                    if (!json.data || !Array.isArray(json.data) || json.data.length === 0) {
+                        el.innerHTML = `<div class='px-3 py-2 text-sm text-red-600 bg-white rounded-2xl border border-orange-200 font-semibold'>Tidak ada data program untuk bagian ini.<br>Silakan cek data di admin atau hubungi admin.</div>`;
+                        hasSubJenis = false;
+                        return;
+                    }
+                    renderJenisButtons(json.data || []);
+                })
+                .catch((err) => {
                     hasSubJenis = false;
-                    return;
-                }
-                renderJenisButtons(json.data || []);
-            })
-            .catch((err) => {
-                hasSubJenis = false;
-                el.innerHTML = `<div class="px-3 py-2 text-sm text-red-600">Gagal memuat data: ${err.message || err}</div>`;
-                // Debug: tampilkan error detail
-                console.error('[DEBUG] Gagal load sub_jenis:', err);
-            });
-    }
+                    el.innerHTML = `<div class="px-3 py-2 text-sm text-red-600">Gagal memuat data: ${err.message || err}</div>`;
+                    // Debug: tampilkan error detail
+                    console.error('[DEBUG] Gagal load sub_jenis:', err);
+                });
+        }
 
-    function lanjutKeBiodata(){
-        // Jika tidak ada jenis layanan, langsung lanjut
-        if (!hasSubJenis) {
+        function lanjutKeBiodata() {
+            // Jika tidak ada jenis layanan, langsung lanjut
+            if (!hasSubJenis) {
+                window.location = '#identitas';
+                return;
+            }
+            // Jika ada jenis layanan, wajib pilih salah satu
+            const selectedJenis = document.querySelector('.radio-jenis:checked');
+            if (!selectedJenis) {
+                alert('Silakan pilih pelayanan atau sub pelayanan terlebih dahulu.');
+                return;
+            }
             window.location = '#identitas';
-            return;
-        }
-        // Jika ada jenis layanan, wajib pilih salah satu
-        const selectedJenis = document.querySelector('.radio-jenis:checked');
-        if (!selectedJenis) {
-            alert('Silakan pilih pelayanan atau sub pelayanan terlebih dahulu.');
-            return;
-        }
-        window.location = '#identitas';
-    }
-
-    function lanjutDariIdentitas(){
-        // const nama = document.getElementById('nama');
-        // const nohp = document.getElementById('nohp');
-        // const alamat = document.getElementById('alamat');
-        // const jenkel = document.querySelector('#identitas input[name="jenkel[jenkel]']:checked');
-
-        // const requiredFields = [
-        //     { element: nama, label: 'Nama' },
-        //     { element: nohp, label: 'No. Telp' },
-        //     { element: alamat, label: 'Alamat' },
-        // ];
-
-        // for (const field of requiredFields) {
-        //     if (!field.element || !field.element.value.trim()) {
-        //         alert(`Silakan isi ${field.label} terlebih dahulu.`);
-        //         field.element?.focus();
-        //         return;
-        //     }
-        // }
-
-        // if (!jenkel) {
-        //     alert('Silakan pilih jenis kelamin terlebih dahulu.');
-        //     return;
-        // }
-
-        window.location.hash = '#kedua';
-    }
-
-    function resetSurveyForm(){
-        const form = document.querySelector('.survey-track');
-        if (!form) {
-            return;
         }
 
-        form.reset();
+        function lanjutDariIdentitas() {
+            
+            window.location.hash = '#kedua';
+            // const nama = document.getElementById('nama');
+            // const nohp = document.getElementById('nohp');
+            // const alamat = document.getElementById('alamat');
+            // const jenkel = document.querySelector('#identitas input[name="jenkel[jenkel]']:checked');
 
-        const firstBagian = document.querySelector('.radio-bagian');
-        if (firstBagian) {
-            firstBagian.checked = true;
-            loadJenisFlat(firstBagian.value);
+            // const requiredFields = [
+            //     { element: nama, label: 'Nama' },
+            //     { element: nohp, label: 'No. Telp' },
+            //     { element: alamat, label: 'Alamat' },
+            // ];
+
+            // for (const field of requiredFields) {
+            //     if (!field.element || !field.element.value.trim()) {
+            //         alert(`Silakan isi ${field.label} terlebih dahulu.`);
+            //         field.element?.focus();
+            //         return;
+            //     }
+            // }
+
+            // if (!jenkel) {
+            //     alert('Silakan pilih jenis kelamin terlebih dahulu.');
+            //     return;
+            // }
+
         }
 
-        hasSubJenis = false;
-        window.location.hash = '#awal';
-    }
+        function resetSurveyForm() {
+            const form = document.querySelector('.survey-track');
+            if (!form) {
+                return;
+            }
 
-    document.addEventListener('change', function (e) {
-        const el = e.target;
-        if (el.classList && el.classList.contains('radio-bagian')) {
-            loadJenisFlat(el.value);
-        }
-    });
+            form.reset();
 
-    document.addEventListener('DOMContentLoaded', function () {
-        document.body.classList.add('is-ready');
+            const firstBagian = document.querySelector('.radio-bagian');
+            if (firstBagian) {
+                firstBagian.checked = true;
+                loadJenisFlat(firstBagian.value);
+            }
 
-        // Tampilkan popup ucapan otomatis di awal
-        var popup = document.getElementById('popup');
-        if (popup) popup.classList.remove('hidden');
-
-        // Langsung skip ke step biodata (identitas) jika belum di hash
-        if (!window.location.hash || window.location.hash === '#awal' || window.location.hash === '#jenisProgram') {
+            hasSubJenis = false;
             window.location.hash = '#awal';
         }
 
-        // Update progress bar dan label step sesuai hash saat halaman dimuat
-        const sections = [
-            { id: 'awal', label: 'Pilih bagian layanan' },
-            { id: 'jenisProgram', label: 'Pilih jenis layanan' },
-            { id: 'identitas', label: 'Lengkapi data identitas' },
-            { id: 'kedua', label: 'Lengkapi biodata lainnya' },
-            { id: 'satu', label: 'Kesesuaian persyaratan layanan' },
-            { id: 'dua', label: 'Kemudahan prosedur pelayanan' },
-            { id: 'tiga', label: 'Kecepatan waktu pelayanan' },
-            { id: 'empat', label: 'Kewajaran biaya atau tarif' },
-            { id: 'lima', label: 'Kesesuaian produk pelayanan' },
-            { id: 'enam', label: 'Kompetensi petugas pelayanan' },
-            { id: 'tujuh', label: 'Kesopanan dan keramahan petugas' },
-            { id: 'delapan', label: 'Kualitas sarana dan prasarana' },
-            { id: 'sembilan', label: 'Penanganan pengaduan layanan' },
-            { id: 'saran', label: 'Saran dan Harapan' }
-        ];
+        document.addEventListener('change', function (e) {
+            const el = e.target;
+            if (el.classList && el.classList.contains('radio-bagian')) {
+                loadJenisFlat(el.value);
+            }
+        });
 
-        const stepLabel = document.getElementById('surveyStepLabel');
-        const stepCount = document.getElementById('surveyStepCount');
-        const dots = document.getElementById('surveyProgressDots');
+        document.addEventListener('DOMContentLoaded', function () {
+            document.body.classList.add('is-ready');
 
-        if (dots) {
-            dots.innerHTML = sections.map((_, index) => `<span data-step-dot="${index}"></span>`).join('');
-        }
+            // Tampilkan popup ucapan otomatis di awal (kecuali jika kita sengaja melewatinya)
+            var popup = document.getElementById('popup');
+            if (popup && !window.__skipInitialPopup) popup.classList.remove('hidden');
 
-        function updateStepFromHash() {
-            const hash = window.location.hash ? window.location.hash.replace('#', '') : 'identitas';
-            const activeIndex = Math.max(0, sections.findIndex((section) => section.id === hash));
-            const activeSection = sections[activeIndex] || sections[0];
-            if (stepLabel) stepLabel.textContent = activeSection.label;
-            if (stepCount) stepCount.textContent = `${activeIndex + 1} / ${sections.length}`;
-            document.querySelectorAll('[data-step-dot]').forEach((dot, index) => {
-                dot.classList.toggle('is-active', index === activeIndex);
+            // Jika tidak ada hash, set ke #awal; jika awal sengaja diminta sebelumnya,
+            // head script sudah mengganti URL ke #identitas, jadi jangan set ulang ke #awal.
+            if (!window.location.hash || window.location.hash === '#jenisProgram') {
+                window.location.hash = '#awal';
+            }
+
+            // Update progress bar dan label step sesuai hash saat halaman dimuat
+            const fullSections = [
+                { id: 'awal', label: 'Pilih bagian layanan' },
+                { id: 'jenisProgram', label: 'Pilih jenis layanan' },
+                { id: 'identitas', label: 'Lengkapi data identitas' },
+                { id: 'kedua', label: 'Lengkapi biodata lainnya' },
+                { id: 'satu', label: 'Kesesuaian persyaratan layanan' },
+                { id: 'dua', label: 'Kemudahan prosedur pelayanan' },
+                { id: 'tiga', label: 'Kecepatan waktu pelayanan' },
+                { id: 'empat', label: 'Kewajaran biaya atau tarif' },
+                { id: 'lima', label: 'Kesesuaian produk pelayanan' },
+                { id: 'enam', label: 'Kompetensi petugas pelayanan' },
+                { id: 'tujuh', label: 'Kesopanan dan keramahan petugas' },
+                { id: 'delapan', label: 'Kualitas sarana dan prasarana' },
+                { id: 'sembilan', label: 'Penanganan pengaduan layanan' },
+                { id: 'saran', label: 'Saran dan Harapan' }
+            ];
+
+            // Keputusan apakah kita harus menghapus dua langkah awal dari indikator.
+            // Kita skip jika head script menandai skip, atau jika URL sudah #identitas
+            // dan tidak ada referrer (langsung akses/tautan) — ini memetakan kasus /skm#awal.
+            const shouldSkipInitial = !!window.__skipInitialPopup || (window.location.hash === '#identitas' && !document.referrer);
+            let sections = shouldSkipInitial ? fullSections.filter(s => s.id !== 'awal' && s.id !== 'jenisProgram') : fullSections;
+
+            const stepLabel = document.getElementById('surveyStepLabel');
+            const stepCount = document.getElementById('surveyStepCount');
+            const dots = document.getElementById('surveyProgressDots');
+
+            if (dots) {
+                dots.innerHTML = sections.map((_, index) => `<span data-step-dot="${index}"></span>`).join('');
+            }
+
+            function updateStepFromHash() {
+                const hash = window.location.hash ? window.location.hash.replace('#', '') : 'identitas';
+                const activeIndex = Math.max(0, sections.findIndex((section) => section.id === hash));
+                const activeSection = sections[activeIndex] || sections[0];
+                if (stepLabel) stepLabel.textContent = activeSection.label;
+                if (stepCount) stepCount.textContent = `${activeIndex + 1} / ${sections.length}`;
+                document.querySelectorAll('[data-step-dot]').forEach((dot, index) => {
+                    dot.classList.toggle('is-active', index === activeIndex);
+                });
+            }
+
+            // Jalankan update saat halaman dimuat dan saat hash berubah
+            updateStepFromHash();
+            window.addEventListener('hashchange', updateStepFromHash);
+
+            // Jika kita mengganti #awal di head (skip awal), scroll ke identitas setelah update
+            if (window.__skipInitialPopup) {
+                try {
+                    const ident = document.getElementById('identitas');
+                    if (ident && typeof ident.scrollIntoView === 'function') {
+                        ident.scrollIntoView({ behavior: 'auto', block: 'start' });
+                    }
+                } catch (e) { }
+            }
+        });
+    </script>
+
+    <script>
+        // Client-side uniqueness checks without page reload
+        (function () {
+            const mapping = [
+                { id: 'no_peserta', field: 'no_pendaftar', label: 'No. Peserta' },
+                { id: 'no_wa', field: 'no_wa', label: 'No. WA' },
+                { id: 'nik', field: 'nik', label: 'NIK' },
+            ];
+
+            const form = document.querySelector('form.survey-track');
+            const submitBtn = form ? form.querySelector('button[type="submit"]') : null;
+            const status = {}; // field -> exists boolean
+            let timers = {};
+
+            function setMessage(el, msg, isError) {
+                let next = el.nextElementSibling;
+                if (!next || !next.classList || !next.classList.contains('unique-msg')) {
+                    next = document.createElement('div');
+                    next.className = 'unique-msg text-sm mt-1';
+                    el.parentNode.insertBefore(next, el.nextSibling);
+                }
+                next.textContent = msg || '';
+                next.style.color = isError ? '#dc2626' : '#15803d';
+            }
+
+            function updateSubmitState() {
+                const hasDuplicate = Object.values(status).some(v => v === true);
+                if (submitBtn) submitBtn.disabled = hasDuplicate;
+            }
+
+            function checkField(field, value, el) {
+                if (!value || value.trim() === '') {
+                    status[field] = false;
+                    setMessage(el, '');
+                    updateSubmitState();
+                    return;
+                }
+
+                fetch(`/survey/check-unique?field=${encodeURIComponent(field)}&value=${encodeURIComponent(value)}`)
+                    .then(r => r.json())
+                    .then(json => {
+                        if (json && json.exists) {
+                            status[field] = true;
+                            setMessage(el, `${el.getAttribute('placeholder') || 'Nilai'} sudah digunakan`, true);
+                        } else {
+                            status[field] = false;
+                            setMessage(el, 'Tersedia', false);
+                        }
+                        updateSubmitState();
+                    })
+                    .catch(() => {
+                        // network error — do not block submission but show warning
+                        status[field] = false;
+                        setMessage(el, 'Gagal cek, coba lagi', true);
+                        updateSubmitState();
+                    });
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                mapping.forEach(m => {
+                    const el = document.getElementById(m.id);
+                    if (!el) return;
+                    // initial empty state
+                    status[m.field] = false;
+
+                    el.addEventListener('input', function () {
+                        clearTimeout(timers[m.field]);
+                        const val = el.value;
+                        timers[m.field] = setTimeout(() => checkField(m.field, val, el), 450);
+                    });
+                });
+
+                if (form) {
+                    form.addEventListener('submit', function (e) {
+                        const hasDuplicate = Object.values(status).some(v => v === true);
+                        if (hasDuplicate) {
+                            e.preventDefault();
+                            alert('Tidak dapat melanjutkan: beberapa data sudah digunakan. Periksa kembali isian Anda.');
+                        }
+                    });
+                }
             });
-        }
-
-        // Jalankan update saat halaman dimuat dan saat hash berubah
-        updateStepFromHash();
-        window.addEventListener('hashchange', updateStepFromHash);
-    });
-</script>
+        })();
+    </script>
 
     <script>
         var popup = document.getElementById("popup");
 
         function closePopup() {
+            if (popup) {
+                popup.classList.add('hidden');
+            }
+        }
+
+        function syncPopupVisibility() {
+            if (!popup) return;
+
+            var hash = window.location.hash || '#awal';
+            var showInitialPopup = hash === '#awal' || hash === '#jenisProgram' || hash === '';
+
+            if (showInitialPopup) {
+                popup.classList.remove('hidden');
+                return;
+            }
+
             popup.classList.add('hidden');
         }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            syncPopupVisibility();
+        });
+
+        window.addEventListener('hashchange', function () {
+            syncPopupVisibility();
+        });
     </script>
 </body>
 
 </html>
-
-
-
-
-

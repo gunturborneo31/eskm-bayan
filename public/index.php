@@ -1,5 +1,32 @@
 <?php
 
+// Suppress deprecation notices (PHP 8.4) so they don't break layout/UI
+$envPath = dirname(__DIR__) . DIRECTORY_SEPARATOR . '.env';
+$appDebug = null;
+$appEnv = null;
+if (file_exists($envPath) && is_readable($envPath)) {
+    $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        if (strpos(trim($line), '#') === 0) {
+            continue;
+        }
+        [$k, $v] = array_pad(explode('=', $line, 2), 2, null);
+        $k = trim($k);
+        $v = $v !== null ? trim($v) : null;
+        if ($k === 'APP_DEBUG') {
+            $appDebug = $v;
+        }
+        if ($k === 'APP_ENV') {
+            $appEnv = $v;
+        }
+    }
+}
+
+// If running in production or debug explicitly false, suppress deprecation notices
+if ((strtolower((string) $appEnv) === 'production') || strtolower((string) $appDebug) === 'false') {
+    error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED);
+}
+
 $user_agent = '';
 if (isset($_SERVER['HTTP_USER_AGENT'])) {
     $user_agent = $_SERVER['HTTP_USER_AGENT'];

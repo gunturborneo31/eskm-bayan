@@ -16,6 +16,7 @@ use App\Http\Controllers\ExportController;
 use App\Http\Controllers\SubJenisController;
 use Illuminate\Support\Facades\Route;
 use App\Support\BagianOptions;
+use App\Http\Controllers\SurveyCodeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -61,6 +62,30 @@ Route::get('/terimakasih', function () {
     return view('terimakasih');
 });
 
+// Public redeem URL for QR codes (shows respondent data and codes)
+Route::get('/survey/redeem/{group}', [SurveyCodeController::class, 'show'])->name('survey.redeem');
+
+// Public endpoint to accept survey submissions from the frontend (no admin.session)
+Route::post('/nilaiUnsur', [NilaiUnsurController::class, 'store'])->name('nilaiUnsur.store');
+
+// AJAX endpoint to check uniqueness of identifiers while filling form
+Route::get('/survey/check-unique', [NilaiUnsurController::class, 'checkUnique'])->name('survey.checkUnique');
+
+// Endpoint to mark a redemption code as used (protected for merch team)
+Route::post('/survey/redeem/{group}/redeem', [SurveyCodeController::class, 'redeem'])->middleware('merch.session')->name('survey.redeem.confirm');
+
+// Merchandise team login + check UI
+Route::get('/merch/login', [\App\Http\Controllers\MerchandiseController::class, 'showLogin']);
+Route::post('/merch/login', [\App\Http\Controllers\MerchandiseController::class, 'login']);
+Route::post('/merch/logout', [\App\Http\Controllers\MerchandiseController::class, 'logout']);
+
+Route::middleware('merch.session')->group(function(){
+    Route::get('/merch/check', [\App\Http\Controllers\MerchandiseController::class, 'checkView']);
+    Route::match(['get','post'], '/merch/api/check', [\App\Http\Controllers\MerchandiseController::class, 'apiCheck']);
+    Route::post('/merch/api/redeem', [\App\Http\Controllers\MerchandiseController::class, 'apiRedeem']);
+    Route::get('/merch/history', [\App\Http\Controllers\MerchandiseController::class, 'history']);
+});
+
 // Route::get('word', function () {
 //     return view('word');
 // });
@@ -80,7 +105,7 @@ Route::middleware('admin.session')->group(function () {
     Route::resource('pendidikan', PendidikanController::class);
     Route::resource('saranDanMasukan', SaranMasukanController::class);
     Route::resource('nilaiRekap', NilaiController::class);
-    Route::resource('nilaiUnsur', NilaiUnsurController::class);
+    Route::resource('nilaiUnsur', NilaiUnsurController::class)->except(['store']);
     Route::resource('rekapTotal', RekapTotalController::class);
     Route::resource('pengaturanAdmin', PengaturanController::class);
 
