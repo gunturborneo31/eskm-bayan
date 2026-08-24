@@ -47,14 +47,14 @@
                 class="js-admin-nav block rounded-xl px-3 py-2.5 transition {{ str_contains($i, 'dashboard') ? 'bg-white text-orange-900 shadow-md' : 'text-white hover:bg-orange-100/20' }}">
                 DASHBOARD
             </a>
-            <a href="/sub-jenis?jenkel=1&usia=1&pekerjaan=1&pendidikan=1&tw={{ $tw }}&Tahun={{ date('Y') }}&bagian={{ $bagian }}&keterangan={{ $keterangan }}"
+            <!-- <a href="/sub-jenis?jenkel=1&usia=1&pekerjaan=1&pendidikan=1&tw={{ $tw }}&Tahun={{ date('Y') }}&bagian={{ $bagian }}&keterangan={{ $keterangan }}"
                 class="js-admin-nav block rounded-xl px-3 py-2.5 transition {{ str_contains($i, 'sub-jenis') ? 'bg-white text-orange-900 shadow-md' : 'text-white hover:bg-orange-100/20' }}">
                 SUB PELAYANAN
-            </a>
+            </a> -->
 
-            <a href="/admin/offline-skm" class="js-admin-nav block rounded-xl px-3 py-2.5 transition {{ str_contains($i, 'offline-skm') ? 'bg-white text-orange-900 shadow-md' : 'text-white hover:bg-orange-100/20' }}">
+            <!-- <a href="/admin/offline-skm" class="js-admin-nav block rounded-xl px-3 py-2.5 transition {{ str_contains($i, 'offline-skm') ? 'bg-white text-orange-900 shadow-md' : 'text-white hover:bg-orange-100/20' }}">
                 INPUT OFFLINE SKM
-            </a>
+            </a> -->
             <a href="/admin/tenant-revenue" class="js-admin-nav block rounded-xl px-3 py-2.5 transition {{ str_contains($i, 'tenant-revenue') ? 'bg-white text-orange-900 shadow-md' : 'text-white hover:bg-orange-100/20' }}">
                 PENDAPATAN TENANT
             </a>

@@ -14,16 +14,16 @@ if ($_GET['tw'] == null) {
     $endDate = $_GET['Tahun'] . '-03-31';
 } elseif ($_GET['tw'] == 2) {
     $startDate = $_GET['Tahun'] . '-04-01';
-    $endDate = $_GET['Tahun'] . '-06-31';
+    $endDate = $_GET['Tahun'] . '-06-30';
 } elseif ($_GET['tw'] == 3) {
     $startDate = $_GET['Tahun'] . '-01-01';
     $endDate = $_GET['Tahun'] . '-06-31';
 } elseif ($_GET['tw'] == 4) {
     $startDate = $_GET['Tahun'] . '-07-01';
-    $endDate = $_GET['Tahun'] . '-09-31';
+    $endDate = $_GET['Tahun'] . '-09-30';
 } elseif ($_GET['tw'] == 5) {
     $startDate = $_GET['Tahun'] . '-01-01';
-    $endDate = $_GET['Tahun'] . '-09-31';
+    $endDate = $_GET['Tahun'] . '-09-30';
 } elseif ($_GET['tw'] == 6) {
     $startDate = $_GET['Tahun'] . '-10-01';
     $endDate = $_GET['Tahun'] . '-12-31';
@@ -36,67 +36,56 @@ $terms = array_values(array_unique(array_filter(array_map('trim', explode(',', $
 
 $tu1 = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
-    ->whereIn('jenisPelayanan', $terms)
     ->get()
     ->sum('u1');
 
 $tu2 = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
-    ->whereIn('jenisPelayanan', $terms)
     ->get()
     ->sum('u2');
 
 $tu3 = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
-    ->whereIn('jenisPelayanan', $terms)
     ->get()
     ->sum('u3');
 
 $tu4 = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
-    ->whereIn('jenisPelayanan', $terms)
     ->get()
     ->sum('u4');
 
 $tu5 = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
-    ->whereIn('jenisPelayanan', $terms)
     ->get()
     ->sum('u5');
 
 $tu6 = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
-    ->whereIn('jenisPelayanan', $terms)
     ->get()
     ->sum('u6');
 
 $tu7 = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
-    ->whereIn('jenisPelayanan', $terms)
     ->get()
     ->sum('u7');
 
 $tu8 = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
-    ->whereIn('jenisPelayanan', $terms)
     ->get()
     ->sum('u8');
 
 $tu9 = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
-    ->whereIn('jenisPelayanan', $terms)
     ->get()
     ->sum('u9');
 
 $n = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
-    ->whereIn('jenisPelayanan', $terms)
     ->get()
     ->count();
 
 $tu9 = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
-    ->whereIn('jenisPelayanan', $terms)
     ->get()
     ->sum('u9');
 
@@ -232,6 +221,7 @@ if ($n == 0) {
                             </select>
                         </div>
                     
+                        @if (false)
                         {{-- bagian --}}
                         <div class="flex flex-row items-center gap-2">
                             <label for="countries" class="text-black font-bold text-sm ">
@@ -294,6 +284,7 @@ if ($n == 0) {
                                 </ul>
                             </div>
                         </div>
+                        @endif
 
                         {{-- download --}}
                         <a href="/exports?tw={{ $_GET['tw'] }}&Tahun={{ $_GET['Tahun'] }}&bagian={{ $_GET['bagian'] }}&keterangan={{ $_GET['keterangan'] }}"

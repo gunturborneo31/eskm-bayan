@@ -14,16 +14,16 @@ if ($_GET['tw'] == null) {
     $endDate = $_GET['Tahun'] . '-03-31';
 } elseif ($_GET['tw'] == 2) {
     $startDate = $_GET['Tahun'] . '-04-01';
-    $endDate = $_GET['Tahun'] . '-06-31';
+    $endDate = $_GET['Tahun'] . '-06-30';
 } elseif ($_GET['tw'] == 3) {
     $startDate = $_GET['Tahun'] . '-01-01';
     $endDate = $_GET['Tahun'] . '-06-31';
 } elseif ($_GET['tw'] == 4) {
     $startDate = $_GET['Tahun'] . '-07-01';
-    $endDate = $_GET['Tahun'] . '-09-31';
+    $endDate = $_GET['Tahun'] . '-09-30';
 } elseif ($_GET['tw'] == 5) {
     $startDate = $_GET['Tahun'] . '-01-01';
-    $endDate = $_GET['Tahun'] . '-09-31';
+    $endDate = $_GET['Tahun'] . '-09-30';
 } elseif ($_GET['tw'] == 6) {
     $startDate = $_GET['Tahun'] . '-10-01';
     $endDate = $_GET['Tahun'] . '-12-31';
@@ -215,6 +215,7 @@ if ($n == 0) {
                             </select>
                         </div>
                     
+                        @if (false)
                         {{-- bagian --}}
                         <div class="flex flex-row items-center gap-2">
                             <label for="countries" class="text-black font-bold text-sm ">
@@ -277,6 +278,7 @@ if ($n == 0) {
                                 </ul>
                             </div>
                         </div>
+                        @endif
 
                         {{-- download --}}
                         <a href="{{ route('exports.download', ['type' => 'resume', 'jenkel' => $_GET['jenkel'], 'usia' => $_GET['usia'], 'pekerjaan' => $_GET['pekerjaan'], 'pendidikan' => $_GET['pendidikan'], 'tahun' => $_GET['tahun'], 'Tahun' => $_GET['Tahun'] ?? $_GET['tahun'] ?? date('Y'), 'Bulan' => $_GET['Bulan'] ?? null]) }}"

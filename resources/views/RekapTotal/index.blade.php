@@ -36,55 +36,46 @@ $terms = array_values(array_unique(array_filter(array_map('trim', explode(',', $
 
 $tu1 = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
-    ->whereIn('jenisPelayanan', $terms)
     ->get()
     ->sum('u1');
 
 $tu2 = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
-    ->whereIn('jenisPelayanan', $terms)
     ->get()
     ->sum('u2');
 
 $tu3 = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
-    ->whereIn('jenisPelayanan', $terms)
     ->get()
     ->sum('u3');
 
 $tu4 = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
-    ->whereIn('jenisPelayanan', $terms)
     ->get()
     ->sum('u4');
 
 $tu5 = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
-    ->whereIn('jenisPelayanan', $terms)
     ->get()
     ->sum('u5');
 
 $tu6 = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
-    ->whereIn('jenisPelayanan', $terms)
     ->get()
     ->sum('u6');
 
 $tu7 = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
-    ->whereIn('jenisPelayanan', $terms)
     ->get()
     ->sum('u7');
 
 $tu8 = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
-    ->whereIn('jenisPelayanan', $terms)
     ->get()
     ->sum('u8');
 
 $tu9 = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
-    ->whereIn('jenisPelayanan', $terms)
     ->get()
     ->sum('u9');
 
@@ -92,7 +83,6 @@ $Ttl_Nilai_Unsur = $tu1 + $tu2 + $tu3 + $tu4 + $tu5 + $tu6 + $tu7 + $tu8 + $tu9;
 
 $n = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
-    ->whereIn('jenisPelayanan', $terms)
     ->get()
     ->count();
 
@@ -302,6 +292,7 @@ $pendidikan = $_GET['pendidikan'] ?? '0';
   </select>
 </div>
 
+ @if (false)
  {{-- bagian --}}
  <div class="flex flex-row items-center gap-2">
     <label for="countries" class="text-black font-bold text-sm ">
@@ -366,6 +357,7 @@ $pendidikan = $_GET['pendidikan'] ?? '0';
         </ul>
     </div>
 </div>
+@endif
 
                         {{-- download --}}
                         <a href="{{ route('exports.download', ['type' => 'resume', 'jenkel' => $_GET['jenkel'], 'usia' => $_GET['usia'], 'pekerjaan' => $_GET['pekerjaan'], 'pendidikan' => $_GET['pendidikan'], 'tahun' => $_GET['tahun'], 'Tahun' => $_GET['Tahun'] ?? $_GET['tahun'] ?? date('Y'), 'Bulan' => $_GET['Bulan'] ?? null]) }}"

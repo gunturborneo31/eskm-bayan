@@ -12,8 +12,7 @@ if (empty($terms)) {
 }
 $_GET['bagian'] = empty($bagianParam) ? implode(',', $terms) : $bagianParam;
 
-$baseQuery = DB::table('survey_responses')
-    ->whereIn('jenisPelayanan', $terms);
+$baseQuery = DB::table('survey_responses');
 
 $jenkelAgg = (clone $baseQuery)
     ->selectRaw("COALESCE(SUM(CASE WHEN jenkel = 'Laki - Laki' THEN 1 ELSE 0 END), 0) as laki_laki")
@@ -154,7 +153,7 @@ $bagianOptions = \App\Support\BagianOptions::codeNameMap();
     'brandTitle' => 'E-SKM Bayan Open',
     'selectedTw' => $_GET['tw'],
     'bagianQuery' => $_GET['bagian'],
-    'showBagian' => true,
+    'showBagian' => false,
     'selectedBagian' => $terms,
     'bagianOptions' => $bagianOptions,
     'showHomeButton' => true,

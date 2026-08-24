@@ -30,16 +30,16 @@ if ($_GET['tw'] == null) {
     $endDate = $_GET['Tahun'] . '-03-31';
 } elseif ($_GET['tw'] == 2) {
     $startDate = $_GET['Tahun'] . '-04-01';
-    $endDate = $_GET['Tahun'] . '-06-31';
+    $endDate = $_GET['Tahun'] . '-06-30';
 } elseif ($_GET['tw'] == 3) {
     $startDate = $_GET['Tahun'] . '-01-01';
     $endDate = $_GET['Tahun'] . '-06-31';
 } elseif ($_GET['tw'] == 4) {
     $startDate = $_GET['Tahun'] . '-07-01';
-    $endDate = $_GET['Tahun'] . '-09-31';
+    $endDate = $_GET['Tahun'] . '-09-30';
 } elseif ($_GET['tw'] == 5) {
     $startDate = $_GET['Tahun'] . '-01-01';
-    $endDate = $_GET['Tahun'] . '-09-31';
+    $endDate = $_GET['Tahun'] . '-09-30';
 } elseif ($_GET['tw'] == 6) {
     $startDate = $_GET['Tahun'] . '-10-01';
     $endDate = $_GET['Tahun'] . '-12-31';
@@ -52,7 +52,6 @@ $terms = array_values(array_unique(array_filter(array_map('trim', explode(',', $
 
 $selects = DB::table('survey_responses')
             ->whereBetween('created_at', [$startDate, $endDate])
-            ->whereIn('jenisPelayanan', $terms)
             ->where('tahun', $_GET['Tahun'] ?? date('Y'))
             ->paginate(10);
 

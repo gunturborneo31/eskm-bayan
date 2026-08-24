@@ -49,7 +49,6 @@
     }
 
     $baseQuery = DB::table('survey_responses')
-        ->whereIn('jenisPelayanan', $terms)
         ->whereBetween('created_at', [$startDate, $endDate]);
 
     $jenkelAgg = (clone $baseQuery)
@@ -154,7 +153,7 @@
                 'selectedYear' => $tahun,
                 'selectedTw' => $tw,
                 'bagianQuery' => $bagianQuery,
-                'showBagian' => true,
+                'showBagian' => false,
                 'selectedBagian' => $terms,
                 'bagianOptions' => $bagianOptions,
                 'showHomeButton' => false,

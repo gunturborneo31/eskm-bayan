@@ -22,7 +22,6 @@ foreach ($yearOptions as $tahun) {
     $startDate = $tahun . '-01-01';
     $endDate = $tahun . '-12-31';
     $aggregate = DB::table('survey_responses')
-        ->whereIn('jenisPelayanan', $terms)
         ->whereBetween('created_at', [$startDate, $endDate])
         ->selectRaw($aggregateSelect)
         ->first();
@@ -341,7 +340,7 @@ $nilaiSkm = json_encode($nilaiSkm);
     'selectedYear' => null, // tahun di-nonaktifkan
     'selectedTw' => null,
     'bagianQuery' => $_GET['bagian'] ?? '',
-    'showBagian' => true,
+    'showBagian' => false,
     'selectedBagian' => $terms ?? [],
     'bagianOptions' => \App\Support\BagianOptions::codeNameMap(),
     'showHomeButton' => false,
