@@ -76,15 +76,15 @@ $jmlResponden = DB::table('survey_responses')->count();
 
 
 $unsurPelayanan = [
-    'Kejelasan Informasi Jadwal Acara Bayan Open',
-    'Kenyamanan Fasilitas Penonton Bayan Open (Tribun, Tempat Duduk, Jarak Pandang)',
-    'Kualitas Area Pertandingan Bayan Open (Kondisi Lapangan, Pencahayaan, Alur Masuk Area)',
-    'Perilaku Petugas (Panitia) Bayan Open di Lapangan',
-    'Kemudahan dan Opsi Metode Pembayaran (Tunai / QRIS / Cashless) di Bayan Craftart Fest',
-    'Seberapa besar Bayan Craftart Fest Mendorong Aktivitas Ekonomi, Promosi, dan Peluang Usaha Lokal',
-    'Kebersihan Umum dan Pengelolaan Sampah di Seluruh Area Acara (Bayan Open dan Bayan Craftart Fest)',
-    'Kesigapan Sistem Keamanan, ketertiban, dan Alur Masuk',
-    'Apakah menurut Anda acara Bayan Open & Bayan Craft perlu diadakan kembali di masa mendatang',
+    'Informasi',
+    'Kenyamanan',
+    'Kualitas',
+    'Perilaku Petugas',
+    'Kemudahan dan Opsi Metode Pembayaran',
+    'Mendorong Usaha Lokal',
+    'Kebersihan',
+    'Kesigapan',
+    'Diadakan Kembali',
 ];
 
 $getMutuBySkm = static function (float $value): string {

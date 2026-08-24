@@ -32,7 +32,7 @@ use App\Http\Controllers\TenantRevenueController;
 
 Route::get('/portal', [PortalController::class, 'index']);
 Route::get('/portal/{slug}', [PortalController::class, 'slug']);
-Route::get('/dashboard', [DashboardController::class, 'welcome']);
+Route::get('/dashboards', [DashboardController::class, 'welcome']);
 Route::get('/', function () {
     $bagianList = collect(BagianOptions::idNameMap())
         ->map(fn ($name) => strtoupper($name))
