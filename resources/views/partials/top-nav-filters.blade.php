@@ -1,6 +1,6 @@
 @php
     $routeBase = $routeBase ?? '/';
-    $brandTitle = $brandTitle ?? 'E-SKM PPM Bayan Group';
+    $brandTitle = $brandTitle ?? 'E-SKM Bayan Open';
     $subtitle = $subtitle ?? null;
     $showBagian = $showBagian ?? false;
     $showHomeButton = $showHomeButton ?? false;

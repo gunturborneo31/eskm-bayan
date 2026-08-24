@@ -1,6 +1,7 @@
 ﻿<!doctype html>
 <html lang="id">
 <head>
+    @include('partials.google-tag')
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Merch - Cek Kode</title>
@@ -45,6 +46,7 @@
             </div>
             <form method="POST" action="/merch/logout" class="self-start sm:self-auto">
                 @csrf
+                <a href="/merch/draw" class="inline-flex px-3 py-2 mr-2 bg-amber-500 text-white rounded-xl font-semibold shadow-sm">Buka Draw</a>
                 <button class="px-3 py-2 bg-red-600 text-white rounded-xl font-semibold shadow-sm">Logout</button>
             </form>
         </div>

@@ -506,7 +506,7 @@ if ($n == 0) {
                                     1
                                 </td>
                                 <td class="whitespace-nowrap  px-4 font-normal text-xs">
-                                    Persyaratan
+                                    Kejelasan Informasi Jadwal Acara Bayan Open
                                 </td>
                                 <td class="whitespace-nowrap text-center px-4 font-normal text-xs">
                                     {{ $nrr1 }}
@@ -536,7 +536,7 @@ if ($n == 0) {
                                     2
                                 </td>
                                 <td class="whitespace-nowrap  px-4 font-normal text-xs">
-                                    Prosedur Pelayanan
+                                    Kenyamanan Fasilitas Penonton Bayan Open
                                 </td>
                                 <td class="whitespace-nowrap text-center px-4 font-normal text-xs">
                                     {{ $nrr2 }}
@@ -566,7 +566,7 @@ if ($n == 0) {
                                     3
                                 </td>
                                 <td class="whitespace-nowrap  px-4 font-normal text-xs">
-                                    Waktu Pelaksana
+                                    Kualitas Area Pertandingan Bayan Open
                                 </td>
                                 <td class="whitespace-nowrap text-center px-4 font-normal text-xs">
                                     {{ $nrr3 }}
@@ -596,7 +596,7 @@ if ($n == 0) {
                                     4
                                 </td>
                                 <td class="whitespace-nowrap  px-4 font-normal text-xs">
-                                    Biaya / Tarif
+                                    Perilaku Petugas (Panitia) Bayan Open
                                 </td>
                                 <td class="whitespace-nowrap text-center px-4 font-normal text-xs">
                                     {{ $nrr4 }}
@@ -626,7 +626,7 @@ if ($n == 0) {
                                     5
                                 </td>
                                 <td class="whitespace-nowrap  px-4 font-normal text-xs">
-                                    Produk Layanan
+                                    Kualitas Area Pertandingan Bayan Open
                                 </td>
                                 <td class="whitespace-nowrap text-center px-4 font-normal text-xs">
                                     {{ $nrr5 }}
@@ -656,7 +656,7 @@ if ($n == 0) {
                                     6
                                 </td>
                                 <td class="whitespace-nowrap  px-4 font-normal text-xs">
-                                    Kompetensi Pelaksana
+                                    Aktivitas Ekonomi, Promosi, dan Peluang Usaha Lokal
                                 </td>
                                 <td class="whitespace-nowrap text-center px-4 font-normal text-xs">
                                     {{ $nrr6 }}
@@ -686,7 +686,7 @@ if ($n == 0) {
                                     7
                                 </td>
                                 <td class="whitespace-nowrap  px-4 font-normal text-xs">
-                                    Perilaku Pelaksana
+                                    Kebersihan Umum dan Pengelolaan Sampah
                                 </td>
                                 <td class="whitespace-nowrap text-center px-4 font-normal text-xs">
                                     {{ $nrr7 }}
@@ -716,7 +716,7 @@ if ($n == 0) {
                                     8
                                 </td>
                                 <td class="whitespace-wrap  px-4 font-normal text-xs">
-                                    Sarana dan Prasarana
+                                    Sistem Keamanan, Ketertiban, dan Alur Masuk
                                 </td>
                                 <td class="whitespace-nowrap text-center px-4 font-normal text-xs">
                                     {{ $nrr8 }}
@@ -746,7 +746,7 @@ if ($n == 0) {
                                     9
                                 </td>
                                 <td class="whitespace-nowrap  px-4 font-normal text-xs">
-                                    Penanganan Pengaduan
+                                    Keberlanjutan Bayan Open &amp; Bayan Craft
                                 </td>
                                 <td class="whitespace-nowrap text-center px-4 font-normal text-xs">
                                     {{ $nrr9 }}

@@ -280,6 +280,7 @@ if ($n == 0) {
 <html class="scroll-smooth">
 
 <head>
+    @include('partials.google-tag')
     <meta charset="utf-8">
     <meta name="viewport" conteitial-scale="1.0">
     <link rel="dns-prefetch" href="//fonts.bunny.net">

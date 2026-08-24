@@ -77,15 +77,15 @@ $jmlResponden = DB::table('survey_responses')->count();
 
 
 $unsurPelayanan = [
-    'Persyaratan',
-    'Sistem, Mekanisme dan Prosedur',
-    'Waktu Penyelesaian',
-    'Biaya / Tarif',
-    'Produk Spesifikasi Jenis Pelayanan',
-    'Kompetensi Pelaksana',
-    'Perilaku Pelaksana',
-    'Sarana dan Prasarana',
-    'Penanganan Pengaduan, Saran & Masukan',
+    'Kejelasan Informasi Jadwal Acara Bayan Open',
+    'Kenyamanan Fasilitas Penonton Bayan Open (Tribun, Tempat Duduk, Jarak Pandang)',
+    'Kualitas Area Pertandingan Bayan Open (Kondisi Lapangan, Pencahayaan, Alur Masuk Area)',
+    'Perilaku Petugas (Panitia) Bayan Open di Lapangan',
+    'Kemudahan dan Opsi Metode Pembayaran (Tunai / QRIS / Cashless) di Bayan Craftart Fest',
+    'Seberapa besar Bayan Craftart Fest Mendorong Aktivitas Ekonomi, Promosi, dan Peluang Usaha Lokal',
+    'Kebersihan Umum dan Pengelolaan Sampah di Seluruh Area Acara (Bayan Open dan Bayan Craftart Fest)',
+    'Kesigapan Sistem Keamanan, ketertiban, dan Alur Masuk',
+    'Apakah menurut Anda acara Bayan Open & Bayan Craft perlu diadakan kembali di masa mendatang',
 ];
 
 $getMutuBySkm = static function (float $value): string {
@@ -159,9 +159,10 @@ $nilaiSkm = json_encode($nilaiSkm);
 <html lang="en">
 
 <head>
+    @include('partials.google-tag')
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>E-SKM PPM Bayan Group - Dashboard</title>
+    <title>E-SKM Bayan Open - Dashboard</title>
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />

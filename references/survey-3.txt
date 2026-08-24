@@ -5,7 +5,7 @@
 <html lang="id"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>E-SKM PPM Bayan Group - Survey Information</title>
+<title>E-SKM Bayan Open - Survey Information</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
@@ -101,7 +101,7 @@
 <div class="absolute inset-0 dot-pattern opacity-40 z-0"></div>
 <!-- Top Navigation Bar -->
 <header class="z-10 flex justify-between items-center w-full px-12 pt-10 max-w-[1920px] mx-auto font-manrope antialiased">
-<div class="text-xl font-bold tracking-tight text-white">E-SKM PPM Bayan Group</div>
+<div class="text-xl font-bold tracking-tight text-white">E-SKM Bayan Open</div>
 <div class="flex items-center gap-8">
 <nav class="flex gap-10">
 <a class="text-white border-b-2 border-white transition-colors duration-300" href="#">Survey</a>

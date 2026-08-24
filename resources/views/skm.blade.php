@@ -2,6 +2,7 @@
 <html class="scroll-smooth">
 
 <head>
+    @include('partials.google-tag')
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="dns-prefetch" href="//fonts.bunny.net">
@@ -1362,7 +1363,7 @@ if (empty($bagianList)) {
                                 class="max-w-md text-left font-bold tracking-tight my-2 whitespace-nowrap mb-3 text-gray-900 lg:text-2xl text-4xl drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)]">
                                 Lengkapi data identitas Anda
                             </label>
-                            <p>Masukkan nama, nomor WhatsApp, dan nomor peserta sebelum lanjut ke biodata lainnya.</p>
+                            <p>Masukkan nama dan nomor WhatsApp sebelum lanjut ke biodata lainnya.</p>
                         </div>
 
                         <div class="biodataIdentity">
@@ -1379,11 +1380,6 @@ if (empty($bagianList)) {
                         </div>
 
                         <div class="biodataIdentity">
-                            <div>
-                                <label for="no_peserta">No. Peserta</label>
-                                <input type="text" id="no_peserta" name="no_peserta" value="{{ old('no_peserta') }}"
-                                    placeholder="Masukkan nomor peserta" inputmode="numeric">
-                            </div>
                             <div>
                                 <label>Jenis Kelamin</label>
                                 <div class="identity-radio-grid">
@@ -1704,35 +1700,30 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                         class="flex flex-col items-stretch gap-4 w-full h-full py-[72px] max-w-2xl mx-auto justify-center">
                         <div
                             class="w-full flex flex-col p-6 bg-white rounded-2xl shadow-[0_8px_32px_rgba(146,76,0,0.12)] y-center">
-                            <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4 gap-3">
-                                <span class="material-symbols-outlined text-[#ff8800] text-2xl">people</span>
-                            </div>
-                            <p class="font-bold uppercase tracking-widest text-xs text-[#924c00] mb-2">pelatihan dan
-                                kemandirian masyarakat</p>
-                            <h2 class="text-lg xl:text-xl font-semibold leading-snug text-[#191c1d]">Sejauh mana materi
-                                pelatihan yang diberikan sesuai dengan kebutuhan keterampilan atau potensi ekonomi di
-                                wilayah Anda?</h2>
+                            
+                            <p class="font-bold uppercase tracking-widest text-xs text-[#924c00] mb-2">Bayan Open & Bayan Craft</p>
+                            <h2 class="text-lg xl:text-xl font-semibold leading-snug text-[#191c1d]">Kejelasan Informasi Jadwal Acara Bayan Open</h2>
                         </div>
                         <div class="w-full flex flex-col gap-3">
                             <div>
                                 <input type="radio" id="u1-1" name="u1" value="1" class="hidden scroll-btn peer">
                                 <label for="u1-1"
                                     class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                    <span class="font-semibold text-base lg:text-lg">Tidak Relevan</span>
+                                    <span class="font-semibold text-base lg:text-lg">Sangat Tidak Jelas</span>
                                 </label>
                             </div>
                             <div>
                                 <input type="radio" id="u1-2" name="u1" value="2" class="hidden scroll-btn peer">
                                 <label for="u1-2"
                                     class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                    <span class="font-semibold text-base lg:text-lg">Kurang Relevan</span>
+                                    <span class="font-semibold text-base lg:text-lg">Kurang Jelas</span>
                                 </label>
                             </div>
                             <div>
                                 <input type="radio" id="u1-3" name="u1" value="3" class="hidden scroll-btn peer">
                                 <label for="u1-3"
                                     class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                    <span class="font-semibold text-base lg:text-lg">Relevan</span>
+                                    <span class="font-semibold text-base lg:text-lg">Jelas</span>
                                 </label>
                             </div>
                             <div>
@@ -1740,7 +1731,7 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                                     class="hidden scroll-btn peer">
                                 <label for="u1-4"
                                     class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                    <span class="font-semibold text-base lg:text-lg">Sangat Relevan</span>
+                                    <span class="font-semibold text-base lg:text-lg">Sangat Jelas</span>
                                 </label>
                             </div>
                             <div class="step-actions flex justify-between mt-3">
@@ -1774,34 +1765,30 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                         class="flex flex-col items-stretch gap-4 w-full h-full py-[72px] max-w-2xl mx-auto justify-center">
                         <div
                             class="w-full flex flex-col p-6 bg-white rounded-2xl shadow-[0_8px_32px_rgba(146,76,0,0.12)] justify-center">
-                            <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4 gap-3">
-                                <span class="material-symbols-outlined text-[#ff8800] text-2xl">school</span>
-                            </div>
+                            
                             <!-- <p class="font-bold uppercase tracking-widest text-xs text-[#924c00] mb-2">Pertanyaan 2 dari 9</p> -->
-                            <h2 class="text-lg xl:text-xl font-semibold leading-snug text-[#191c1d]">Bagaimana penilaian
-                                Anda terhadap kemudahan proses birokrasi atau administrasi dalam pengajuan bantuan
-                                pendidikan ini?</h2>
+                            <h2 class="text-lg xl:text-xl font-semibold leading-snug text-[#191c1d]">Kenyamanan Fasilitas Penonton Bayan Open (Tribun, Tempat Duduk, Jarak Pandang)</h2>
                         </div>
                         <div class="w-full flex flex-col gap-3">
                             <div>
                                 <input type="radio" id="u2-1" name="u2" value="1" class="hidden scroll-btn peer">
                                 <label for="u2-1"
                                     class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                    <span class="font-semibold text-base lg:text-lg">Tidak Sulit</span>
+                                    <span class="font-semibold text-base lg:text-lg">Sangat Tidak Nyaman</span>
                                 </label>
                             </div>
                             <div>
                                 <input type="radio" id="u2-2" name="u2" value="2" class="hidden scroll-btn peer">
                                 <label for="u2-2"
                                     class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                    <span class="font-semibold text-base lg:text-lg">Kurang Sulit</span>
+                                    <span class="font-semibold text-base lg:text-lg">Kurang Nyaman</span>
                                 </label>
                             </div>
                             <div>
                                 <input type="radio" id="u2-3" name="u2" value="3" class="hidden scroll-btn peer">
                                 <label for="u2-3"
                                     class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                    <span class="font-semibold text-base lg:text-lg">Sulit</span>
+                                    <span class="font-semibold text-base lg:text-lg">Nyaman</span>
                                 </label>
                             </div>
                             <div>
@@ -1809,7 +1796,7 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                                     class="hidden scroll-btn peer">
                                 <label for="u2-4"
                                     class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                    <span class="font-semibold text-base lg:text-lg">Sangat Sulit</span>
+                                    <span class="font-semibold text-base lg:text-lg">Sangat Nyaman</span>
                                 </label>
                             </div>
                             <div class="step-actions flex justify-between mt-3">
@@ -1843,34 +1830,29 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                         class="flex flex-col items-stretch gap-4 w-full h-full py-[72px] max-w-2xl mx-auto justify-center">
                         <div
                             class="w-full flex flex-col p-6 bg-white rounded-2xl shadow-[0_8px_32px_rgba(146,76,0,0.12)] justify-center">
-                            <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4 gap-3">
-                                <span class="material-symbols-outlined text-[#ff8800] text-2xl">people</span>p>
-                            </div>
-                            <h2 class="text-lg xl:text-xl font-semibold leading-snug text-[#191c1d]">Sejauh m<p
-                                    class="font-bold uppercase tracking-widest text-xs text-[#924c00] mb-2">pelatihan
-                                    dan kemandirian masyarakat</ana materi pelatihan yang diberikan sesuai dengan
-                                        kebutuhan keterampilan atau potensi ekonomi di wilayah Anda?</h2>
+                            
+                            <h2 class="text-lg xl:text-xl font-semibold leading-snug text-[#191c1d]">Kualitas Area Pertandingan Bayan Open (Kondisi Lapangan, Pencahayaan, Alur Masuk Area)</h2>
                         </div>
                         <div class="w-full flex flex-col gap-3">
                             <div>
                                 <input type="radio" id="u3-1" name="u3" value="1" class="hidden scroll-btn peer">
                                 <label for="u3-1"
                                     class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                    <span class="font-semibold text-base lg:text-lg">Tidak Relevan</span>
+                                    <span class="font-semibold text-base lg:text-lg">Sangat Buruk</span>
                                 </label>
                             </div>
                             <div>
                                 <input type="radio" id="u3-2" name="u3" value="2" class="hidden scroll-btn peer">
                                 <label for="u3-2"
                                     class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                    <span class="font-semibold text-base lg:text-lg">Kurang Relevan</span>
+                                    <span class="font-semibold text-base lg:text-lg">Kurang Baik</span>
                                 </label>
                             </div>
                             <div>
                                 <input type="radio" id="u3-3" name="u3" value="3" class="hidden scroll-btn peer">
                                 <label for="u3-3"
                                     class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                    <span class="font-semibold text-base lg:text-lg">Relevan</span>
+                                    <span class="font-semibold text-base lg:text-lg">Baik</span>
                                 </label>
                             </div>
                             <div>
@@ -1878,7 +1860,7 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                                     class="hidden scroll-btn peer">
                                 <label for="u3-4"
                                     class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                    <span class="font-semibold text-base lg:text-lg">Sangat Relevan</span>
+                                    <span class="font-semibold text-base lg:text-lg">Sangat Baik</span>
                                 </label>
                             </div>
                             <div class="step-actions flex justify-between mt-3">
@@ -1912,33 +1894,30 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                         class="flex flex-col items-stretch gap-4 w-full h-full py-[72px] max-w-2xl mx-auto justify-center">
                         <div
                             class="w-full flex flex-col p-6 bg-white rounded-2xl shadow-[0_8px_32px_rgba(146,76,0,0.12)] justify-center">
-                            <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4 gap-3">
-                                <span class="material-symbols-outlined text-[#ff8800] text-2xl">payments</span>
-                            </div>
+                            
                             <!-- <p class="font-bold uppercase tracking-widest text-xs text-[#924c00] mb-2">Pertanyaan 4 dari 9</p> -->
-                            <h2 class="text-lg xl:text-xl font-semibold leading-snug text-[#191c1d]">Bagaimana pendapat
-                                Saudara tentang kewajaran biaya/tarif untuk mendapatkan pelayanan?</h2>
+                            <h2 class="text-lg xl:text-xl font-semibold leading-snug text-[#191c1d]">Perilaku Petugas (Panitia) Bayan Open di Lapangan</h2>
                         </div>
                         <div class="w-full flex flex-col gap-3">
                             <div>
                                 <input type="radio" id="u4-1" name="u4" value="1" class="hidden scroll-btn peer">
                                 <label for="u4-1"
                                     class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                    <span class="font-semibold text-base lg:text-lg">Sangat Mahal</span>
+                                    <span class="font-semibold text-base lg:text-lg">Sangat Tidak Puas</span>
                                 </label>
                             </div>
                             <div>
                                 <input type="radio" id="u4-2" name="u4" value="2" class="hidden scroll-btn peer">
                                 <label for="u4-2"
                                     class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                    <span class="font-semibold text-base lg:text-lg">Cukup Mahal</span>
+                                    <span class="font-semibold text-base lg:text-lg">Kurang Puas</span>
                                 </label>
                             </div>
                             <div>
                                 <input type="radio" id="u4-3" name="u4" value="3" class="hidden scroll-btn peer">
                                 <label for="u4-3"
                                     class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                    <span class="font-semibold text-base lg:text-lg">Murah</span>
+                                    <span class="font-semibold text-base lg:text-lg">Puas</span>
                                 </label>
                             </div>
                             <div>
@@ -1946,7 +1925,7 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                                     class="hidden scroll-btn peer">
                                 <label for="u4-4"
                                     class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                    <span class="font-semibold text-base lg:text-lg">Gratis</span>
+                                    <span class="font-semibold text-base lg:text-lg">Sangat Puas</span>
                                 </label>
                             </div>
                             <div class="step-actions flex justify-between mt-3">
@@ -1980,34 +1959,30 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                         class="flex flex-col items-stretch gap-4 w-full h-full py-[72px] max-w-2xl mx-auto justify-center">
                         <div
                             class="w-full flex flex-col p-6 bg-white rounded-2xl shadow-[0_8px_32px_rgba(146,76,0,0.12)] justify-center">
-                            <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4 gap-3">
-                                <span class="material-symbols-outlined text-[#ff8800] text-2xl">verified</span>
-                            </div>
+                            
                             <!-- <p class="font-bold uppercase tracking-widest text-xs text-[#924c00] mb-2">Pertanyaan 5 dari 9</p> -->
-                            <h2 class="text-lg xl:text-xl font-semibold leading-snug text-[#191c1d]">Bagaimana pendapat
-                                Saudara tentang kesesuaian produk pelayanan antara yang tercantum dalam standar
-                                pelayanan dengan hasil yang diberikan?</h2>
+                            <h2 class="text-lg xl:text-xl font-semibold leading-snug text-[#191c1d]">Kemudahan dan Opsi Metode Pembayaran (Tunai / QRIS / Cashless) di Bayan Craftart Fest</h2>
                         </div>
                         <div class="w-full flex flex-col gap-3">
                             <div>
                                 <input type="radio" id="u5-1" name="u5" value="1" class="hidden scroll-btn peer">
                                 <label for="u5-1"
                                     class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                    <span class="font-semibold text-base lg:text-lg">Tidak Sesuai</span>
+                                    <span class="font-semibold text-base lg:text-lg">Sangat Sulit</span>
                                 </label>
                             </div>
                             <div>
                                 <input type="radio" id="u5-2" name="u5" value="2" class="hidden scroll-btn peer">
                                 <label for="u5-2"
                                     class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                    <span class="font-semibold text-base lg:text-lg">Kurang Sesuai</span>
+                                    <span class="font-semibold text-base lg:text-lg">Sulit</span>
                                 </label>
                             </div>
                             <div>
                                 <input type="radio" id="u5-3" name="u5" value="3" class="hidden scroll-btn peer">
                                 <label for="u5-3"
                                     class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                    <span class="font-semibold text-base lg:text-lg">Sesuai</span>
+                                    <span class="font-semibold text-base lg:text-lg">Mudah</span>
                                 </label>
                             </div>
                             <div>
@@ -2015,7 +1990,7 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                                     class="hidden scroll-btn peer">
                                 <label for="u5-4"
                                     class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                    <span class="font-semibold text-base lg:text-lg">Sangat Sesuai</span>
+                                    <span class="font-semibold text-base lg:text-lg">Sangat Mudah</span>
                                 </label>
                             </div>
                             <div class="step-actions flex justify-between mt-3">
@@ -2049,33 +2024,30 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                         class="flex flex-col items-stretch gap-4 w-full h-full py-[72px] max-w-2xl mx-auto justify-center">
                         <div
                             class="w-full flex flex-col p-6 bg-white rounded-2xl shadow-[0_8px_32px_rgba(146,76,0,0.12)] justify-center">
-                            <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4 gap-3">
-                                <span class="material-symbols-outlined text-[#ff8800] text-2xl">school</span>
-                            </div>
-                            <p class="font-bold uppercase tracking-widest text-xs text-[#924c00] mb-2">Beasiswa</p>
-                            <h2 class="text-lg xl:text-xl font-semibold leading-snug text-[#191c1d]">Bagaimana pendapat
-                                Saudara tentang kompetensi/ kemampuan petugas dalam pelayanan?</h2>
+                            
+                            <p class="font-bold uppercase tracking-widest text-xs text-[#924c00] mb-2">Bayan Open & Bayan Craft</p>
+                            <h2 class="text-lg xl:text-xl font-semibold leading-snug text-[#191c1d]">Seberapa besar Bayan Craftart Fest Mendorong Aktivitas Ekonomi, Promosi, dan Peluang Usaha Lokal</h2>
                         </div>
                         <div class="w-full flex flex-col gap-3">
                             <div>
                                 <input type="radio" id="u6-1" name="u6" value="1" class="hidden scroll-btn peer">
                                 <label for="u6-1"
                                     class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                    <span class="font-semibold text-base lg:text-lg">Tidak Kompeten</span>
+                                    <span class="font-semibold text-base lg:text-lg">Sangat Tidak Efektif</span>
                                 </label>
                             </div>
                             <div>
                                 <input type="radio" id="u6-2" name="u6" value="2" class="hidden scroll-btn peer">
                                 <label for="u6-2"
                                     class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                    <span class="font-semibold text-base lg:text-lg">Kurang Kompeten</span>
+                                    <span class="font-semibold text-base lg:text-lg">Kurang Efektif</span>
                                 </label>
                             </div>
                             <div>
                                 <input type="radio" id="u6-3" name="u6" value="3" class="hidden scroll-btn peer">
                                 <label for="u6-3"
                                     class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                    <span class="font-semibold text-base lg:text-lg">Kompeten</span>
+                                    <span class="font-semibold text-base lg:text-lg">Efektif</span>
                                 </label>
                             </div>
                             <div>
@@ -2083,7 +2055,7 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                                     class="hidden scroll-btn peer">
                                 <label for="u6-4"
                                     class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                    <span class="font-semibold text-base lg:text-lg">Sangat Kompeten</span>
+                                    <span class="font-semibold text-base lg:text-lg">Sangat Efektif</span>
                                 </label>
                             </div>
                             <div class="step-actions flex justify-between mt-3">
@@ -2117,34 +2089,29 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                         class="flex flex-col items-stretch gap-4 w-full h-full py-[72px] max-w-2xl mx-auto justify-center">
                         <div
                             class="w-full flex flex-col p-6 bg-white rounded-2xl shadow-[0_8px_32px_rgba(146,76,0,0.12)] justify-center">
-                            <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4 gap-3">
-                                <span
-                                    class="material-symbols-outlined text-[#ff8800] text-2xl">sentiment_satisfied</span>
-                            </div>
-                            <!-- <p class="font-bold uppercase tracking-widest text-xs text-[#924c00] mb-2">Pertanyaan 7 dari 9</p> -->
-                            <h2 class="text-lg xl:text-xl font-semibold leading-snug text-[#191c1d]">Bagaimana pendapat
-                                Saudara tentang perilaku petugas dalam pelayanan terkait kesopanan dan keramahan?</h2>
+                            
+                            <h2 class="text-lg xl:text-xl font-semibold leading-snug text-[#191c1d]">Kebersihan Umum dan Pengelolaan Sampah di Seluruh Area Acara (Bayan Open dan Bayan Craftart Fest)</h2>
                         </div>
                         <div class="w-full flex flex-col gap-3">
                             <div>
                                 <input type="radio" id="u7-1" name="u7" value="1" class="hidden scroll-btn peer">
                                 <label for="u7-1"
                                     class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                    <span class="font-semibold text-base lg:text-lg">Tidak Sopan dan Ramah</span>
+                                    <span class="font-semibold text-base lg:text-lg">Sangat Kotor</span>
                                 </label>
                             </div>
                             <div>
                                 <input type="radio" id="u7-2" name="u7" value="2" class="hidden scroll-btn peer">
                                 <label for="u7-2"
                                     class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                    <span class="font-semibold text-base lg:text-lg">Kurang Sopan dan Ramah</span>
+                                    <span class="font-semibold text-base lg:text-lg">Kurang Bersih</span>
                                 </label>
                             </div>
                             <div>
                                 <input type="radio" id="u7-3" name="u7" value="3" class="hidden scroll-btn peer">
                                 <label for="u7-3"
                                     class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                    <span class="font-semibold text-base lg:text-lg">Sopan dan Ramah</span>
+                                    <span class="font-semibold text-base lg:text-lg">Cukup Bersih</span>
                                 </label>
                             </div>
                             <div>
@@ -2152,7 +2119,7 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                                     class="hidden scroll-btn peer">
                                 <label for="u7-4"
                                     class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                    <span class="font-semibold text-base lg:text-lg">Sangat Sopan dan Ramah</span>
+                                    <span class="font-semibold text-base lg:text-lg">Sangat Clean &amp; Terawat</span>
                                 </label>
                             </div>
                             <div class="step-actions flex justify-between mt-3">
@@ -2186,33 +2153,30 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                         class="flex flex-col items-stretch gap-4 w-full h-full py-[72px] max-w-2xl mx-auto justify-center">
                         <div
                             class="w-full flex flex-col p-6 bg-white rounded-2xl shadow-[0_8px_32px_rgba(146,76,0,0.12)] justify-center">
-                            <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4 gap-3">
-                                <span class="material-symbols-outlined text-[#ff8800] text-2xl">apartment</span>
-                            </div>
+                            
                             <!-- <p class="font-bold uppercase tracking-widest text-xs text-[#924c00] mb-2">Pertanyaan 8 dari 9</p> -->
-                            <h2 class="text-lg xl:text-xl font-semibold leading-snug text-[#191c1d]">Bagaimana pendapat
-                                Saudara tentang kualitas sarana dan prasarana?</h2>
+                            <h2 class="text-lg xl:text-xl font-semibold leading-snug text-[#191c1d]">Kesigapan Sistem Keamanan, ketertiban, dan Alur Masuk</h2>
                         </div>
                         <div class="w-full flex flex-col gap-3">
                             <div>
                                 <input type="radio" id="u8-1" name="u8" value="1" class="hidden scroll-btn peer">
                                 <label for="u8-1"
                                     class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                    <span class="font-semibold text-base lg:text-lg">Buruk</span>
+                                    <span class="font-semibold text-base lg:text-lg">Sangat Kacau</span>
                                 </label>
                             </div>
                             <div>
                                 <input type="radio" id="u8-2" name="u8" value="2" class="hidden scroll-btn peer">
                                 <label for="u8-2"
                                     class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                    <span class="font-semibold text-base lg:text-lg">Cukup</span>
+                                    <span class="font-semibold text-base lg:text-lg">Kurang Tertib</span>
                                 </label>
                             </div>
                             <div>
                                 <input type="radio" id="u8-3" name="u8" value="3" class="hidden scroll-btn peer">
                                 <label for="u8-3"
                                     class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                    <span class="font-semibold text-base lg:text-lg">Baik</span>
+                                    <span class="font-semibold text-base lg:text-lg">Cukup Tertib</span>
                                 </label>
                             </div>
                             <div>
@@ -2220,7 +2184,7 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                                     class="hidden scroll-btn peer">
                                 <label for="u8-4"
                                     class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                    <span class="font-semibold text-base lg:text-lg">Sangat Baik</span>
+                                    <span class="font-semibold text-base lg:text-lg">Sangat Tertib &amp; Sigap</span>
                                 </label>
                             </div>
                             <div class="step-actions flex justify-between mt-3">
@@ -2255,32 +2219,31 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                         <div
                             class="w-full flex flex-col p-6 bg-white rounded-2xl shadow-[0_8px_32px_rgba(146,76,0,0.12)] justify-center">
                             <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4 gap-3">
-                                <span class="material-symbols-outlined text-[#ff8800] text-2xl">support_agent</span>
+                            
                             </div>
                             <!-- <p class="font-bold uppercase tracking-widest text-xs text-[#924c00] mb-2">Pertanyaan 9 dari 9</p> -->
-                            <h2 class="text-lg xl:text-xl font-semibold leading-snug text-[#191c1d]">Bagaimana pendapat
-                                Saudara tentang penanganan pengaduan pengguna layanan?</h2>
+                            <h2 class="text-lg xl:text-xl font-semibold leading-snug text-[#191c1d]">Apakah menurut Anda acara Bayan Open & Bayan Craft perlu diadakan kembali di masa mendatang?</h2>
                         </div>
                         <div class="w-full flex flex-col gap-3">
                             <div>
                                 <input type="radio" id="u9-1" name="u9" value="1" class="hidden scroll-btn peer">
                                 <label for="u9-1"
                                     class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                    <span class="font-semibold text-base lg:text-lg">Tidak Ada</span>
+                                    <span class="font-semibold text-base lg:text-lg">Tidak Perlu Diadakan Kembali</span>
                                 </label>
                             </div>
                             <div>
                                 <input type="radio" id="u9-2" name="u9" value="2" class="hidden scroll-btn peer">
                                 <label for="u9-2"
                                     class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                    <span class="font-semibold text-base lg:text-lg">Ada Tetapi Tidak Berfungsi</span>
+                                    <span class="font-semibold text-base lg:text-lg">Ragu-Ragu / Netral</span>
                                 </label>
                             </div>
                             <div>
                                 <input type="radio" id="u9-3" name="u9" value="3" class="hidden scroll-btn peer">
                                 <label for="u9-3"
                                     class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                    <span class="font-semibold text-base lg:text-lg">Berfungsi Kurang Maksimal</span>
+                                    <span class="font-semibold text-base lg:text-lg">Perlu Diadakan Kembali</span>
                                 </label>
                             </div>
                             <div>
@@ -2288,7 +2251,7 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                                     class="hidden scroll-btn peer">
                                 <label for="u9-4"
                                     class="flex items-center px-5 py-4 rounded-xl border-2 border-orange-100 bg-white/80 text-[#3d2000] cursor-pointer hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 peer-checked:bg-[#1c1917] peer-checked:text-white peer-checked:border-[#ff8800] peer-checked:shadow-lg">
-                                    <span class="font-semibold text-base lg:text-lg">Dikelola Dengan Baik</span>
+                                    <span class="font-semibold text-base lg:text-lg">Sangat Perlu Diadakan Kembali</span>
                                 </label>
                             </div>
                             <div class="step-actions flex justify-between mt-3">
@@ -2551,15 +2514,15 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                 { id: 'jenisProgram', label: 'Pilih jenis layanan' },
                 { id: 'identitas', label: 'Lengkapi data identitas' },
                 { id: 'kedua', label: 'Lengkapi biodata lainnya' },
-                { id: 'satu', label: 'Kesesuaian persyaratan layanan' },
-                { id: 'dua', label: 'Kemudahan prosedur pelayanan' },
-                { id: 'tiga', label: 'Kecepatan waktu pelayanan' },
-                { id: 'empat', label: 'Kewajaran biaya atau tarif' },
-                { id: 'lima', label: 'Kesesuaian produk pelayanan' },
-                { id: 'enam', label: 'Kompetensi petugas pelayanan' },
-                { id: 'tujuh', label: 'Kesopanan dan keramahan petugas' },
-                { id: 'delapan', label: 'Kualitas sarana dan prasarana' },
-                { id: 'sembilan', label: 'Penanganan pengaduan layanan' },
+                { id: 'satu', label: 'Kejelasan jadwal acara' },
+                { id: 'dua', label: 'Kenyamanan fasilitas penonton' },
+                { id: 'tiga', label: 'Kualitas area pertandingan' },
+                { id: 'empat', label: 'Perilaku wasit dan panitia' },
+                { id: 'lima', label: 'Kemudahan metode pembayaran' },
+                { id: 'enam', label: 'Dampak ekonomi dan promosi lokal' },
+                { id: 'tujuh', label: 'Kebersihan dan pengelolaan sampah' },
+                { id: 'delapan', label: 'Keamanan dan manajemen kerumunan' },
+                { id: 'sembilan', label: 'Keberlanjutan acara' },
                 { id: 'saran', label: 'Saran dan Harapan' }
             ];
 
@@ -2608,7 +2571,6 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
         // Client-side uniqueness checks without page reload
         (function () {
             const mapping = [
-                { id: 'no_peserta', field: 'no_pendaftar', label: 'No. Peserta' },
                 { id: 'no_wa', field: 'no_wa', label: 'No. WA' },
                 { id: 'nik', field: 'nik', label: 'NIK' },
             ];

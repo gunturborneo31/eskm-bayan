@@ -149,7 +149,7 @@
 
             @include('partials.top-nav-filters', [
                 'routeBase' => '/dashboardAdmin/create',
-                'brandTitle' => 'E-SKM PPM Bayan Group',
+                'brandTitle' => 'E-SKM Bayan Open',
                 'subtitle' => 'Dashboard Responden',
                 'selectedYear' => $tahun,
                 'selectedTw' => $tw,

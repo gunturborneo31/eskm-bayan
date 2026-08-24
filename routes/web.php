@@ -17,6 +17,7 @@ use App\Http\Controllers\SubJenisController;
 use Illuminate\Support\Facades\Route;
 use App\Support\BagianOptions;
 use App\Http\Controllers\SurveyCodeController;
+use App\Http\Controllers\TenantRevenueController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,7 +32,14 @@ use App\Http\Controllers\SurveyCodeController;
 
 Route::get('/portal', [PortalController::class, 'index']);
 Route::get('/portal/{slug}', [PortalController::class, 'slug']);
-Route::get('/', [DashboardController::class, 'welcome']);
+Route::get('/dashboard', [DashboardController::class, 'welcome']);
+Route::get('/', function () {
+    $bagianList = collect(BagianOptions::idNameMap())
+        ->map(fn ($name) => strtoupper($name))
+        ->toArray();
+
+    return view('skm', compact('bagianList'));
+});
 Route::view('/remake', 'home');
 
 Route::get('/login', function () {
@@ -62,6 +70,11 @@ Route::get('/terimakasih', function () {
     return view('terimakasih');
 });
 
+// Public tenant revenue input and dashboard
+Route::get('/tenant-revenue', [TenantRevenueController::class, 'create'])->name('tenant-revenue.create');
+Route::post('/tenant-revenue', [TenantRevenueController::class, 'store'])->name('tenant-revenue.store');
+Route::get('/tenant-revenue/dashboard', [TenantRevenueController::class, 'publicDashboard'])->name('tenant-revenue.public-dashboard');
+
 // Public redeem URL for QR codes (shows respondent data and codes)
 Route::get('/survey/redeem/{group}', [SurveyCodeController::class, 'show'])->name('survey.redeem');
 
@@ -81,6 +94,7 @@ Route::post('/merch/logout', [\App\Http\Controllers\MerchandiseController::class
 
 Route::middleware('merch.session')->group(function(){
     Route::get('/merch/check', [\App\Http\Controllers\MerchandiseController::class, 'checkView']);
+    Route::get('/merch/draw', [\App\Http\Controllers\MerchandiseController::class, 'drawView']);
     Route::match(['get','post'], '/merch/api/check', [\App\Http\Controllers\MerchandiseController::class, 'apiCheck']);
     Route::post('/merch/api/redeem', [\App\Http\Controllers\MerchandiseController::class, 'apiRedeem']);
         Route::get('/merch/api/stats', [\App\Http\Controllers\MerchandiseController::class, 'apiStats']);
@@ -115,6 +129,8 @@ Route::middleware('admin.session')->group(function () {
     Route::get('exports/download', [ExportController::class, 'export'])->name('exports.download');
 
     Route::get('/sub-jenis', [SubJenisController::class, 'index'])->name('subjenis.index');
+    Route::get('/admin/tenant-revenue', [TenantRevenueController::class, 'adminDashboard'])->name('tenant-revenue.admin-dashboard');
+    Route::delete('/admin/tenant-revenue/{tenantRevenue}', [TenantRevenueController::class, 'destroy'])->name('tenant-revenue.destroy');
 });
 
 // Offline SKM Admin

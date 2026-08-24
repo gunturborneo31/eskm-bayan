@@ -50,6 +50,18 @@ class MerchandiseController extends Controller
         return view('merch.check');
     }
 
+    public function drawView()
+    {
+        $participants = NilaiUnsur::query()
+            ->select(['id', 'nama'])
+            ->whereNotNull('nama')
+            ->where('nama', '<>', '')
+            ->orderBy('id')
+            ->get();
+
+        return view('merch.draw', compact('participants'));
+    }
+
     // AJAX: check by code or group
     public function apiCheck(Request $request)
     {

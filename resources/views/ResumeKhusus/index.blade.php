@@ -408,6 +408,7 @@ $jmlResponden = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? 
 <html lang="en">
 
 <head>
+    @include('partials.google-tag')
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Indeks Kepuasan Masyarakat</title>

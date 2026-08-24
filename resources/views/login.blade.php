@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    @include('partials.google-tag')
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Admin E-SKM</title>
@@ -52,7 +53,7 @@
                     <img src="/assets/logo-bayan.png" class="h-10 w-10 rounded-xl bg-white border border-orange-200 p-1" alt="Logo Bayan">
                 </div>
                 <div>
-                    <p class="text-sm font-extrabold tracking-tight text-orange-900">E-SKM PPM Bayan Group</p>
+                    <p class="text-sm font-extrabold tracking-tight text-orange-900">E-SKM Bayan Open</p>
                     <p class="text-[11px] font-bold text-orange-700">Panel Administrasi</p>
                 </div>
             </a>

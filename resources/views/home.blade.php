@@ -3,9 +3,10 @@
 <html lang="en">
 
 <head>
+    @include('partials.google-tag')
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>E-SKM PPM Bayan Group - Dashboard</title>
+    <title>E-SKM Bayan Open - Dashboard</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap"
         rel="stylesheet" />
@@ -125,7 +126,7 @@
     <nav class="shrink-0 bg-white shadow-sm z-50 px-8 py-2">
         <div class="max-w-full px-16 mx-auto flex items-center justify-between">
             <div class="flex items-center">
-                <span class="text-2xl font-extrabold tracking-tighter text-[#FF8800]">7E-SKM PPM Bayan Group</span>
+                <span class="text-2xl font-extrabold tracking-tighter text-[#FF8800]">7E-SKM Bayan Open</span>
                 <div class="h-8 w-px bg-slate-200 mx-6"></div>
             </div>
             <!-- Center Filters -->
@@ -327,7 +328,7 @@
                             <tbody class="divide-y divide-slate-50">
                                 <tr class="hover:bg-slate-50 transition-colors">
                                     <td class="py-2 px-4 text-[11px] font-black">1</td>
-                                    <td class="py-2 px-4 text-[11px] font-medium">Persyaratan</td>
+                                    <td class="py-2 px-4 text-[11px] font-medium">Kejelasan Informasi Jadwal Acara Bayan Open</td>
                                     <td class="py-2 px-4 text-[11px] font-black text-center">3.50</td>
                                     <td class="py-2 px-4 text-center"><span
                                             class="bg-[#26C281] text-white w-5 h-5 inline-flex items-center justify-center rounded-lg text-[9px] font-black shadow-sm">A</span>
@@ -335,7 +336,7 @@
                                 </tr>
                                 <tr class="hover:bg-slate-50 transition-colors">
                                     <td class="py-2 px-4 text-[11px] font-black">2</td>
-                                    <td class="py-2 px-4 text-[11px] font-medium">Sistem, Mekanisme dan Prosedur</td>
+                                    <td class="py-2 px-4 text-[11px] font-medium">Kenyamanan Fasilitas Penonton Bayan Open</td>
                                     <td class="py-2 px-4 text-[11px] font-black text-center">3.42</td>
                                     <td class="py-2 px-4 text-center"><span
                                             class="bg-[#26C281] text-white w-5 h-5 inline-flex items-center justify-center rounded-lg text-[9px] font-black shadow-sm">A</span>
@@ -343,7 +344,7 @@
                                 </tr>
                                 <tr class="hover:bg-slate-50 transition-colors">
                                     <td class="py-2 px-4 text-[11px] font-black">3</td>
-                                    <td class="py-2 px-4 text-[11px] font-medium">Waktu Penyelesaian</td>
+                                    <td class="py-2 px-4 text-[11px] font-medium">Kualitas Area Pertandingan Bayan Open</td>
                                     <td class="py-2 px-4 text-[11px] font-black text-center">3.38</td>
                                     <td class="py-2 px-4 text-center"><span
                                             class="bg-[#3B82F6] text-white w-5 h-5 inline-flex items-center justify-center rounded-lg text-[9px] font-black shadow-sm">B</span>
@@ -351,7 +352,7 @@
                                 </tr>
                                 <tr class="hover:bg-slate-50 transition-colors">
                                     <td class="py-2 px-4 text-[11px] font-black">4</td>
-                                    <td class="py-2 px-4 text-[11px] font-medium">Biaya/Tarif</td>
+                                    <td class="py-2 px-4 text-[11px] font-medium">Perilaku Petugas (Panitia) Bayan Open</td>
                                     <td class="py-2 px-4 text-[11px] font-black text-center">3.80</td>
                                     <td class="py-2 px-4 text-center"><span
                                             class="bg-[#26C281] text-white w-5 h-5 inline-flex items-center justify-center rounded-lg text-[9px] font-black shadow-sm">A</span>
@@ -359,7 +360,7 @@
                                 </tr>
                                 <tr class="hover:bg-slate-50 transition-colors">
                                     <td class="py-2 px-4 text-[11px] font-black">5</td>
-                                    <td class="py-2 px-4 text-[11px] font-medium">Produk Spesifikasi Jenis Pelayanan
+                                    <td class="py-2 px-4 text-[11px] font-medium">Kemudahan dan Opsi Metode Pembayaran
                                     </td>
                                     <td class="py-2 px-4 text-[11px] font-black text-center">3.45</td>
                                     <td class="py-2 px-4 text-center"><span
@@ -368,7 +369,7 @@
                                 </tr>
                                 <tr class="hover:bg-slate-50 transition-colors">
                                     <td class="py-2 px-4 text-[11px] font-black">6</td>
-                                    <td class="py-2 px-4 text-[11px] font-medium">Kompetensi Pelaksana</td>
+                                    <td class="py-2 px-4 text-[11px] font-medium">Aktivitas Ekonomi, Promosi, dan Peluang Usaha Lokal</td>
                                     <td class="py-2 px-4 text-[11px] font-black text-center">3.20</td>
                                     <td class="py-2 px-4 text-center"><span
                                             class="bg-[#3B82F6] text-white w-5 h-5 inline-flex items-center justify-center rounded-lg text-[9px] font-black shadow-sm">B</span>
@@ -376,7 +377,7 @@
                                 </tr>
                                 <tr class="hover:bg-slate-50 transition-colors">
                                     <td class="py-2 px-4 text-[11px] font-black">7</td>
-                                    <td class="py-2 px-4 text-[11px] font-medium">Perilaku Pelaksana</td>
+                                    <td class="py-2 px-4 text-[11px] font-medium">Kebersihan Umum dan Pengelolaan Sampah</td>
                                     <td class="py-2 px-4 text-[11px] font-black text-center">3.92</td>
                                     <td class="py-2 px-4 text-center"><span
                                             class="bg-[#26C281] text-white w-5 h-5 inline-flex items-center justify-center rounded-lg text-[9px] font-black shadow-sm">A</span>
@@ -384,7 +385,7 @@
                                 </tr>
                                 <tr class="hover:bg-slate-50 transition-colors">
                                     <td class="py-2 px-4 text-[11px] font-black">8</td>
-                                    <td class="py-2 px-4 text-[11px] font-medium">Sarana dan Prasarana</td>
+                                    <td class="py-2 px-4 text-[11px] font-medium">Sistem Keamanan, Ketertiban, dan Alur Masuk</td>
                                     <td class="py-2 px-4 text-[11px] font-black text-center">3.60</td>
                                     <td class="py-2 px-4 text-center"><span
                                             class="bg-[#26C281] text-white w-5 h-5 inline-flex items-center justify-center rounded-lg text-[9px] font-black shadow-sm">A</span>
@@ -392,7 +393,7 @@
                                 </tr>
                                 <tr class="hover:bg-slate-50 transition-colors">
                                     <td class="py-2 px-4 text-[11px] font-black">9</td>
-                                    <td class="py-2 px-4 text-[11px] font-medium">Penanganan Pengaduan, Saran &amp;
+                                    <td class="py-2 px-4 text-[11px] font-medium">Keberlanjutan Bayan Open &amp; Bayan Craft
                                         Masukan</td>
                                     <td class="py-2 px-4 text-[11px] font-black text-center">3.75</td>
                                     <td class="py-2 px-4 text-center"><span

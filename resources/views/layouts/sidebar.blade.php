@@ -55,6 +55,9 @@
             <a href="/admin/offline-skm" class="js-admin-nav block rounded-xl px-3 py-2.5 transition {{ str_contains($i, 'offline-skm') ? 'bg-white text-orange-900 shadow-md' : 'text-white hover:bg-orange-100/20' }}">
                 INPUT OFFLINE SKM
             </a>
+            <a href="/admin/tenant-revenue" class="js-admin-nav block rounded-xl px-3 py-2.5 transition {{ str_contains($i, 'tenant-revenue') ? 'bg-white text-orange-900 shadow-md' : 'text-white hover:bg-orange-100/20' }}">
+                PENDAPATAN TENANT
+            </a>
         </nav>
 
         <div class="space-y-2 hidden lg:block">

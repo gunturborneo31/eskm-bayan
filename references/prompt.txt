@@ -1,0 +1,53 @@
+1. Kejelasan Informasi Jadwal Acara Bayan Open:
+[ ] Sangat Tidak Jelas
+[ ] Kurang Jelas
+[ ] Jelas
+[ ] Sangat Jelas
+
+2. Kenyamanan Fasilitas Penonton Bayan Open (Tribun, Tempat Duduk, Jarak Pandang):
+[ ] Sangat Tidak Nyaman
+[ ] Kurang Nyaman
+[ ] Nyaman
+[ ] Sangat Nyaman
+
+3. Kualitas Area Pertandingan Bayan Open (Kondisi Lapangan, Pencahayaan, Alur Masuk Area):
+[ ] Sangat Buruk
+[ ] Kurang Baik
+[ ] Baik
+[ ] Sangat Baik
+
+4. Perilaku Petugas (Panitia) Bayan Open di Lapangan:
+[ ] Sangat Tidak Puas
+[ ] Kurang Puas
+[ ] Puas
+[ ] Sangat Puas
+
+5. Kemudahan dan Opsi Metode Pembayaran (Tunai / QRIS / Cashless) di Bayan Craftart Fest:
+[ ] Sangat Sulit
+[ ] Sulit
+[ ] Mudah
+[ ] Sangat Mudah
+
+6. Seberapa besar Bayan Craftart Fest Mendorong Aktivitas Ekonomi, Promosi, dan Peluang Usaha Lokal:
+[ ] Sangat Tidak Efektif
+[ ] Kurang Efektif
+[ ] Efektif
+[ ] Sangat Efektif
+
+7. Kebersihan Umum dan Pengelolaan Sampah di Seluruh Area Acara (Bayan Open dan Bayan Craftart Fest):
+[ ] Sangat Kotor
+[ ] Kurang Bersih
+[ ] Cukup Bersih
+[ ] Sangat Clean & Terawat
+
+8. Kesigapan Sistem Keamanan, ketertiban, dan Alur Masuk:
+[ ] Sangat Kacau
+[ ] Kurang Tertib
+[ ] Cukup Tertib
+[ ] Sangat Tertib & Sigap
+
+9. Apakah menurut Anda acara Bayan Open & Bayan Craft perlu diadakan kembali di masa mendatang?
+[ ] Tidak Perlu Diadakan Kembali
+[ ] Ragu-Ragu / Netral
+[ ] Perlu Diadakan Kembali
+[ ] Sangat Perlu Diadakan Kembali

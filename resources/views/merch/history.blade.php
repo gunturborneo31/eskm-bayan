@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="id">
 <head>
+    @include('partials.google-tag')
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Merch - History Penukaran</title>

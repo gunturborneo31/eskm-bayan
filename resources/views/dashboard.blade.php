@@ -89,9 +89,10 @@ $bagianOptions = \App\Support\BagianOptions::codeNameMap();
 <html lang="en">
 
 <head>
+    @include('partials.google-tag')
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>E-SKM PPM Bayan Group - Dashboard Responden</title>
+    <title>E-SKM Bayan Open - Dashboard Responden</title>
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
@@ -150,7 +151,7 @@ $bagianOptions = \App\Support\BagianOptions::codeNameMap();
 
 @include('partials.top-nav-filters', [
     'routeBase' => '/dashboard',
-    'brandTitle' => 'E-SKM PPM Bayan Group',
+    'brandTitle' => 'E-SKM Bayan Open',
     'selectedTw' => $_GET['tw'],
     'bagianQuery' => $_GET['bagian'],
     'showBagian' => true,

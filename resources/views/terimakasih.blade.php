@@ -2,6 +2,7 @@
 <html lang="id" class="scroll-smooth">
 
 <head>
+    @include('partials.google-tag')
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Terima Kasih — E-SKM PPM Bayan</title>
@@ -87,7 +88,7 @@
             </button>
 
             {{-- Footer note --}}
-            <p class="text-[10px] text-slate-300 -mt-2">E-SKM PPM Bayan Group</p>
+            <p class="text-[10px] text-slate-300 -mt-2">E-SKM Bayan Open</p>
         </div>
     </div>
 
