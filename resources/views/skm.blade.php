@@ -1115,22 +1115,109 @@
             }
         }
         
-        /* Debug + aggressive pull-up for mobile: temporary */
-        @media (max-width: 640px) {
-            .survey-header { outline: none !important; }
-            .survey-track>div[id] { padding-top: 0 !important; margin-top: 0 !important; }
-            .survey-track>div[id]>div:first-child { margin-top: 0 !important; }
-            /* pull the identitas block slightly upward to remove any remaining gap */
-            #identitas { margin-top: -0.9rem !important; padding-top: 0 !important; }
-            /* visually mark identitas during debug */
-            #identitas { outline: 2px dashed magenta !important; }
+        /* Keep the document as the only vertical scroll owner on touch Safari. */
+        @media (max-width: 1024px) {
+            :is(#satu, #dua, #tiga, #empat, #lima, #enam, #tujuh, #delapan, #sembilan, #saran) {
+                min-height: 100svh !important;
+                height: auto !important;
+                padding: 1rem 0.75rem calc(var(--survey-footer-height) + 1rem) !important;
+                align-items: center !important;
+            }
+
+            :is(#satu, #dua, #tiga, #empat, #lima, #enam, #tujuh, #delapan, #sembilan, #saran)>div:first-child {
+                height: auto !important;
+                max-height: none !important;
+                margin-top: 0 !important;
+                padding: 1rem !important;
+                border-radius: 1.25rem !important;
+                background: rgba(255, 255, 255, 0.96) !important;
+                box-shadow: 0 12px 30px rgba(146, 76, 0, 0.12);
+                overflow: visible !important;
+            }
+
+            :is(#satu, #dua, #tiga, #empat, #lima, #enam, #tujuh, #delapan, #sembilan, div#saran)>div:first-child {
+                min-height: 0 !important;
+                justify-content: center !important;
+                margin-left: auto !important;
+                margin-right: auto !important;
+            }
+
+            div#saran {
+                align-items: center !important;
+            }
+
+            div#saran>div:first-child {
+                max-width: 42rem;
+            }
+
+            textarea#saran {
+                height: min(50svh, 22rem) !important;
+                min-height: 10rem !important;
+                max-height: 50svh !important;
+                resize: vertical;
+            }
+
+            #kedua {
+                padding-top: 0 !important;
+                scroll-margin-top: 0 !important;
+            }
+
+            #kedua>div:first-child {
+                margin-top: 0 !important;
+            }
+
+            .survey-shell,
+            .survey-track {
+                height: auto !important;
+                min-height: 100%;
+            }
+
+            .survey-track {
+                display: block !important;
+                overflow: visible !important;
+            }
+
+            .survey-track>div[id] {
+                height: auto !important;
+                min-height: max(100dvh, 100svh) !important;
+                overflow: visible !important;
+            }
+
+            #kedua,
+            #kedua>div:first-child {
+                height: auto !important;
+            }
+
+            #kedua>div:first-child {
+                max-height: calc(100svh - var(--survey-header-height) - var(--survey-footer-height) - 1rem) !important;
+                padding-bottom: calc(var(--survey-footer-height) + 2.5rem) !important;
+                overflow-y: auto !important;
+                overscroll-behavior-y: contain;
+                -webkit-overflow-scrolling: touch;
+                touch-action: pan-y;
+                scroll-padding-bottom: calc(var(--survey-footer-height) + 1rem);
+            }
         }
 
-        /* Aggressive mobile pull: translate the card up by header height minus small offset */
         @media (max-width: 640px) {
-            .survey-track>div#identitas>div:first-child {
-                transform: translateY(calc(-1 * var(--survey-header-height) + 0.45rem)) !important;
-                -webkit-transform: translateY(calc(-1 * var(--survey-header-height) + 0.45rem)) !important;
+            html,
+            body {
+                min-height: 100%;
+                height: auto;
+                overflow-x: hidden !important;
+                overflow-y: auto !important;
+                overscroll-behavior-y: contain;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            html {
+                scroll-padding-top: 0 !important;
+            }
+
+            .survey-track {
+                touch-action: pan-y;
+                overscroll-behavior-y: contain;
+                -webkit-overflow-scrolling: touch;
             }
         }
     </style>
@@ -1701,7 +1788,6 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                         <div
                             class="w-full flex flex-col p-6 bg-white rounded-2xl shadow-[0_8px_32px_rgba(146,76,0,0.12)] y-center">
                             
-                            <p class="font-bold uppercase tracking-widest text-xs text-[#924c00] mb-2">Bayan Open & Bayan Craft</p>
                             <h2 class="text-lg xl:text-xl font-semibold leading-snug text-[#191c1d]">Kejelasan Informasi Jadwal Acara Bayan Open</h2>
                         </div>
                         <div class="w-full flex flex-col gap-3">
@@ -2025,7 +2111,6 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                         <div
                             class="w-full flex flex-col p-6 bg-white rounded-2xl shadow-[0_8px_32px_rgba(146,76,0,0.12)] justify-center">
                             
-                            <p class="font-bold uppercase tracking-widest text-xs text-[#924c00] mb-2">Bayan Open & Bayan Craft</p>
                             <h2 class="text-lg xl:text-xl font-semibold leading-snug text-[#191c1d]">Seberapa besar Bayan Craftart Fest Mendorong Aktivitas Ekonomi, Promosi, dan Peluang Usaha Lokal</h2>
                         </div>
                         <div class="w-full flex flex-col gap-3">
@@ -2218,9 +2303,6 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                         class="flex flex-col items-stretch gap-4 w-full h-full py-[72px] max-w-2xl mx-auto justify-center">
                         <div
                             class="w-full flex flex-col p-6 bg-white rounded-2xl shadow-[0_8px_32px_rgba(146,76,0,0.12)] justify-center">
-                            <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4 gap-3">
-                            
-                            </div>
                             <!-- <p class="font-bold uppercase tracking-widest text-xs text-[#924c00] mb-2">Pertanyaan 9 dari 9</p> -->
                             <h2 class="text-lg xl:text-xl font-semibold leading-snug text-[#191c1d]">Apakah menurut Anda acara Bayan Open & Bayan Craft perlu diadakan kembali di masa mendatang?</h2>
                         </div>
