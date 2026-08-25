@@ -84,7 +84,7 @@
 
         .survey-shell {
             position: relative;
-            z-index: 1;
+            z-index: 100;
         }
 
         .survey-header,
@@ -102,6 +102,7 @@
             top: 0;
             padding-top: 0.5rem;
             padding-bottom: 0.2rem;
+            z-index: 100;
         }
 
         .survey-footer {
@@ -202,6 +203,13 @@
         .survey-brand .material-symbols-outlined,
         .survey-progress .material-symbols-outlined {
             color: #6f3800 !important;
+        }
+
+        .survey-brand>div>p:last-child {
+            display: block !important;
+            font-size: clamp(0.72rem, 1.2vw, 0.95rem) !important;
+            font-weight: 800;
+            white-space: nowrap;
         }
 
         .survey-brand img {
@@ -1263,7 +1271,7 @@ if (empty($bagianList)) {
                     <div>
                         <p class="text-xs font-extrabold uppercase tracking-[0.22em] text-white/75">E-SKM PPM Bayan
                             Group</p>
-                        <p class="text-xs font-extrabold tracking-tight text-white">Survei Kepuasan Masyarakat</p>
+                        <p class="text-xs font-extrabold tracking-tight text-white">Survey Kepuasan Masyarakat</p>
                     </div>
                 </div>
             </div>
