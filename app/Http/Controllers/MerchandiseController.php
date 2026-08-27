@@ -50,6 +50,27 @@ class MerchandiseController extends Controller
         return view('merch.check');
     }
 
+    public function drawView()
+    {
+        $participants = NilaiUnsur::query()
+            ->select(['id', 'nama', 'nohp'])
+            ->whereNotNull('nama')
+            ->where('nama', '!=', '')
+            ->orderBy('id')
+            ->get()
+            ->map(function (NilaiUnsur $participant) {
+                $phone = preg_replace('/\D+/', '', (string) $participant->nohp);
+
+                return [
+                    'id' => $participant->id,
+                    'name' => $participant->nama,
+                    'phone' => $phone !== '' ? str_repeat('*', max(0, strlen($phone) - 4)) . substr($phone, -4) : '-',
+                ];
+            });
+
+        return view('merch.draw', compact('participants'));
+    }
+
     // AJAX: check by code or group
     public function apiCheck(Request $request)
     {

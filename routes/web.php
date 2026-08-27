@@ -27,7 +27,7 @@ use App\Http\Controllers\TenantRevenueController;
 | Here is where you can register web routes for your application. These
 | routes are loaded by the RouteServiceProvider and all of them will
 | be assigned to the "web" middleware group. Make something great!
-|
+|   
 */
 
 Route::get('/portal', [PortalController::class, 'index']);
@@ -94,13 +94,16 @@ Route::post('/merch/logout', [\App\Http\Controllers\MerchandiseController::class
 
 Route::middleware('merch.session')->group(function(){
     Route::get('/merch/check', [\App\Http\Controllers\MerchandiseController::class, 'checkView']);
-    Route::get('/merch/draw', [\App\Http\Controllers\MerchandiseController::class, 'drawView']);
     Route::match(['get','post'], '/merch/api/check', [\App\Http\Controllers\MerchandiseController::class, 'apiCheck']);
     Route::post('/merch/api/redeem', [\App\Http\Controllers\MerchandiseController::class, 'apiRedeem']);
         Route::get('/merch/api/stats', [\App\Http\Controllers\MerchandiseController::class, 'apiStats']);
         Route::get('/merch/api/list', [\App\Http\Controllers\MerchandiseController::class, 'apiList']);
-        Route::get('/merch/api/detail', [\App\Http\Controllers\MerchandiseController::class, 'apiDetail']);
     Route::get('/merch/history', [\App\Http\Controllers\MerchandiseController::class, 'history']);
+});
+
+Route::middleware('admin.or.merch')->group(function () {
+    Route::get('/merch/draw', [\App\Http\Controllers\MerchandiseController::class, 'drawView']);
+    Route::get('/merch/api/detail', [\App\Http\Controllers\MerchandiseController::class, 'apiDetail']);
 });
 
 // Route::get('word', function () {

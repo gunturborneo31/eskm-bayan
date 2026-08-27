@@ -11,8 +11,8 @@
 
   // Helper URL
   $q = http_build_query([
-      'tw'    => request('tw'),
-      'Tahun' => request('Tahun'),
+      'tw'    => request('tw', 7),
+      'Tahun' => request('Tahun', date('Y')),
   ]);
 @endphp
 
@@ -29,7 +29,7 @@
             @if (in_array($role, ['admin', 'superadmin', 'ortal'], true))
                 <div class="lg:flex w-full justify-between gap-4 mb-[30px]">
             <ul class="grid w-full gap-2 grid-cols-1">
-                <a href="/export?{{ $q }}&bagian=setkab">
+                <a href="/export?{{ $q }}">
                 <label
                     class="inline-flex items-center justify-center w-full p-3 text-gray-900 bg-gray-800 h-full border-2 border-white rounded-lg cursor-pointer hover:text-gray-900 hover:bg-gray-600">
                     <div class="block">

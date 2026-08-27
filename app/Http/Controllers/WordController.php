@@ -160,15 +160,10 @@ class WordController extends Controller
             $tw=7;
         }
 
-        if (array_key_exists("tw", $_GET)){
-            // echo "ada";
-        } else {
-            // echo "kosong";
-
-            return redirect("export/?tw=".$tw."&Tahun=".date('Y'));
-        }
-
         $bagian = strtolower(trim((string) $request->query('bagian', 'setkab')));
+        $tahun = (int) $request->query('Tahun', date('Y'));
+        $tw = (int) $request->query('tw', 7);
+        $tw = in_array($tw, [1, 2, 3, 4, 5, 6, 7], true) ? $tw : 7;
         $allowedBagian = ['organisasi', 'umum', 'pemerintahan', 'adbang', 'prokopim', 'kesra', 'barjas', 'ekosda', 'hukum', 'setkab'];
         if (!in_array($bagian, $allowedBagian, true)) {
             abort(400, 'Bagian export tidak valid.');
@@ -184,22 +179,26 @@ class WordController extends Controller
 
         error_reporting(0);
         if ($_GET['Bulan'] == '') {
-            for ($x = 0; $x <= date('m'); $x++) {
+            for ($x = 0; $x < 12; $x++) {
                 $responden[$x] = DB::table("survey_responses")
                     ->whereMonth('created_at', '=', $x + 1)
+                    ->whereYear('created_at', $tahun)
+                    ->where('tahun', $tahun)
                     ->get()
                     ->count();
                 $singkatan[$x] = $bulan[$x];
-                $jml = date('m');
+                $jml = 12;
             }
         } else {
-            for ($x = 0; $x <= $_GET['Bulan']; $x++) {
+            for ($x = 0; $x < 12; $x++) {
                 $responden[$x] = DB::table("survey_responses")
                     ->whereMonth('created_at', '=', $x + 1)
+                    ->whereYear('created_at', $tahun)
+                    ->where('tahun', $tahun)
                     ->get()
                     ->count();
                 $singkatan[$x] = $bulan[$x];
-                $jml = $_GET['Bulan'];
+                $jml = 12;
             }
         }
         // dd($responden);
@@ -212,42 +211,20 @@ class WordController extends Controller
 
         error_reporting(0);
 
-        $startDate = 'survey_responses-01-01';
+        $startDate = $tahun . '-01-01';
+        $endDate = $tahun . '-12-31';
 
-        $endDate = 'survey_responses-10-03';
-
-        if ($_GET['tw'] == null) {
-            $today = date('Y-m-d', strtotime('+1 days'));
-            $endDate = $today;
-        } elseif ($_GET['tw'] == 1) {
-            $startDate = $_GET['Tahun'] . '-01-01';
-            $endDate = $_GET['Tahun'] . '-03-31';
-        } elseif ($_GET['tw'] == 2) {
-            $startDate = $_GET['Tahun'] . '-04-01';
-            $endDate = $_GET['Tahun'] . '-06-31';
-        } elseif ($_GET['tw'] == 3) {
-            $startDate = $_GET['Tahun'] . '-01-01';
-            $endDate = $_GET['Tahun'] . '-06-31';
-        } elseif ($_GET['tw'] == 4) {
-            $startDate = $_GET['Tahun'] . '-07-01';
-            $endDate = $_GET['Tahun'] . '-09-31';
-        } elseif ($_GET['tw'] == 5) {
-            $startDate = $_GET['Tahun'] . '-01-01';
-            $endDate = $_GET['Tahun'] . '-09-31';
-        } elseif ($_GET['tw'] == 6) {
-            $startDate = $_GET['Tahun'] . '-10-01';
-            $endDate = $_GET['Tahun'] . '-12-31';
-        } elseif ($_GET['tw'] == 7) {
-            $startDate = $_GET['Tahun'] . '-01-01';
-            $endDate = $_GET['Tahun'] . '-12-31';
-        }
-
-        $bagians = $bagian;
-        if($bagians == 'setkab'){
-            $bagians = BagianOptions::allCodesCsv();
-        }
-
-        $terms = array_values(array_unique(array_filter(array_map('trim', explode(',', $bagians )))));
+        $periods = [
+            1 => [$tahun . '-01-01', $tahun . '-03-31'],
+            2 => [$tahun . '-04-01', $tahun . '-06-30'],
+            3 => [$tahun . '-01-01', $tahun . '-06-30'],
+            4 => [$tahun . '-07-01', $tahun . '-09-30'],
+            5 => [$tahun . '-01-01', $tahun . '-09-30'],
+            6 => [$tahun . '-10-01', $tahun . '-12-31'],
+            7 => [$tahun . '-01-01', $tahun . '-12-31'],
+        ];
+        // Laporan Word selalu merupakan rekap tahunan penuh.
+        [$startDate, $endDate] = $periods[7];
 
         $indexTu = ['u1', 'u2', 'u3', 'u4', 'u5', 'u6', 'u7', 'u8', 'u9'];
         $lastDate = ['2026-01-31', '2026-02-31', '2026-03-31', '2026-04-31', '2026-05-31', '2026-06-31', '2026-07-31', '2026-08-31', '2026-09-31', '2026-10-31', '2026-11-31', '2026-12-31'];
@@ -270,8 +247,7 @@ class WordController extends Controller
                 // echo $xyz;
                 $nilaiTu = DB::table('survey_responses')
                     ->whereBetween('created_at', [$startDate, $abc])
-                    ->whereIn('jenisPelayanan', $terms)
-                    ->where('tahun', $_GET['Tahun'] ?? date('Y'))
+                    ->where('tahun', $tahun)
                     ->get()
                     ->sum($xyz);
                 array_push($x, $nilaiTu);
@@ -279,8 +255,7 @@ class WordController extends Controller
 
             $nnn = DB::table('survey_responses')
                 ->whereBetween('created_at', [$startDate, $abc])
-                    ->whereIn('jenisPelayanan', $terms)
-                    ->where('tahun', $_GET['Tahun'] ?? date('Y'))
+                    ->where('tahun', $tahun)
                 ->get()
                 ->count();
 
@@ -334,8 +309,7 @@ class WordController extends Controller
 
         $baseQuery = DB::table('survey_responses')
             ->whereBetween('created_at', [$startDate, $endDate])
-            ->whereIn('jenisPelayanan', $terms)
-            ->where('tahun', $_GET['Tahun'] ?? date('Y'));
+            ->where('tahun', $tahun);
 
         $tu1 = (clone $baseQuery)->get()->sum('u1');
         $tu2 = (clone $baseQuery)->get()->sum('u2');
@@ -431,8 +405,7 @@ class WordController extends Controller
         // echo $nrrTertimbang;
         $baseStatsQuery = DB::table('survey_responses')
             ->whereBetween('created_at', [$startDate, $endDate])
-            ->whereIn('jenisPelayanan', $terms)
-            ->where('tahun', $_GET['Tahun'] ?? date('Y'));
+            ->where('tahun', $tahun);
 
         $jmlResponden = (clone $baseStatsQuery)->count();
         $jenkel_l = (clone $baseStatsQuery)->where('jenkel', 'Laki - Laki')->count();
@@ -510,9 +483,6 @@ class WordController extends Controller
             $templateProcessor = new TemplateProcessor($templatePath . '/exportsetkab.docx');
             $namaBagian = "";
         }
-
-        $tahun = $_GET['Tahun'];
-        $tw = $_GET['tw'];
 
         if($tw==1){
             $bulanAwal = "Januari";
@@ -764,8 +734,7 @@ class WordController extends Controller
 
         $baseReportQuery = DB::table('survey_responses')
             ->whereBetween('created_at', [$startDate, $endDate])
-            ->whereIn('jenisPelayanan', $terms)
-            ->where('tahun', $_GET['Tahun'] ?? date('Y'));
+            ->where('tahun', $tahun);
 
         $nilaiUnsur = (clone $baseReportQuery)->get();
 

@@ -196,6 +196,22 @@ if ($n == 0) {
             white-space: nowrap;
         }
 
+        .rekap-total-summary th {
+            padding: 0.55rem 0.75rem;
+            border-right: 1px solid #fdba74;
+            background: #ea580c;
+            color: #ffffff;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .rekap-total-summary th:first-child {
+            width: 180px;
+            text-align: left;
+        }
+
         .rekap-total-summary td:first-child {
             width: 180px;
             text-align: left;
@@ -602,6 +618,20 @@ $pendidikan = $_GET['pendidikan'] ?? '0';
                         </div>
                         <div class="rekap-total-summary mt-3">
                             <table class="w-full">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Rekap Tahun {{ $selectedYear }}</th>
+                                        <th scope="col">U1</th>
+                                        <th scope="col">U2</th>
+                                        <th scope="col">U3</th>
+                                        <th scope="col">U4</th>
+                                        <th scope="col">U5</th>
+                                        <th scope="col">U6</th>
+                                        <th scope="col">U7</th>
+                                        <th scope="col">U8</th>
+                                        <th scope="col">U9</th>
+                                    </tr>
+                                </thead>
                                 <tbody>
                                     <tr>
                                         <td>Total Tahun {{ $selectedYear }} ({{ $yearTotals->total_responden }} responden)</td>

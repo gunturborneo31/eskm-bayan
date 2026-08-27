@@ -144,6 +144,14 @@
         <div class="h-full w-full rounded-xl p-3 mb-2 overflow-auto">
             <div class="admin-toolbar flex w-full justify-between items-start lg:items-center gap-3 flex-wrap lg:flex-nowrap">
                 <p class="text-[25px] font-black text-gray-800">Dashboard</p>
+                <a href="{{ url('/merch/draw') }}"
+                    class="inline-flex items-center gap-2 rounded-full bg-orange-600 px-4 py-2 text-sm font-bold text-white shadow-sm transition hover:bg-orange-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2m6.364.636-1.414 1.414M21 12h-2M18.364 18.364l-1.414-1.414M12 21v-2M5.636 18.364l1.414-1.414M3 12h2M5.636 5.636 7.05 7.05" />
+                        <circle cx="12" cy="12" r="4" />
+                    </svg>
+                    <span>Pickup Random</span>
+                </a>
             </div>
 
             @include('partials.top-nav-filters', [

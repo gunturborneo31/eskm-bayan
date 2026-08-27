@@ -47,6 +47,10 @@
                 class="js-admin-nav block rounded-xl px-3 py-2.5 transition {{ str_contains($i, 'dashboard') ? 'bg-white text-orange-900 shadow-md' : 'text-white hover:bg-orange-100/20' }}">
                 DASHBOARD
             </a>
+            <a href="/merch/draw"
+                class="js-admin-nav block rounded-xl px-3 py-2.5 transition {{ str_contains($i, 'merch/draw') ? 'bg-white text-orange-900 shadow-md' : 'text-white hover:bg-orange-100/20' }}">
+                PICKUP RANDOM
+            </a>
             <!-- <a href="/sub-jenis?jenkel=1&usia=1&pekerjaan=1&pendidikan=1&tw={{ $tw }}&Tahun={{ date('Y') }}&bagian={{ $bagian }}&keterangan={{ $keterangan }}"
                 class="js-admin-nav block rounded-xl px-3 py-2.5 transition {{ str_contains($i, 'sub-jenis') ? 'bg-white text-orange-900 shadow-md' : 'text-white hover:bg-orange-100/20' }}">
                 SUB PELAYANAN

@@ -40,10 +40,7 @@
     </div>
 
     <script>
-        const participants = @json($participants->map(fn ($participant) => [
-            'id' => $participant->id,
-            'name' => $participant->nama,
-        ])->values());
+        const participants = @json($participants->values());
         const drawButton = document.getElementById('drawButton');
         const drawResult = document.getElementById('drawResult');
         const drawnParticipantIds = new Set();
@@ -60,6 +57,11 @@
                 nameElement.className = muted ? 'mt-3 text-3xl font-black' : 'mt-3 text-4xl sm:text-6xl font-black break-words';
                 nameElement.textContent = participant.name;
                 drawResult.appendChild(nameElement);
+
+                const phoneElement = document.createElement('p');
+                phoneElement.className = muted ? 'mt-2 text-slate-400 text-base font-semibold' : 'mt-2 text-slate-300 text-lg font-semibold';
+                phoneElement.textContent = `HP: ${participant.phone}`;
+                drawResult.appendChild(phoneElement);
 
                 if (!muted) {
                     const idElement = document.createElement('p');
