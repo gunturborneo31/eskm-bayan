@@ -168,6 +168,12 @@ class WordController extends Controller
             return redirect("export/?tw=".$tw."&Tahun=".date('Y'));
         }
 
+        $bagian = strtolower(trim((string) $request->query('bagian', 'setkab')));
+        $allowedBagian = ['organisasi', 'umum', 'pemerintahan', 'adbang', 'prokopim', 'kesra', 'barjas', 'ekosda', 'hukum', 'setkab'];
+        if (!in_array($bagian, $allowedBagian, true)) {
+            abort(400, 'Bagian export tidak valid.');
+        }
+
         // $tahun = date("Y");
         // dd($tahun);
           // echo (""+Session::get('subbidang'));
@@ -236,7 +242,7 @@ class WordController extends Controller
             $endDate = $_GET['Tahun'] . '-12-31';
         }
 
-        $bagians = $_GET['bagian'];
+        $bagians = $bagian;
         if($bagians == 'setkab'){
             $bagians = BagianOptions::allCodesCsv();
         }
@@ -470,37 +476,38 @@ class WordController extends Controller
         //-----------------------------------------------------------------------------------------------------------------
 
         //Open template with ${table}
-        $bagian = $_GET['bagian'];
+
+        $templatePath = public_path('word-template');
 
         if($bagian=="organisasi"){
-            $templateProcessor = new TemplateProcessor('word-template/exportorganisasi.docx');
+            $templateProcessor = new TemplateProcessor($templatePath . '/exportorganisasi.docx');
             $namaBagian = "Bagian Organisasi";
         } else if($bagian=="umum"){
-            $templateProcessor = new TemplateProcessor('word-template/exportumum.docx');
+            $templateProcessor = new TemplateProcessor($templatePath . '/exportumum.docx');
             $namaBagian = "Bagian Umum";
         } else if($bagian=="pemerintahan"){
-            $templateProcessor = new TemplateProcessor('word-template/exportpemerintahan.docx');
+            $templateProcessor = new TemplateProcessor($templatePath . '/exportpemerintahan.docx');
             $namaBagian = "Bagian Pemerintahan";
         } else if($bagian=="adbang"){
-            $templateProcessor = new TemplateProcessor('word-template/exportadbang.docx');
+            $templateProcessor = new TemplateProcessor($templatePath . '/exportadbang.docx');
             $namaBagian = "Bagian Adbang";
         } else if($bagian=="prokopim"){
-            $templateProcessor = new TemplateProcessor('word-template/exportprokopim.docx');
+            $templateProcessor = new TemplateProcessor($templatePath . '/exportprokopim.docx');
             $namaBagian = "Bagian Prokopim";
         } else if($bagian=="kesra"){
-            $templateProcessor = new TemplateProcessor('word-template/exportkesra.docx');
+            $templateProcessor = new TemplateProcessor($templatePath . '/exportkesra.docx');
             $namaBagian = "Bagian Kesra";
         } else if($bagian=="barjas"){
-            $templateProcessor = new TemplateProcessor('word-template/exportbarjas.docx');
+            $templateProcessor = new TemplateProcessor($templatePath . '/exportbarjas.docx');
             $namaBagian = "Bagian Barjas";
         } else if($bagian=="ekosda"){
-            $templateProcessor = new TemplateProcessor('word-template/exportekosda.docx');
+            $templateProcessor = new TemplateProcessor($templatePath . '/exportekosda.docx');
             $namaBagian = "Bagian Ekosda";
         } else if($bagian=="hukum"){
-            $templateProcessor = new TemplateProcessor('word-template/exporthukum.docx');
+            $templateProcessor = new TemplateProcessor($templatePath . '/exporthukum.docx');
             $namaBagian = "Bagian Hukum";
         } else if($bagian=="setkab"){
-            $templateProcessor = new TemplateProcessor('word-template/exportsetkab.docx');
+            $templateProcessor = new TemplateProcessor($templatePath . '/exportsetkab.docx');
             $namaBagian = "";
         }
 
@@ -944,7 +951,7 @@ class WordController extends Controller
         $templateProcessor->setValue(search: 'nrrt9', replace: $nrrt9);
 
         $table->addRow();
-        $table->addCell(200)->addText( 'Nilai SKM DISEPRINDAG MAHULU per'. $bulanAkhir. ' '. $tahun);
+        $table->addCell(200)->addText('Nilai SKM Bayan Open dan Bayan Craft ' . $tahun);
         $table->addCell(500)->addText( '');
         $table->addCell(500)->addText( '');
         $table->addCell(500)->addText( '');
@@ -957,7 +964,7 @@ class WordController extends Controller
         $table->addCell(500)->addText( sprintf('%0.3f', $nrrT * 25));
         // }
         // $phpWord = new TemplateProcessor('template.docx');
-        $templateProcessor->setComplexBlock('{tabelNilaiUnsurPelayanan}', $table);
+        $templateProcessor->setComplexBlock('tabelNilaiUnsurPelayanan', $table);
 
 
         $table = new Table(array('unit' => TblWidth::TWIP));
@@ -972,10 +979,12 @@ class WordController extends Controller
             $table->addCell(5000)->addText( $item->saran);
         }
 
-        $templateProcessor->setComplexBlock('{tabelSaran}', $table);
+        $templateProcessor->setComplexBlock('tabelSaran', $table);
         //save template with table
-        $templateProcessor->saveAs('Laporan SKM '.$namaBagian.'PT Bayan Tahun '.$tahun.'.docx');
-        return response()->download('Laporan SKM '.$namaBagian.'PT Bayan Tahun '.$tahun.'.docx')->deleteFileAfterSend(true);
+        $outputPath = storage_path('app/' . 'Laporan SKM ' . $namaBagian . 'PT Bayan Tahun ' . $tahun . '.docx');
+        $templateProcessor->saveAs($outputPath);
+
+        return response()->download($outputPath)->deleteFileAfterSend(true);
     }
 
     // $document_with_table = new \PhpOffice\PhpWord\PhpWord();

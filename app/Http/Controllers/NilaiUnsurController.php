@@ -14,55 +14,32 @@ use Illuminate\Support\Str;
 
 class NilaiUnsurController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-               error_reporting(0);
+        $selectedYear = (int) $request->query('Tahun', date('Y'));
+        $nameSearch = trim((string) $request->query('nama', ''));
+        $perPage = (int) $request->query('per_page', 10);
+        $perPage = in_array($perPage, [10, 25, 50, 100], true) ? $perPage : 10;
+        $startDate = $selectedYear . '-01-01';
+        $endDate = $selectedYear . '-12-31';
 
-$startDate = '2024-01-01';
-
-$endDate = '2024-10-03';
-
-if ($_GET['tw'] == null) {
-    $today = date('Y-m-d', strtotime('+1 days'));
-    $endDate = $today;
-} elseif ($_GET['tw'] == 1) {
-    $startDate = $_GET['Tahun'] . '-01-01';
-    $endDate = $_GET['Tahun'] . '-03-31';
-} elseif ($_GET['tw'] == 2) {
-    $startDate = $_GET['Tahun'] . '-04-01';
-    $endDate = $_GET['Tahun'] . '-06-30';
-} elseif ($_GET['tw'] == 3) {
-    $startDate = $_GET['Tahun'] . '-01-01';
-    $endDate = $_GET['Tahun'] . '-06-31';
-} elseif ($_GET['tw'] == 4) {
-    $startDate = $_GET['Tahun'] . '-07-01';
-    $endDate = $_GET['Tahun'] . '-09-30';
-} elseif ($_GET['tw'] == 5) {
-    $startDate = $_GET['Tahun'] . '-01-01';
-    $endDate = $_GET['Tahun'] . '-09-30';
-} elseif ($_GET['tw'] == 6) {
-    $startDate = $_GET['Tahun'] . '-10-01';
-    $endDate = $_GET['Tahun'] . '-12-31';
-} elseif ($_GET['tw'] == 7) {
-    $startDate = $_GET['Tahun'] . '-01-01';
-    $endDate = $_GET['Tahun'] . '-12-31';
-}        
-
-$terms = array_values(array_unique(array_filter(array_map('trim', explode(',', $_GET['bagian'])))));
-
-$selects = DB::table('survey_responses')
+        $selects = DB::table('survey_responses')
             ->whereBetween('created_at', [$startDate, $endDate])
-            ->where('tahun', $_GET['Tahun'] ?? date('Y'))
-            ->paginate(10);
+            ->where('tahun', $selectedYear)
+            ->when($nameSearch !== '', function ($query) use ($nameSearch) {
+                $query->where('nama', 'like', '%' . $nameSearch . '%');
+            })
+            ->latest('created_at')
+            ->paginate($perPage);
 
-        return view('NilaiUnsur.index', compact('selects'));
+        return view('NilaiUnsur.index', compact('selects', 'selectedYear', 'nameSearch', 'perPage'));
     }
 
 
     public function cariNilaiUnsur(Request $request)
     {
-        $keyword = $request->search;
-        $datas = NilaiUnsur::where('nilaiUnsur', 'like', "%" . 'like', "%" . $keyword . "%");
+        $keyword = trim((string) $request->input('search', ''));
+        $datas = NilaiUnsur::where('nama', 'like', '%' . $keyword . '%')->paginate(10);
         return view('nilaiUnsur.index', compact('datas'));
     }
 

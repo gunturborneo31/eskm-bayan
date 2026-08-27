@@ -2,35 +2,8 @@
 
 error_reporting(0);
 
-$startDate = '2024-01-01';
-
-$endDate = '2024-10-03';
-
-if ($_GET['tw'] == null) {
-    $today = date('Y-m-d', strtotime('+1 days'));
-    $endDate = $today;
-} elseif ($_GET['tw'] == 1) {
-    $startDate = $_GET['Tahun'] . '-01-01';
-    $endDate = $_GET['Tahun'] . '-03-31';
-} elseif ($_GET['tw'] == 2) {
-    $startDate = $_GET['Tahun'] . '-04-01';
-    $endDate = $_GET['Tahun'] . '-06-30';
-} elseif ($_GET['tw'] == 3) {
-    $startDate = $_GET['Tahun'] . '-01-01';
-    $endDate = $_GET['Tahun'] . '-06-31';
-} elseif ($_GET['tw'] == 4) {
-    $startDate = $_GET['Tahun'] . '-07-01';
-    $endDate = $_GET['Tahun'] . '-09-30';
-} elseif ($_GET['tw'] == 5) {
-    $startDate = $_GET['Tahun'] . '-01-01';
-    $endDate = $_GET['Tahun'] . '-09-30';
-} elseif ($_GET['tw'] == 6) {
-    $startDate = $_GET['Tahun'] . '-10-01';
-    $endDate = $_GET['Tahun'] . '-12-31';
-} elseif ($_GET['tw'] == 7) {
-    $startDate = $_GET['Tahun'] . '-01-01';
-    $endDate = $_GET['Tahun'] . '-12-31';
-}
+$startDate = ($_GET['Tahun'] ?? date('Y')) . '-01-01';
+$endDate = ($_GET['Tahun'] ?? date('Y')) . '-12-31';
 
 $tu1 = DB::table('survey_responses')->where('tahun', $_GET['Tahun'] ?? date('Y'))
     ->whereBetween('created_at', [$startDate, $endDate])
@@ -148,72 +121,162 @@ if ($n == 0) {
     // role/keterangan dari URL login, contoh: ?keterangan=asisten2
     $role = request('keterangan', 'admin');
     $bagianQuery = request('bagian', '');
-
-    // Semua opsi yang tersedia untuk ditampilkan
-    $allOptions = \App\Support\BagianOptions::codeNameMap();
-    $visibleKeys = \App\Support\BagianOptions::codesForRole($role);
 @endphp
 
 @extends('layouts.index', ['title' => 'nilaiUnsur'])
 
 @section('content')
-    <div class="admin-main">
+    <style>
+        .nilai-unsur-page .nilai-unsur-scroll {
+            width: 100%;
+            max-height: 390px;
+            overflow-x: auto;
+            overflow-y: auto;
+            border: 1px solid #cbd5e1;
+            border-radius: 0.75rem;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-gutter: stable both-edges;
+        }
+
+        .nilai-unsur-page table {
+            border-collapse: collapse;
+            min-width: 920px;
+            table-layout: fixed;
+        }
+
+        .nilai-unsur-page .nilai-unsur-data-table col:nth-child(1),
+        .nilai-unsur-page .nilai-unsur-summary col:nth-child(1) {
+            width: 76px;
+        }
+
+        .nilai-unsur-page .nilai-unsur-data-table col:nth-child(2),
+        .nilai-unsur-page .nilai-unsur-summary col:nth-child(2) {
+            width: 240px;
+        }
+
+        .nilai-unsur-page .nilai-unsur-data-table col:nth-child(n + 3),
+        .nilai-unsur-page .nilai-unsur-summary col:nth-child(n + 3) {
+            width: 58px;
+        }
+
+        .nilai-unsur-page th,
+        .nilai-unsur-page td {
+            border: 1px solid #cbd5e1;
+            white-space: nowrap;
+        }
+
+        .nilai-unsur-page thead th {
+            background: #0f172a !important;
+            color: #ffffff !important;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+
+        .nilai-unsur-page tbody td {
+            color: #1e293b !important;
+            vertical-align: middle;
+        }
+
+        .nilai-unsur-page .nilai-unsur-name {
+            width: 240px;
+            max-width: 240px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .nilai-unsur-page .nilai-unsur-filter input,
+        .nilai-unsur-page .nilai-unsur-filter select {
+            height: 2.25rem;
+            background: #ffffff !important;
+            border: 1px solid #cbd5e1;
+            color: #1e293b !important;
+            font-size: 0.875rem !important;
+        }
+
+        .nilai-unsur-page tbody tr:nth-child(even) td {
+            background: #f8fafc !important;
+        }
+
+        .nilai-unsur-page tbody tr:nth-child(odd) td {
+            background: #ffffff !important;
+        }
+
+        .nilai-unsur-page .nilai-unsur-filter select {
+            min-width: 7rem;
+        }
+
+        .nilai-unsur-summary {
+            overflow-x: auto;
+            border: 1px solid #fdba74;
+            border-radius: 0.75rem;
+            background: #fff7ed;
+        }
+
+        .nilai-unsur-summary table {
+            min-width: 920px;
+        }
+
+        .nilai-unsur-summary td {
+            padding: 0.55rem 0.75rem;
+            border-right: 1px solid #fed7aa;
+            color: #7c2d12;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .nilai-unsur-summary td:first-child {
+            width: 190px;
+            text-align: left;
+        }
+
+        @media (max-width: 640px) {
+            .nilai-unsur-page .nilai-unsur-filter,
+            .nilai-unsur-page .nilai-unsur-filter form {
+                width: 100%;
+            }
+
+            .nilai-unsur-page .nilai-unsur-filter input {
+                min-width: 0;
+                flex: 1;
+            }
+        }
+    </style>
+
+    <div class="admin-main nilai-unsur-page">
         <div class="bg-white h-full w-full rounded-xl p-3  mb-2">
             <div class="admin-toolbar flex w-full justify-between items-start lg:items-center gap-3 flex-wrap lg:flex-nowrap">
                 <p class="text-[25px] font-black text-gray-800">RESUME / PENDIDIKAN</p>
-                <div class="flex justify-between items-center py-4 ">
+                <div class="nilai-unsur-filter flex flex-row items-center gap-3 py-4">
+                    <form method="GET" action="{{ route('nilaiUnsur.index') }}" class="flex flex-wrap items-center justify-end gap-3">
+                        <label for="tahun" class="font-bold text-gray-900 text-sm">Tahun</label>
+                        <select id="tahun" name="Tahun" class="rounded-full px-3 py-1 text-center font-bold">
+                            @foreach ([2023, 2024, 2025, 2026] as $year)
+                                <option value="{{ $year }}" @selected($selectedYear === $year)>{{ $year }}</option>
+                            @endforeach
+                        </select>
+                        <label for="nama" class="sr-only">Cari nama</label>
+                        <input id="nama" name="nama" type="search" value="{{ $nameSearch }}"
+                            placeholder="Cari nama responden..." class="rounded-full px-4 py-1.5 w-56">
+                        <button type="submit"
+                            class="rounded-full bg-slate-900 px-4 py-2 text-sm font-bold text-white transition hover:bg-slate-700">
+                            Filter
+                        </button>
+                        <label for="per_page" class="font-bold text-gray-900 text-sm">Baris</label>
+                        <select id="per_page" name="per_page" class="rounded-full px-3 py-1 text-center font-bold">
+                            @foreach ([10, 25, 50, 100] as $pageSize)
+                                <option value="{{ $pageSize }}" @selected($perPage === $pageSize)>{{ $pageSize }}</option>
+                            @endforeach
+                        </select>
+                        @if ($nameSearch !== '')
+                            <a href="{{ route('nilaiUnsur.index', ['Tahun' => $selectedYear]) }}"
+                                class="text-sm font-semibold text-slate-600 hover:text-slate-900">Reset</a>
+                        @endif
+                    </form>
                     <div>
-                        <label class="text-gray-900 font-bold text-xl"> </label>
-                    </div>
-                    <?php
-
-                    error_reporting(0);
-                    if ($_GET['triwulan'] == '') {
-                    } else {
-                        $_SESSION['triwulan'] = $_GET['triwulan'];
-                    }
-
-                    if ($_GET['tw'] == '') {
-                    } else {
-                        $_SESSION['tw'] = $_GET['tw'];
-                    }
-                    ?>
-                    <div class="flex flex-row items-center gap-3">
-
-                        {{-- tahun --}}
-                        <div class="flex flex-row items-center gap-3">
-                            <label for="tahun"
-                                class=" font-bold text-gray-900 text-4xl lg:text-base drop-shadow-[0_3px_3px_rgba(0,0,0,0.3)]">
-                                Tahun</label>
-                            <select id="tahun"  
-                                onChange="document.location.href='/nilaiUnsur?tw=' + {{ $_GET['tw'] }} + '&Tahun=' + this.value + '&bagian={{ $_GET['bagian'] }}'"
-                                class="bg-white border border-gray-400 text-gray-900 font-bold text-4xl w-[200px] text-center lg:w-fit lg:text-sm rounded-full px-3 py-1">
-                    
-                                <option value="2023" <?php if($_GET['Tahun']=='2023') echo 'selected'; ?>>2023</option>
-                                <option value="2024" <?php if($_GET['Tahun']=='2024') echo 'selected'; ?>>2024</option>
-                                <option value="2025" <?php if($_GET['Tahun']=='2024') echo 'selected'; ?>>2025</option>
-                                <option value="2026" <?php if($_GET['Tahun']=='2026' || $_GET['Tahun']=='') echo 'selected'; ?>>2026</option>
-                            </select>
-                        </div>
-                    
-                        {{-- triwulan --}}
-                        <div class="flex flex-row items-center gap-3">
-                            <label for="tw"
-                                class=" font-bold text-gray-900 text-4xl lg:text-base drop-shadow-[0_3px_3px_rgba(0,0,0,0.3)]">
-                                Triwulan</label>
-                            <select id="tw"
-                                onChange="document.location.href='/nilaiUnsur?tw=' + this.value + '&Tahun=' + {{ $_GET['Tahun'] }} + '&bagian={{ $_GET['bagian'] }}'"
-                                class="bg-white border border-gray-400 text-gray-900 font-bold text-4xl w-[300px] text-center lg:w-fit lg:text-sm rounded-full px-3 py-1">
-                    
-                                <option value="1" <?php if($_GET['tw']=='1') echo 'selected'; ?>>TW 1 (Jan, Feb, Mar)</option>
-                                <option value="2" <?php if($_GET['tw']=='2') echo 'selected'; ?>>TW 2 (Apr, Mei, Jun)</option>
-                                <option value="3" <?php if($_GET['tw']=='3') echo 'selected'; ?>>TW 2 (Jan s/d Jun)</option>
-                                <option value="4" <?php if($_GET['tw']=='4') echo 'selected'; ?>>TW 3 (Jul, Agu, Sep)</option>
-                                <option value="5" <?php if($_GET['tw']=='5') echo 'selected'; ?>>TW 3 (Jan s/d Sep)</option>
-                                <option value="6" <?php if($_GET['tw']=='6') echo 'selected'; ?>>TW 4 (Okt, Nop, Des)</option>
-                                <option value="7" <?php if($_GET['tw']=='7') echo 'selected'; ?>>TW 4 (Jan s/d Des)</option>
-                            </select>
-                        </div>
                     
                         @if (false)
                         {{-- bagian --}}
@@ -267,10 +330,9 @@ if ($n == 0) {
                                         return;
                                         }
                                         // Redirect dengan parameter bagian=... (dipisah koma)
-                                        const tw = "{{ $_GET['tw'] }}";
                                         const tahun = "{{ $_GET['Tahun'] }}";
                                         const bagian = checked.join(",");
-                                        window.location.href = `/nilaiUnsur?tw=${tw}&Tahun=${tahun}&bagian=${bagian}`;
+                                        window.location.href = `/nilaiUnsur?Tahun=${tahun}&bagian=${bagian}`;
                                     }
                                     </script>
                                     
@@ -281,10 +343,13 @@ if ($n == 0) {
                         @endif
 
                         {{-- download --}}
-                        <a href="{{ route('exports.download', ['type' => 'resume', 'jenkel' => $_GET['jenkel'], 'usia' => $_GET['usia'], 'pekerjaan' => $_GET['pekerjaan'], 'pendidikan' => $_GET['pendidikan'], 'tahun' => $_GET['tahun'], 'Tahun' => $_GET['Tahun'] ?? $_GET['tahun'] ?? date('Y'), 'Bulan' => $_GET['Bulan'] ?? null]) }}"
-                            class="py-1 text-center items-center  bg-gradient-to-br from-[#EA580C] from-60%  to-[#FDBA74] to-95% rounded-full font-bold text-sm px-3  w-full  text-gray-900"
-                            style="font-family:'Roboto'">
-                            <p>DOWNLOAD</p>
+                        <a href="{{ route('exports.download', ['type' => 'resume', 'jenkel' => request('jenkel', 1), 'usia' => request('usia', 1), 'pekerjaan' => request('pekerjaan', 1), 'pendidikan' => request('pendidikan', 1), 'tahun' => request('tahun', $selectedYear), 'Tahun' => $selectedYear, 'Bulan' => request('Bulan')]) }}"
+                            class="inline-flex items-center justify-center gap-2 rounded-full bg-orange-600 px-4 py-2 text-sm font-bold text-white shadow-sm transition hover:bg-orange-700"
+                            title="Download rekap nilai unsur">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14" />
+                            </svg>
+                            <span>Download</span>
                         </a>
                     </div>
                 </div>
@@ -293,18 +358,24 @@ if ($n == 0) {
             <div class="w-full ">
                 <div class="-m-1.5  ">
                     <div class="p-1.5 ">
-                        <div class="border border-[#EA580C] rounded-lg overflow-hidden h-[335px]">
-                            <table class="w-full divide-y divide-gray-200 ">
-                                <thead class="bg-gradient-to-br from-[#EA580C] from-60%  to-[#FDBA74] to-95%">
+                        <div class="nilai-unsur-scroll h-[310px]">
+                            <table class="nilai-unsur-data-table w-full divide-y divide-gray-200">
+                                <colgroup>
+                                    <col><col><col><col><col><col><col><col><col><col><col><col>
+                                </colgroup>
+                                <thead class="sticky top-0 z-10 bg-slate-900">
                                     <tr>
                                         <th scope="col" rowspan="2"
-                                            class="px-6 py-3 w-[50px] text-center text-xs font-medium text-gray-900 uppercase">
-                                            No.<br>RESPONDEN</th>
-                                        <th scope="col" colspan="10"
-                                            class=" px-6 px-6 py-1 w-[50px] text-center text-xs font-medium text-gray-900 uppercase ">
+                                            class="px-4 py-3 w-[76px] text-center text-xs font-semibold uppercase">
+                                            No. Responden</th>
+                                        <th scope="col" colspan="11"
+                                            class="px-4 py-2 text-center text-xs font-semibold uppercase">
                                             NILAI UNSUR PELAYANAN</th>
                                     </tr>
                                     <tr>
+                                        <th scope="col"
+                                            class="nilai-unsur-name px-4 py-2 text-left text-xs font-semibold uppercase">
+                                            NAMA</th>
                                         <th scope="col"
                                             class=" px-6 py-1 w-[50px] text-center text-xs font-medium text-gray-900 uppercase">
                                             U1</th>
@@ -337,14 +408,16 @@ if ($n == 0) {
                                             HASIL</th>
                                     </tr>
                                 </thead>
-                                <div class="h-200 overflow-y-auto">
-                                    <tbody class="" style="overflow-y:auto;">
+                                <tbody>
                                         <?php $row = 1; ?>
                                         @forelse($selects as $data)
-                                            <tr class="{{ $row % 2 == 0 ? 'bg-[#E3E3E3]' : '' }}">
+                                            <tr>
 
                                                 <td class="whitespace-nowrap  px-2 py-2 text-center font-medium">
                                                     {{ $row++ }}
+                                                </td>
+                                                <td class="nilai-unsur-name px-4 py-2 text-left font-medium" title="{{ $data->nama ?? '-' }}">
+                                                    {{ $data->nama ?? '-' }}
                                                 </td>
                                                 <td class="whitespace-nowrap  px-2 py-2 text-center font-medium">
                                                     {{ $data->u1 }}
@@ -378,14 +451,19 @@ if ($n == 0) {
                                                 </td>
                                             </tr>
                                         @empty
+                                            <tr>
+                                                <td colspan="12" class="px-4 py-8 text-center text-sm text-slate-500">
+                                                    Tidak ada data responden untuk filter yang dipilih.
+                                                </td>
+                                            </tr>
                                         @endforelse
 
-                                    </tbody>
-                                </div>
+                                </tbody>
                             </table>
                         </div>
 
 
+                        @if (false)
                         <div class="rounded-lg overflow-hidden  mt-1">
                             <table class="w-full divide-y divide-gray-200 ">
                                 <thead
@@ -515,9 +593,41 @@ if ($n == 0) {
                                     </tbody>
                             </table>
                         </div>
+                        @endif
+
+                        <div class="nilai-unsur-summary mt-3">
+                            <table class="w-full">
+                                <colgroup>
+                                    <col><col><col><col><col><col><col><col><col><col><col><col>
+                                </colgroup>
+                                <tbody>
+                                    <tr>
+                                        <td aria-hidden="true"></td>
+                                        <td>Total Nilai Unsur</td>
+                                        <td>{{ $tu1 }}</td><td>{{ $tu2 }}</td><td>{{ $tu3 }}</td><td>{{ $tu4 }}</td>
+                                        <td>{{ $tu5 }}</td><td>{{ $tu6 }}</td><td>{{ $tu7 }}</td><td>{{ $tu8 }}</td><td>{{ $tu9 }}</td>
+                                        <td>{{ $Ttl_Nilai_Unsur }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td aria-hidden="true"></td>
+                                        <td>NRR Per Unsur</td>
+                                        <td>{{ $nrr1 }}</td><td>{{ $nrr2 }}</td><td>{{ $nrr3 }}</td><td>{{ $nrr4 }}</td>
+                                        <td>{{ $nrr5 }}</td><td>{{ $nrr6 }}</td><td>{{ $nrr7 }}</td><td>{{ $nrr8 }}</td><td>{{ $nrr9 }}</td>
+                                        <td>{{ $nrr }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td aria-hidden="true"></td>
+                                        <td>NRR Tertimbang</td>
+                                        <td>{{ $nrrt1 }}</td><td>{{ $nrrt2 }}</td><td>{{ $nrrt3 }}</td><td>{{ $nrrt4 }}</td>
+                                        <td>{{ $nrrt5 }}</td><td>{{ $nrrt6 }}</td><td>{{ $nrrt7 }}</td><td>{{ $nrrt8 }}</td><td>{{ $nrrt9 }}</td>
+                                        <td>{{ $nrrT }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
 
                         <div class="mt-2">
-                            {{ $selects->links() }}
+                            {{ $selects->appends(request()->except('page'))->links() }}
                         </div>
                     </div>
                 </div>

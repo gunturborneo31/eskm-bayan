@@ -12,49 +12,21 @@ use App\Support\BagianOptions;
 
 class RekapTotalController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-               error_reporting(0);
-
-        $_GET['Tahun'] = $_GET['Tahun'] ?? date('Y');
-        $_GET['tw'] = $_GET['tw'] ?? '';
-        $_GET['bagian'] = $_GET['bagian'] ?? BagianOptions::allCodesCsv();
-
-$startDate = '2024-01-01';
-
-$endDate = '2024-10-03';
-
-$terms = array_values(array_unique(array_filter(array_map('trim', explode(',', $_GET['bagian'])))));
-
-if ($_GET['tw'] == null) {
-    $today = date('Y-m-d', strtotime('+1 days'));
-    $endDate = $today;
-} elseif ($_GET['tw'] == 1) {
-    $startDate = $_GET['Tahun'] . '-01-01';
-    $endDate = $_GET['Tahun'] . '-03-31';
-} elseif ($_GET['tw'] == 2) {
-    $startDate = $_GET['Tahun'] . '-04-01';
-    $endDate = $_GET['Tahun'] . '-06-30';
-} elseif ($_GET['tw'] == 3) {
-    $startDate = $_GET['Tahun'] . '-01-01';
-    $endDate = $_GET['Tahun'] . '-06-31';
-} elseif ($_GET['tw'] == 4) {
-    $startDate = $_GET['Tahun'] . '-07-01';
-    $endDate = $_GET['Tahun'] . '-09-30';
-} elseif ($_GET['tw'] == 5) {
-    $startDate = $_GET['Tahun'] . '-01-01';
-    $endDate = $_GET['Tahun'] . '-09-30';
-} elseif ($_GET['tw'] == 6) {
-    $startDate = $_GET['Tahun'] . '-10-01';
-    $endDate = $_GET['Tahun'] . '-12-31';
-} elseif ($_GET['tw'] == 7) {
-    $startDate = $_GET['Tahun'] . '-01-01';
-    $endDate = $_GET['Tahun'] . '-12-31';
-}   
+        $selectedYear = (int) $request->query('Tahun', date('Y'));
+        $startDate = $selectedYear . '-01-01';
+        $endDate = $selectedYear . '-12-31';
 
         $query = DB::table('survey_responses')
             ->whereBetween('survey_responses.created_at', [$startDate, $endDate])
-            ->where('survey_responses.tahun', $_GET['Tahun'] ?? date('Y'));
+            ->where('survey_responses.tahun', $selectedYear);
+
+        $yearTotals = DB::table('survey_responses')
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->where('tahun', $selectedYear)
+            ->selectRaw('COUNT(*) as total_responden, COALESCE(SUM(u1), 0) as u1, COALESCE(SUM(u2), 0) as u2, COALESCE(SUM(u3), 0) as u3, COALESCE(SUM(u4), 0) as u4, COALESCE(SUM(u5), 0) as u5, COALESCE(SUM(u6), 0) as u6, COALESCE(SUM(u7), 0) as u7, COALESCE(SUM(u8), 0) as u8, COALESCE(SUM(u9), 0) as u9')
+            ->first();
 
         $search = trim((string) request('search', ''));
         $perPage = (int) request('per_page', 10);
@@ -73,7 +45,7 @@ if ($_GET['tw'] == null) {
         $selects = $query->paginate($perPage);
         $selects->appends(request()->query());
 
-        return view('RekapTotal.index', compact('selects', 'search', 'perPage'));
+        return view('RekapTotal.index', compact('selects', 'search', 'perPage', 'selectedYear', 'yearTotals'));
     }
 
 

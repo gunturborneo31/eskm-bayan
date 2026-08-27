@@ -31,15 +31,15 @@
         </a>
 
         <nav class="mt-0 lg:mt-4 flex-1 hidden lg:block space-y-1.5 text-[12px] font-extrabold tracking-wide">
-            <a href="/rekapTotal?jenkel=1&usia=1&pekerjaan=1&pendidikan=1&tw={{ $tw }}&Tahun={{ date('Y') }}&bagian={{ $bagian }}&keterangan={{ $keterangan }}"
+            <a href="/rekapTotal?jenkel=1&usia=1&pekerjaan=1&pendidikan=1&Tahun={{ date('Y') }}&bagian={{ $bagian }}&keterangan={{ $keterangan }}"
                 class="js-admin-nav block rounded-xl px-3 py-2.5 transition {{ str_contains($i, 'rekapTotal') ? 'bg-white text-orange-900 shadow-md' : 'text-white hover:bg-orange-100/20' }}">
                 RESUME
             </a>
-            <a href="/nilaiUnsur?jenkel=1&usia=1&pekerjaan=1&pendidikan=1&tw={{ $tw }}&Tahun={{ date('Y') }}&bagian={{ $bagian }}&keterangan={{ $keterangan }}"
+            <a href="/nilaiUnsur?jenkel=1&usia=1&pekerjaan=1&pendidikan=1&Tahun={{ date('Y') }}&bagian={{ $bagian }}&keterangan={{ $keterangan }}"
                 class="js-admin-nav block rounded-xl px-3 py-2.5 transition {{ str_contains($i, 'nilaiUnsur') ? 'bg-white text-orange-900 shadow-md' : 'text-white hover:bg-orange-100/20' }}">
                 NILAI UNSUR
             </a>
-            <a href="/nilaiRekap?jenkel=1&usia=1&pekerjaan=1&pendidikan=1&tw={{ $tw }}&Tahun={{ date('Y') }}&bagian={{ $bagian }}&keterangan={{ $keterangan }}"
+            <a href="/nilaiRekap?jenkel=1&usia=1&pekerjaan=1&pendidikan=1&Tahun={{ date('Y') }}&bagian={{ $bagian }}&keterangan={{ $keterangan }}"
                 class="js-admin-nav block rounded-xl px-3 py-2.5 transition {{ str_contains($i, 'nilaiRekap') ? 'bg-white text-orange-900 shadow-md' : 'text-white hover:bg-orange-100/20' }}">
                 NILAI
             </a>

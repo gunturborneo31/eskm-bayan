@@ -2,35 +2,8 @@
 
 error_reporting(0);
 
-$startDate = '2024-01-01';
-
-$endDate = '2024-10-03';
-
-if ($_GET['tw'] == null) {
-    $today = date('Y-m-d', strtotime('+1 days'));
-    $endDate = $today;
-} elseif ($_GET['tw'] == 1) {
-    $startDate = $_GET['Tahun'] . '-01-01';
-    $endDate = $_GET['Tahun'] . '-03-31';
-} elseif ($_GET['tw'] == 2) {
-    $startDate = $_GET['Tahun'] . '-04-01';
-    $endDate = $_GET['Tahun'] . '-06-31';
-} elseif ($_GET['tw'] == 3) {
-    $startDate = $_GET['Tahun'] . '-01-01';
-    $endDate = $_GET['Tahun'] . '-06-31';
-} elseif ($_GET['tw'] == 4) {
-    $startDate = $_GET['Tahun'] . '-07-01';
-    $endDate = $_GET['Tahun'] . '-09-31';
-} elseif ($_GET['tw'] == 5) {
-    $startDate = $_GET['Tahun'] . '-01-01';
-    $endDate = $_GET['Tahun'] . '-09-31';
-} elseif ($_GET['tw'] == 6) {
-    $startDate = $_GET['Tahun'] . '-10-01';
-    $endDate = $_GET['Tahun'] . '-12-31';
-} elseif ($_GET['tw'] == 7) {
-    $startDate = $_GET['Tahun'] . '-01-01';
-    $endDate = $_GET['Tahun'] . '-12-31';
-}
+$startDate = ($_GET['Tahun'] ?? date('Y')) . '-01-01';
+$endDate = ($_GET['Tahun'] ?? date('Y')) . '-12-31';
 
 $terms = array_values(array_unique(array_filter(array_map('trim', explode(',', $_GET['bagian'])))));
 
@@ -201,6 +174,32 @@ if ($n == 0) {
             color: #7c2d12 !important;
             font-weight: 800;
         }
+
+        .rekap-total-summary {
+            overflow-x: auto;
+            border: 1px solid #fdba74;
+            border-radius: 0.75rem;
+            background: #fff7ed;
+        }
+
+        .rekap-total-summary table {
+            min-width: 920px;
+        }
+
+        .rekap-total-summary td {
+            padding: 0.65rem 0.75rem;
+            border-right: 1px solid #fed7aa;
+            color: #7c2d12;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .rekap-total-summary td:first-child {
+            width: 180px;
+            text-align: left;
+        }
     </style>
 
     <div class="admin-main">
@@ -218,7 +217,6 @@ if ($n == 0) {
                     ?>
                     <div class="flex flex-row items-center gap-3">
                         <form method="GET" action="{{ url('/rekapTotal') }}" class="flex items-center gap-2">
-                            <input type="hidden" name="tw" value="{{ request('tw') }}">
                             <input type="hidden" name="Tahun" value="{{ request('Tahun') }}">
                             <input type="hidden" name="bagian" value="{{ request('bagian') }}">
                             <input type="hidden" name="jenkel" value="{{ request('jenkel', '0') }}">
@@ -238,7 +236,6 @@ if ($n == 0) {
                         {{-- filter --}}
 <div class="flex flex-row items-center gap-2">
                         <form method="GET" action="{{ url('/rekapTotal') }}" class="flex items-center gap-2">
-                            <input type="hidden" name="tw" value="{{ request('tw') }}">
                             <input type="hidden" name="Tahun" value="{{ request('Tahun') }}">
                             <input type="hidden" name="bagian" value="{{ request('bagian') }}">
                             <input type="hidden" name="jenkel" value="{{ request('jenkel', '0') }}">
@@ -267,7 +264,6 @@ if ($n == 0) {
     <div id="dropdown" class="z-10 hidden border bg-white divide-y divide-gray-100 rounded-lg shadow w-44">
       <ul class="py-2 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
         @php
-          $tw = $_GET['tw'] ?? '';
           $Tahun = $_GET['Tahun'] ?? '';
           $bagian = $_GET['bagian'] ?? '';
           $jenkel = $_GET['jenkel'] ?? '0';
@@ -277,7 +273,7 @@ if ($n == 0) {
         @endphp
   
         <li>
-          <a href="/rekapTotal?tw={{ $tw }}&Tahun={{ $Tahun }}&bagian={{ urlencode($bagian) }}&jenkel={{ $jenkel=='0'?'1':'0' }}&usia={{ $usia }}&pekerjaan={{ $pekerjaan }}&pendidikan={{ $pendidikan }}"
+          <a href="/rekapTotal?Tahun={{ $Tahun }}&bagian={{ urlencode($bagian) }}&jenkel={{ $jenkel=='0'?'1':'0' }}&usia={{ $usia }}&pekerjaan={{ $pekerjaan }}&pendidikan={{ $pendidikan }}"
              class="block px-4 py-2 hover:bg-gray-100 flex items-center gap-2">
             <p>Jenis kelamin</p>
             <svg aria-hidden="true" fill="none" stroke-width="4" stroke="currentColor" viewBox="0 0 24 24" class="w-3 h-3 {{ $jenkel=='1' ? '' : 'hidden' }}">
@@ -287,7 +283,7 @@ if ($n == 0) {
         </li>
   
         <li>
-          <a href="/rekapTotal?tw={{ $tw }}&Tahun={{ $Tahun }}&bagian={{ urlencode($bagian) }}&jenkel={{ $jenkel }}&usia={{ $usia=='0'?'1':'0' }}&pekerjaan={{ $pekerjaan }}&pendidikan={{ $pendidikan }}"
+          <a href="/rekapTotal?Tahun={{ $Tahun }}&bagian={{ urlencode($bagian) }}&jenkel={{ $jenkel }}&usia={{ $usia=='0'?'1':'0' }}&pekerjaan={{ $pekerjaan }}&pendidikan={{ $pendidikan }}"
              class="block px-4 py-2 hover:bg-gray-100 flex items-center gap-2">
             <p>Usia</p>
             <svg aria-hidden="true" fill="none" stroke-width="4" stroke="currentColor" viewBox="0 0 24 24" class="w-3 h-3 {{ $usia=='1' ? '' : 'hidden' }}">
@@ -297,7 +293,7 @@ if ($n == 0) {
         </li>
   
         <li>
-          <a href="/rekapTotal?tw={{ $tw }}&Tahun={{ $Tahun }}&bagian={{ urlencode($bagian) }}&jenkel={{ $jenkel }}&usia={{ $usia }}&pekerjaan={{ $pekerjaan=='0'?'1':'0' }}&pendidikan={{ $pendidikan }}"
+          <a href="/rekapTotal?Tahun={{ $Tahun }}&bagian={{ urlencode($bagian) }}&jenkel={{ $jenkel }}&usia={{ $usia }}&pekerjaan={{ $pekerjaan=='0'?'1':'0' }}&pendidikan={{ $pendidikan }}"
              class="block px-4 py-2 hover:bg-gray-100 flex items-center gap-2">
             <p>Pekerjaan</p>
             <svg aria-hidden="true" fill="none" stroke-width="4" stroke="currentColor" viewBox="0 0 24 24" class="w-3 h-3 {{ $pekerjaan=='1' ? '' : 'hidden' }}">
@@ -307,7 +303,7 @@ if ($n == 0) {
         </li>
   
         <li>
-          <a href="/rekapTotal?tw={{ $tw }}&Tahun={{ $Tahun }}&bagian={{ urlencode($bagian) }}&jenkel={{ $jenkel }}&usia={{ $usia }}&pekerjaan={{ $pekerjaan }}&pendidikan={{ $pendidikan=='0'?'1':'0' }}"
+          <a href="/rekapTotal?Tahun={{ $Tahun }}&bagian={{ urlencode($bagian) }}&jenkel={{ $jenkel }}&usia={{ $usia }}&pekerjaan={{ $pekerjaan }}&pendidikan={{ $pendidikan=='0'?'1':'0' }}"
              class="block px-4 py-2 hover:bg-gray-100 flex items-center gap-2">
             <p>Pendidikan</p>
             <svg aria-hidden="true" fill="none" stroke-width="4" stroke="currentColor" viewBox="0 0 24 24" class="w-3 h-3 {{ $pendidikan=='1' ? '' : 'hidden' }}">
@@ -321,7 +317,6 @@ if ($n == 0) {
 
   {{-- tahun --}}
 @php
-$tw = $_GET['tw'] ?? '';
 $Tahun = $_GET['Tahun'] ?? '';
 $bagian = $_GET['bagian'] ?? '';
 $jenkel = $_GET['jenkel'] ?? '0';
@@ -333,39 +328,13 @@ $pendidikan = $_GET['pendidikan'] ?? '0';
 <div class="flex flex-row items-center gap-3 mb-5 lg:mb-0">
 <label for="tahun" class="font-bold text-gray-800 text-5xl lg:text-base">Tahun</label>
 <select id="tahun"
-  onChange="document.location.href='/rekapTotal?tw={{ $tw }}&Tahun=' + this.value + '&bagian={{ urlencode($bagian) }}&jenkel={{ $jenkel }}&usia={{ $usia }}&pekerjaan={{ $pekerjaan }}&pendidikan={{ $pendidikan }}'"
+    onChange="document.location.href='/rekapTotal?Tahun=' + this.value + '&bagian={{ urlencode($bagian) }}&jenkel={{ $jenkel }}&usia={{ $usia }}&pekerjaan={{ $pekerjaan }}&pendidikan={{ $pendidikan }}'"
   class="bg-white border border-gray-300 text-gray-800 font-bold text-5xl w-[250px] text-center lg:w-fit lg:text-sm rounded-full px-3 py-1">
   <option value="2023" {{ $Tahun=='2023' ? 'selected' : '' }}>2023</option>
   <option value="2024" {{ $Tahun=='2024' ? 'selected' : '' }}>2024</option>
   <option value="2025" {{ $Tahun=='2025' ? 'selected' : '' }}>2025</option>
   <option value="2026" {{ ($Tahun=='2026' || $Tahun=='') ? 'selected' : '' }}>2026</option>
 </select>
-</div>
-
-{{-- tw --}}
-@php
-  $tw = $_GET['tw'] ?? '';
-  $Tahun = $_GET['Tahun'] ?? '';
-  $bagian = $_GET['bagian'] ?? '';
-  $jenkel = $_GET['jenkel'] ?? '0';
-  $usia = $_GET['usia'] ?? '0';
-  $pekerjaan = $_GET['pekerjaan'] ?? '0';
-  $pendidikan = $_GET['pendidikan'] ?? '0';
-@endphp
-
-<div class="flex flex-row items-center gap-3 mb-5 lg:mb-0">
-  <label for="tw" class="font-bold text-gray-800 text-5xl lg:text-base">Triwulan</label>
-  <select id="tw"
-    onChange="document.location.href='/rekapTotal?tw=' + this.value + '&Tahun={{ $Tahun }}&bagian={{ urlencode($bagian) }}&jenkel={{ $jenkel }}&usia={{ $usia }}&pekerjaan={{ $pekerjaan }}&pendidikan={{ $pendidikan }}'"
-    class="bg-white border border-gray-300 text-gray-800 font-bold text-5xl w-[300px] text-center lg:w-fit lg:text-sm rounded-full px-3 py-1">
-    <option value="1" {{ $tw=='1' ? 'selected' : '' }}>Triwulan 1 (Jan, Feb, Mar)</option>
-    <option value="2" {{ $tw=='2' ? 'selected' : '' }}>Triwulan 2 (Apr, Mei, Jun)</option>
-    <option value="3" {{ $tw=='3' ? 'selected' : '' }}>Triwulan 2 (Jan s/d Jun)</option>
-    <option value="4" {{ $tw=='4' ? 'selected' : '' }}>Triwulan 3 (Jul, Agu, Sep)</option>
-    <option value="5" {{ $tw=='5' ? 'selected' : '' }}>Triwulan 3 (Jan s/d Sep)</option>
-    <option value="6" {{ $tw=='6' ? 'selected' : '' }}>Triwulan 4 (Okt, Nop, Des)</option>
-    <option value="7" {{ $tw=='7' ? 'selected' : '' }}>Triwulan 4 (Jan s/d Des)</option>
-  </select>
 </div>
 
  @if (false)
@@ -418,14 +387,13 @@ $pendidikan = $_GET['pendidikan'] ?? '0';
                 return;
                 }
                 // Redirect dengan parameter bagian=... (dipisah koma)
-                const tw = "{{ $_GET['tw'] }}";
                 const tahun = "{{ $_GET['Tahun'] }}";
                 const jenkel = "{{ $_GET['jenkel'] }}";
                 const usia = "{{ $_GET['usia'] }}";
                 const pekerjaan = "{{ $_GET['pekerjaan'] }}";
                 const pendidikan = "{{ $_GET['pendidikan'] }}";
                 const bagian = checked.join(",");
-                window.location.href = `/rekapTotal?tw=${tw}&Tahun=${tahun}&bagian=${bagian}&jenkel=${jenkel}&usia=${usia}&pekerjaan=${pekerjaan}&pendidikan=${pendidikan}`;
+                window.location.href = `/rekapTotal?Tahun=${tahun}&bagian=${bagian}&jenkel=${jenkel}&usia=${usia}&pekerjaan=${pekerjaan}&pendidikan=${pendidikan}`;
             }
             </script>
             
@@ -448,7 +416,7 @@ $pendidikan = $_GET['pendidikan'] ?? '0';
             <div class="w-full ">
                 <div class="-m-1.5  ">
                     <div class="p-1.5 ">
-                        <div class="border border-[#EA580C] rounded-lg h-[460px] max-w-full overflow-auto">
+                        <div class="border border-[#EA580C] rounded-lg h-[360px] max-w-full overflow-auto">
                             <table class="rekap-total-table w-full divide-y divide-gray-200 h-full ">
                                 <thead class="sticky top-0 z-10 bg-slate-900">
                                     <tr>
@@ -630,82 +598,27 @@ $pendidikan = $_GET['pendidikan'] ?? '0';
                                             </td>
                                         </tr>
                                     </tbody>
-                                    <tfoot class="h-[50px]">
-                                        <?php $row = 1; ?>
-                                        <tr>
-
-                                            <td class="text-center px-2 font-normal text-xs">
-                                                TOTAL
-                                            </td>
-                                            {{-- <td class="text-center px-2 font-normal text-xs">
-
-                                            </td>
-                                            <td class="text-center px-2 font-normal text-xs">
-
-                                            </td> --}}
-                                            
-                                            <td class="text-center px-2 font-normal text-xs">
-
-                                            </td>
-                                            <td class="text-center px-2 font-normal text-xs">
-
-                                            </td>
-                                            <td class="text-center px-2 font-normal text-xs">
-
-                                            </td>
-                                            <td
-                                                class="text-center px-2 font-normal text-xs {{ $_GET['jenkel'] == 0 ? 'hidden' : '' }}">
-
-                                            </td>
-                                            <td
-                                                class="text-center px-2 font-normal text-xs {{ $_GET['usia'] == 0 ? 'hidden' : '' }}">
-
-                                            </td>
-                                            <td
-                                                class="text-center px-2 font-normal text-xs {{ $_GET['pekerjaan'] == 0 ? 'hidden' : '' }}">
-
-                                            </td>
-                                            <td
-                                                class="text-center px-2 font-normal text-xs {{ $_GET['pendidikan'] == 0 ? 'hidden' : '' }}">
-
-                                            </td>
-                                            <td class="text-center px-2 font-normal text-xs">
-                                                {{ $data->u1 }}
-                                            </td>
-                                            <td class="text-center px-2 font-normal text-xs">
-                                                {{ $data->u2 }}
-                                            </td>
-                                            <td class="text-center px-2 font-normal text-xs">
-                                                {{ $data->u3 }}
-                                            </td>
-                                            <td class="text-center px-2 font-normal text-xs">
-                                                {{ $data->u4 }}
-                                            </td>
-                                            <td class="text-center px-2 font-normal text-xs">
-                                                {{ $data->u5 }}
-                                            </td>
-                                            <td class="text-center px-2 font-normal text-xs">
-                                                {{ $data->u6 }}
-                                            </td>
-                                            <td class="text-center px-2 font-normal text-xs">
-                                                {{ $data->u7 }}
-                                            </td>
-                                            <td class="text-center px-2 font-normal text-xs">
-                                                {{ $data->u8 }}
-                                            </td>
-                                            <td class="text-center px-2 font-normal text-xs">
-                                                {{ $data->u9 }}
-                                            </td>
-                                            <td class="text-center px-2 font-normal text-xs">
-
-                                            </td>
-                                            <td class="text-center px-2 font-normal text-xs">
-
-                                            </td>
-                                            </tr>
-                                    </tfoot>
                             </table>
                         </div>
+                        <div class="rekap-total-summary mt-3">
+                            <table class="w-full">
+                                <tbody>
+                                    <tr>
+                                        <td>Total Tahun {{ $selectedYear }} ({{ $yearTotals->total_responden }} responden)</td>
+                                        <td>{{ $yearTotals->u1 }}</td>
+                                        <td>{{ $yearTotals->u2 }}</td>
+                                        <td>{{ $yearTotals->u3 }}</td>
+                                        <td>{{ $yearTotals->u4 }}</td>
+                                        <td>{{ $yearTotals->u5 }}</td>
+                                        <td>{{ $yearTotals->u6 }}</td>
+                                        <td>{{ $yearTotals->u7 }}</td>
+                                        <td>{{ $yearTotals->u8 }}</td>
+                                        <td>{{ $yearTotals->u9 }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
                         <div class="mt-2">
                             {{ $selects->links() }}
                         </div>

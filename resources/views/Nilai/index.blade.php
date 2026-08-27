@@ -2,35 +2,8 @@
 
 error_reporting(0);
 
-$startDate = '2024-01-01';
-
-$endDate = '2024-10-03';
-
-if ($_GET['tw'] == null) {
-    $today = date('Y-m-d', strtotime('+1 days'));
-    $endDate = $today;
-} elseif ($_GET['tw'] == 1) {
-    $startDate = $_GET['Tahun'] . '-01-01';
-    $endDate = $_GET['Tahun'] . '-03-31';
-} elseif ($_GET['tw'] == 2) {
-    $startDate = $_GET['Tahun'] . '-04-01';
-    $endDate = $_GET['Tahun'] . '-06-30';
-} elseif ($_GET['tw'] == 3) {
-    $startDate = $_GET['Tahun'] . '-01-01';
-    $endDate = $_GET['Tahun'] . '-06-31';
-} elseif ($_GET['tw'] == 4) {
-    $startDate = $_GET['Tahun'] . '-07-01';
-    $endDate = $_GET['Tahun'] . '-09-30';
-} elseif ($_GET['tw'] == 5) {
-    $startDate = $_GET['Tahun'] . '-01-01';
-    $endDate = $_GET['Tahun'] . '-09-30';
-} elseif ($_GET['tw'] == 6) {
-    $startDate = $_GET['Tahun'] . '-10-01';
-    $endDate = $_GET['Tahun'] . '-12-31';
-} elseif ($_GET['tw'] == 7) {
-    $startDate = $_GET['Tahun'] . '-01-01';
-    $endDate = $_GET['Tahun'] . '-12-31';
-}
+$startDate = ($_GET['Tahun'] ?? date('Y')) . '-01-01';
+$endDate = ($_GET['Tahun'] ?? date('Y')) . '-12-31';
 
 $terms = array_values(array_unique(array_filter(array_map('trim', explode(',', $_GET['bagian'])))));
 
@@ -174,15 +147,6 @@ if ($n == 0) {
                     <?php
                     
                     error_reporting(0);
-                    if ($_GET['triwulan'] == '') {
-                    } else {
-                        $_SESSION['triwulan'] = $_GET['triwulan'];
-                    }
-                    
-                    if ($_GET['tw'] == '') {
-                    } else {
-                        $_SESSION['tw'] = $_GET['tw'];
-                    }
                     ?>
                     <div class="flex flex-row items-center gap-3">
 
@@ -192,32 +156,13 @@ if ($n == 0) {
                                 class=" font-bold text-gray-900 text-4xl lg:text-base drop-shadow-[0_3px_3px_rgba(0,0,0,0.3)]">
                                 Tahun</label>
                             <select id="tahun"  
-                                onChange="document.location.href='/nilaiRekap?tw=' + {{ $_GET['tw'] }} + '&Tahun=' + this.value + '&bagian={{ $_GET['bagian'] }}'"
+                                onChange="document.location.href='/nilaiRekap?Tahun=' + this.value + '&bagian={{ $_GET['bagian'] }}'"
                                 class="bg-white border border-gray-400 text-gray-900 font-bold text-4xl w-[200px] text-center lg:w-fit lg:text-sm rounded-full px-3 py-1">
                     
                                 <option value="2023" <?php if($_GET['Tahun']=='2023') echo 'selected'; ?>>2023</option>
                                 <option value="2024" <?php if($_GET['Tahun']=='2024') echo 'selected'; ?>>2024</option>
                                 <option value="2025" <?php if($_GET['Tahun']=='2024') echo 'selected'; ?>>2025</option>
                                 <option value="2026" <?php if($_GET['Tahun']=='2026' || $_GET['Tahun']=='') echo 'selected'; ?>>2026</option>
-                            </select>
-                        </div>
-                    
-                        {{-- triwulan --}}
-                        <div class="flex flex-row items-center gap-3">
-                            <label for="tw"
-                                class=" font-bold text-gray-900 text-4xl lg:text-base drop-shadow-[0_3px_3px_rgba(0,0,0,0.3)]">
-                                Triwulan</label>
-                            <select id="tw"
-                                onChange="document.location.href='/nilaiRekap?tw=' + this.value + '&Tahun=' + {{ $_GET['Tahun'] }} + '&bagian={{ $_GET['bagian'] }}'"
-                                class="bg-white border border-gray-400 text-gray-900 font-bold text-4xl w-[300px] text-center lg:w-fit lg:text-sm rounded-full px-3 py-1">
-                    
-                                <option value="1" <?php if($_GET['tw']=='1') echo 'selected'; ?>>TW 1 (Jan, Feb, Mar)</option>
-                                <option value="2" <?php if($_GET['tw']=='2') echo 'selected'; ?>>TW 2 (Apr, Mei, Jun)</option>
-                                <option value="3" <?php if($_GET['tw']=='3') echo 'selected'; ?>>TW 2 (Jan s/d Jun)</option>
-                                <option value="4" <?php if($_GET['tw']=='4') echo 'selected'; ?>>TW 3 (Jul, Agu, Sep)</option>
-                                <option value="5" <?php if($_GET['tw']=='5') echo 'selected'; ?>>TW 3 (Jan s/d Sep)</option>
-                                <option value="6" <?php if($_GET['tw']=='6') echo 'selected'; ?>>TW 4 (Okt, Nop, Des)</option>
-                                <option value="7" <?php if($_GET['tw']=='7') echo 'selected'; ?>>TW 4 (Jan s/d Des)</option>
                             </select>
                         </div>
                     
@@ -273,10 +218,9 @@ if ($n == 0) {
                                         return;
                                         }
                                         // Redirect dengan parameter bagian=... (dipisah koma)
-                                        const tw = "{{ $_GET['tw'] }}";
                                         const tahun = "{{ $_GET['Tahun'] }}";
                                         const bagian = checked.join(",");
-                                        window.location.href = `/nilaiRekap?tw=${tw}&Tahun=${tahun}&bagian=${bagian}`;
+                                        window.location.href = `/nilaiRekap?Tahun=${tahun}&bagian=${bagian}`;
                                     }
                                     </script>
                                     
@@ -287,7 +231,7 @@ if ($n == 0) {
                         @endif
 
                         {{-- download --}}
-                        <a href="/exports?tw={{ $_GET['tw'] }}&Tahun={{ $_GET['Tahun'] }}&bagian={{ $_GET['bagian'] }}&keterangan={{ $_GET['keterangan'] }}"
+                        <a href="/exports?Tahun={{ $_GET['Tahun'] }}&bagian={{ $_GET['bagian'] }}&keterangan={{ $_GET['keterangan'] }}"
                             class="py-1 text-center items-center  bg-gradient-to-br from-[#EA580C] from-60%  to-[#FDBA74] to-95% rounded-full font-bold text-sm px-3  w-full  text-gray-900"
                             style="font-family:'Roboto'">
                             <p>DOWNLOAD LAPORAN SKM</p>
@@ -296,7 +240,7 @@ if ($n == 0) {
                 </div>
             </div>
 
-            <div class="overflow-y-auto  h-[510px]">
+            <div class="overflow-y-auto  h-full">
 
                 <div class="rounded-xl w-full p-3 mb-3 bg-gradient-to-br from-[#EA580C] to-[#EA580C]">
                     <div class="flex mb-3 justify-between text-gray-900 text-base font-bold">
