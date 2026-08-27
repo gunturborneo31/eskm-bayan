@@ -35,7 +35,9 @@
                 <tr>
                     <td>{{ $merchant['name'] }}</td>
                     @foreach ($dateColumns as $date)
-                        <td class="amount">Rp {{ number_format($merchant['amount_by_date'][$date] ?? 0, 0, ',', '.') }}</td>
+                        @php($amountByDate = $merchant['amount_by_date'] ?? [])
+                        @php($amount = $amountByDate instanceof \Illuminate\Support\Collection ? $amountByDate->get($date, 0) : ($amountByDate[$date] ?? 0))
+                        <td class="amount">Rp {{ number_format((float) ($amount ?? 0), 0, ',', '.') }}</td>
                     @endforeach
                     <td class="amount total">Rp {{ number_format($merchant['total'], 0, ',', '.') }}</td>
                 </tr>

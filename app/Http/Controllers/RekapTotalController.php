@@ -56,6 +56,13 @@ if ($_GET['tw'] == null) {
             ->whereBetween('survey_responses.created_at', [$startDate, $endDate])
             ->where('survey_responses.tahun', $_GET['Tahun'] ?? date('Y'));
 
+        $search = trim((string) request('search', ''));
+        $perPage = (int) request('per_page', 10);
+        $perPage = in_array($perPage, [10, 25, 50, 100], true) ? $perPage : 10;
+        if ($search !== '') {
+            $query->where('survey_responses.nama', 'like', '%' . $search . '%');
+        }
+
         if (Schema::hasTable('sub_jenis')) {
             $query->leftJoin('sub_jenis', 'survey_responses.id_sub_jenis', '=', 'sub_jenis.id')
                 ->select('survey_responses.*', 'sub_jenis.jenis as sub_jenis_jenis');
@@ -63,9 +70,10 @@ if ($_GET['tw'] == null) {
             $query->select('survey_responses.*', DB::raw('NULL as sub_jenis_jenis'));
         }
 
-        $selects = $query->paginate(10);
+        $selects = $query->paginate($perPage);
+        $selects->appends(request()->query());
 
-        return view('RekapTotal.index', compact('selects'));
+        return view('RekapTotal.index', compact('selects', 'search', 'perPage'));
     }
 
 

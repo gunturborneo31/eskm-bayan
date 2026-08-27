@@ -161,6 +161,48 @@ if ($n == 0) {
 @extends('layouts.index', ['title' => 'Dashboard'])
 
 @section('content')
+    <style>
+        .rekap-total-table {
+            border-collapse: collapse;
+            min-width: max-content;
+        }
+
+        .rekap-total-table th,
+        .rekap-total-table td {
+            border: 1px solid #cbd5e1;
+            white-space: nowrap;
+        }
+
+        .rekap-total-table td.allow-wrap {
+            white-space: normal;
+            min-width: 180px;
+            max-width: 280px;
+        }
+
+        .rekap-total-table thead th {
+            background: #0f172a !important;
+            color: #ffffff !important;
+        }
+
+        .rekap-total-table tbody td {
+            color: #1e293b !important;
+        }
+
+        .rekap-total-table tbody tr:nth-child(even) td {
+            background: #f8fafc !important;
+        }
+
+        .rekap-total-table tbody tr:nth-child(odd) td {
+            background: #ffffff !important;
+        }
+
+        .rekap-total-table tfoot td {
+            background: #fed7aa !important;
+            color: #7c2d12 !important;
+            font-weight: 800;
+        }
+    </style>
+
     <div class="admin-main">
         <div class="bg-white h-full w-full rounded-xl p-3  mb-2">
             <div class="admin-toolbar flex w-full justify-between items-start lg:items-center gap-3 flex-wrap lg:flex-nowrap">
@@ -175,9 +217,43 @@ if ($n == 0) {
 
                     ?>
                     <div class="flex flex-row items-center gap-3">
+                        <form method="GET" action="{{ url('/rekapTotal') }}" class="flex items-center gap-2">
+                            <input type="hidden" name="tw" value="{{ request('tw') }}">
+                            <input type="hidden" name="Tahun" value="{{ request('Tahun') }}">
+                            <input type="hidden" name="bagian" value="{{ request('bagian') }}">
+                            <input type="hidden" name="jenkel" value="{{ request('jenkel', '0') }}">
+                            <input type="hidden" name="usia" value="{{ request('usia', '0') }}">
+                            <input type="hidden" name="pekerjaan" value="{{ request('pekerjaan', '0') }}">
+                            <input type="hidden" name="pendidikan" value="{{ request('pendidikan', '0') }}">
+                            <label for="search" class="sr-only">Cari nama</label>
+                            <input id="search" name="search" type="search" value="{{ $search }}"
+                                placeholder="Cari nama..." class="w-44 rounded-full border border-gray-300 px-4 py-1 text-sm text-gray-800">
+                            <button type="submit" class="rounded-full bg-orange-600 px-4 py-1 text-sm font-bold text-white hover:bg-orange-700">Terapkan</button>
+                            @if ($search !== '')
+                                <a href="{{ url('/rekapTotal?' . http_build_query(request()->except('search', 'page'))) }}"
+                                    class="rounded-full border border-gray-300 px-3 py-1 text-sm font-bold text-gray-700 hover:bg-gray-100">Reset</a>
+                            @endif
+                        </form>
 
                         {{-- filter --}}
 <div class="flex flex-row items-center gap-2">
+                        <form method="GET" action="{{ url('/rekapTotal') }}" class="flex items-center gap-2">
+                            <input type="hidden" name="tw" value="{{ request('tw') }}">
+                            <input type="hidden" name="Tahun" value="{{ request('Tahun') }}">
+                            <input type="hidden" name="bagian" value="{{ request('bagian') }}">
+                            <input type="hidden" name="jenkel" value="{{ request('jenkel', '0') }}">
+                            <input type="hidden" name="usia" value="{{ request('usia', '0') }}">
+                            <input type="hidden" name="pekerjaan" value="{{ request('pekerjaan', '0') }}">
+                            <input type="hidden" name="pendidikan" value="{{ request('pendidikan', '0') }}">
+                            <input type="hidden" name="search" value="{{ request('search') }}">
+                            <label for="per_page" class="text-sm font-bold text-gray-800">Baris</label>
+                            <select id="per_page" name="per_page" onchange="this.form.submit()"
+                                class="rounded-full border border-gray-300 bg-white px-3 py-1 text-sm font-bold text-gray-800">
+                                @foreach ([10, 25, 50, 100] as $pageSize)
+                                    <option value="{{ $pageSize }}" {{ $perPage === $pageSize ? 'selected' : '' }}>{{ $pageSize }}</option>
+                                @endforeach
+                            </select>
+                        </form>
     <label class="font-bold text-gray-800 text-sm">Filter</label>
   
     <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown"
@@ -372,9 +448,9 @@ $pendidikan = $_GET['pendidikan'] ?? '0';
             <div class="w-full ">
                 <div class="-m-1.5  ">
                     <div class="p-1.5 ">
-                        <div class="border border-[#EA580C] rounded-lg overflow-hidden h-[460px] overflow-x-auto">
-                            <table class="w-full divide-y divide-gray-200 h-full ">
-                                <thead class="bg-gradient-to-br from-[#EA580C] from-60%  to-[#FDBA74] to-95%">
+                        <div class="border border-[#EA580C] rounded-lg h-[460px] max-w-full overflow-auto">
+                            <table class="rekap-total-table w-full divide-y divide-gray-200 h-full ">
+                                <thead class="sticky top-0 z-10 bg-slate-900">
                                     <tr>
                                         <th scope="col" rowspan="2"
                                             class="px-6 py-3 w-[50px] text-center text-xs font-medium text-gray-900 uppercase">
@@ -385,6 +461,15 @@ $pendidikan = $_GET['pendidikan'] ?? '0';
                                         <th scope="col" rowspan="2"
                                             class="px-6 py-3 w-[50px] text-center text-xs font-medium text-gray-900 uppercase">
                                             NAMA</th>
+                                        <th scope="col" rowspan="2"
+                                            class="px-6 py-3 text-center text-xs font-medium text-gray-900 uppercase">
+                                            NO HP</th>
+                                        <th scope="col" rowspan="2"
+                                            class="px-6 py-3 text-center text-xs font-medium text-gray-900 uppercase">
+                                            ALAMAT</th>
+                                        <th scope="col" rowspan="2"
+                                            class="px-6 py-3 text-center text-xs font-medium text-gray-900 uppercase">
+                                            SARAN</th>
                                         {{-- <th scope="col" rowspan="2"
                                             class="px-6 py-3 w-[50px] text-center text-xs font-medium text-gray-900 uppercase">
                                             JENIS<br>Pelayanan</th> --}}
@@ -400,9 +485,6 @@ $pendidikan = $_GET['pendidikan'] ?? '0';
                                         <th scope="col" rowspan="2"
                                             class="px-6 py-3 w-[50px] text-center text-xs font-medium text-gray-900 uppercase {{ $_GET['pendidikan'] == 0 ? 'hidden' : '' }}">
                                             PENDIDIKAN</th>
-                                        <th scope="col" rowspan="2"
-                                            class="px-6 py-3 w-[50px] text-center text-xs font-medium text-gray-900 uppercase {{ $_GET['pendidikan'] == 0 ? 'hidden' : '' }}">
-                                            BAGIAN</th>
                                         {{-- <th scope="col" rowspan="2"
                                             class="px-6 py-3 w-[50px] text-center text-xs font-medium text-gray-900 uppercase {{ $_GET['pendidikan'] == 0 ? 'hidden' : '' }}">
                                             JENIS PELAYANAN</th> --}}
@@ -446,8 +528,7 @@ $pendidikan = $_GET['pendidikan'] ?? '0';
                                             U9</th>
                                     </tr>
                                 </thead>
-                                <div class="h-200 overflow-y-auto">
-                                    <tbody class="" style="overflow-y:auto;">
+                                <tbody>
                                         <?php $row = 1; ?>
                                         @forelse($selects as $data)
                                             <tr class="{{ $row % 2 == 0 ? 'bg-[#E3E3E3]' : '' }}">
@@ -460,7 +541,16 @@ $pendidikan = $_GET['pendidikan'] ?? '0';
                                                 </td>
                                                 <td class="text-center px-2 font-normal text-xs">
                                                     {{ $data->nama }}
-                                                </td> 
+                                                </td>
+                                                <td class="px-2 font-normal text-xs">
+                                                    {{ $data->nohp ?? '-' }}
+                                                </td>
+                                                <td class="allow-wrap px-2 font-normal text-xs">
+                                                    {{ $data->alamat ?? '-' }}
+                                                </td>
+                                                <td class="allow-wrap px-2 font-normal text-xs">
+                                                    {{ $data->saran ?? '-' }}
+                                                </td>
                                                 {{-- <td class="text-center px-2 font-normal text-xs">
                                                     {{ $data->jenisPelayanan }}
                                                 </td> --}}
@@ -479,31 +569,6 @@ $pendidikan = $_GET['pendidikan'] ?? '0';
                                                 <td
                                                     class="text-center px-2 font-normal text-xs {{ $_GET['pendidikan'] == 0 ? 'hidden' : '' }}">
                                                     {{ $data->pendidikan }}
-                                                </td>
-                                                <td
-                                                    class="text-center px-2 font-normal text-xs {{ $_GET['jenkel'] == 0 ? 'hidden' : '' }}">
-                                                    @if($data->jenisPelayanan == 'organisasi')
-                                                        ORGANISASI
-                                                    @elseif($data->jenisPelayanan == 'umum')
-                                                        UMUM
-                                                    @elseif($data->jenisPelayanan == 'pemerintahan')
-                                                        PEMERINTAHAN
-                                                    @elseif($data->jenisPelayanan == 'adbang')
-                                                        ADMINISTRASI PEMBANGUNAN
-                                                    @elseif($data->jenisPelayanan == 'prokopim')
-                                                        PROTOKOL DAN KOMUNIKASI PIMPINAN
-                                                    @elseif($data->jenisPelayanan == 'kesra')
-                                                        KESEJAHTERAAN RAKYAT
-                                                    @elseif(\App\Support\BagianOptions::normalizeCode($data->jenisPelayanan) == 'pbj')
-                                                        PENGADAAN BARANG DAN JASA
-                                                    @elseif($data->jenisPelayanan == 'ekosda')
-                                                        PEREKONOMIAN DAN SUMBER DAYA ALAM
-                                                    @elseif($data->jenisPelayanan == 'hukum')
-                                                        HUKUM
-                                                    @else
-                                                        {{ strtoupper($data->jenisPelayanan ?? '-') }}
-                                                    @endif
-
                                                 </td>
                                                 {{-- <td
                                                     class="text-center px-2 font-normal text-xs {{ $_GET['usia'] == 0 ? 'hidden' : '' }}">
@@ -565,11 +630,9 @@ $pendidikan = $_GET['pendidikan'] ?? '0';
                                             </td>
                                         </tr>
                                     </tbody>
-                                    <tfoot class="bg-gradient-to-br from-[#EA580C] h-[50px] from-60%  to-[#FDBA74] to-95% text-gray-900"
-                                        style="
-                                        overflow-y:auto;">
+                                    <tfoot class="h-[50px]">
                                         <?php $row = 1; ?>
-                                        <t>
+                                        <tr>
 
                                             <td class="text-center px-2 font-normal text-xs">
                                                 TOTAL
@@ -600,6 +663,10 @@ $pendidikan = $_GET['pendidikan'] ?? '0';
                                             </td>
                                             <td
                                                 class="text-center px-2 font-normal text-xs {{ $_GET['pekerjaan'] == 0 ? 'hidden' : '' }}">
+
+                                            </td>
+                                            <td
+                                                class="text-center px-2 font-normal text-xs {{ $_GET['pendidikan'] == 0 ? 'hidden' : '' }}">
 
                                             </td>
                                             <td class="text-center px-2 font-normal text-xs">
@@ -637,7 +704,6 @@ $pendidikan = $_GET['pendidikan'] ?? '0';
                                             </td>
                                             </tr>
                                     </tfoot>
-                                </div>
                             </table>
                         </div>
                         <div class="mt-2">
