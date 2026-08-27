@@ -18,10 +18,12 @@
             <a href="{{ url('/tenant-revenue') }}" class="rounded-xl bg-orange-600 px-4 py-3 text-center text-sm font-black text-white hover:bg-orange-700">Input Pendapatan</a>
         </header>
 
-        <form method="GET" class="mb-6 grid gap-3 rounded-2xl bg-white p-4 shadow-sm sm:grid-cols-[1fr_1fr_auto] sm:items-end">
+        <form method="GET" class="mb-6 grid gap-3 rounded-2xl bg-white p-4 shadow-sm sm:grid-cols-[auto_1fr_1fr_auto_auto] sm:items-end">
+            <a href="{{ $previousUrl }}" aria-label="Rentang tanggal sebelumnya" class="rounded-lg border border-slate-300 px-4 py-2.5 text-center text-sm font-bold text-slate-700 hover:bg-slate-100">&larr; Sebelumnya</a>
             <div><label for="from" class="mb-1 block text-xs font-bold text-slate-500">Dari tanggal</label><input id="from" name="from" type="date" value="{{ $from }}" class="w-full rounded-lg border-slate-300"></div>
             <div><label for="to" class="mb-1 block text-xs font-bold text-slate-500">Sampai tanggal</label><input id="to" name="to" type="date" value="{{ $to }}" class="w-full rounded-lg border-slate-300"></div>
             <button class="rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-bold text-white hover:bg-slate-700">Terapkan</button>
+            <a href="{{ $nextUrl }}" aria-label="Rentang tanggal berikutnya" class="rounded-lg border border-slate-300 px-4 py-2.5 text-center text-sm font-bold text-slate-700 hover:bg-slate-100">Berikutnya &rarr;</a>
         </form>
 
         <div class="mb-6 grid gap-4 sm:grid-cols-3">

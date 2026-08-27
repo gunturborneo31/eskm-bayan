@@ -130,6 +130,9 @@ Route::middleware('admin.session')->group(function () {
 
     Route::get('/sub-jenis', [SubJenisController::class, 'index'])->name('subjenis.index');
     Route::get('/admin/tenant-revenue', [TenantRevenueController::class, 'adminDashboard'])->name('tenant-revenue.admin-dashboard');
+    Route::get('/admin/tenant-revenue/export/{format}', [TenantRevenueController::class, 'export'])
+        ->whereIn('format', ['excel', 'pdf'])
+        ->name('tenant-revenue.export');
     Route::delete('/admin/tenant-revenue/{tenantRevenue}', [TenantRevenueController::class, 'destroy'])->name('tenant-revenue.destroy');
 });
 

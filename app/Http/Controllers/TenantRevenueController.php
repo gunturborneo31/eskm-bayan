@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\TenantRevenueExport;
 use App\Models\TenantRevenue;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class TenantRevenueController extends Controller
 {
@@ -43,6 +47,25 @@ class TenantRevenueController extends Controller
         return view('tenant-revenue.admin-dashboard', $this->dashboardData($request));
     }
 
+    public function export(Request $request, string $format)
+    {
+        abort_unless(in_array($format, ['excel', 'pdf'], true), 404);
+
+        $data = $this->dashboardData($request);
+        $filename = 'akumulasi-pendapatan-tenant-' . $data['from'] . '-' . $data['to'];
+
+        if ($format === 'excel') {
+            return Excel::download(
+                new TenantRevenueExport($data['summary'], $data['dateColumns']),
+                $filename . '.xlsx'
+            );
+        }
+
+        return Pdf::loadView('tenant-revenue.export-pdf', $data)
+            ->setPaper('a4', 'landscape')
+            ->download($filename . '.pdf');
+    }
+
     public function destroy(Request $request, TenantRevenue $tenantRevenue)
     {
         $sameTenantEntries = TenantRevenue::query()
@@ -63,6 +86,7 @@ class TenantRevenueController extends Controller
     {
         $from = $request->input('from', now()->toDateString());
         $to = $request->input('to', now()->toDateString());
+        $rangeDays = Carbon::parse($from)->diffInDays(Carbon::parse($to)) + 1;
         $dateColumns = CarbonPeriod::create($from, $to);
         $sort = in_array($request->input('sort'), ['name', 'date', 'total'], true)
             ? $request->input('sort')
@@ -124,6 +148,14 @@ class TenantRevenueController extends Controller
             'summary' => $summary,
             'entries' => $entries,
             'grandTotal' => $entries->sum('amount'),
+            'previousUrl' => $request->fullUrlWithQuery([
+                'from' => Carbon::parse($from)->subDays($rangeDays)->toDateString(),
+                'to' => Carbon::parse($to)->subDays($rangeDays)->toDateString(),
+            ]),
+            'nextUrl' => $request->fullUrlWithQuery([
+                'from' => Carbon::parse($from)->addDays($rangeDays)->toDateString(),
+                'to' => Carbon::parse($to)->addDays($rangeDays)->toDateString(),
+            ]),
             'sortUrl' => static function (string $column) use ($request, $sort, $direction): string {
                 $nextDirection = $sort === $column && $direction === 'asc' ? 'desc' : 'asc';
 
