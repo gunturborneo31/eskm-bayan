@@ -738,6 +738,12 @@ class WordController extends Controller
 
         $nilaiUnsur = (clone $baseReportQuery)->get();
 
+        $wordText = static fn ($value): string => htmlspecialchars(
+            (string) ($value ?? ''),
+            ENT_XML1 | ENT_QUOTES,
+            'UTF-8'
+        );
+
         // dd($nilaiUnsur);
 
         $table = new Table(array('unit' => TblWidth::TWIP));
@@ -945,7 +951,7 @@ class WordController extends Controller
         foreach($nilaiUnsur as $k=>$item){
             $table->addRow();
             $table->addCell(200)->addText( $k++);
-            $table->addCell(5000)->addText( $item->saran);
+            $table->addCell(5000)->addText($wordText($item->saran));
         }
 
         $templateProcessor->setComplexBlock('tabelSaran', $table);
