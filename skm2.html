@@ -52,17 +52,25 @@
         })();
     </script>
     <style>
+        :root {
+            --app-vh: 1vh;
+        }
+
         html {
             scroll-behavior: smooth;
             overflow-x: hidden;
-            overflow-y: auto;
+            overflow-y: auto !important;
+            height: 100%;
+            scroll-padding-top: 5.5rem;
+            scroll-padding-bottom: 4.5rem;
         }
 
         body {
             font-family: 'Manrope', sans-serif;
             min-height: 100vh;
+            height: auto;
             overflow-x: hidden;
-            overflow-y: auto;
+            overflow-y: auto !important;
             color: #191c1d;
             background: linear-gradient(135deg, #ff8800 0%, #ff9e3d 52%, #ffb366 100%);
         }
@@ -181,13 +189,14 @@
         .survey-track {
             position: relative;
             z-index: 10;
-            min-height: 100dvh;
+            min-height: 100vh;
             height: auto;
             display: block;
-            overflow: visible;
+            overflow: visible !important;
+            overflow-y: visible !important;
             scroll-snap-type: none;
             scroll-behavior: smooth;
-            touch-action: auto;
+            touch-action: pan-y;
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
@@ -198,22 +207,24 @@
 
         .survey-track > div[id] {
             min-width: 100%;
-            min-height: 100dvh;
-            height: auto;
+            min-height: 100vh;
+            height: auto !important;
             padding: 3.6rem 0.9rem 3.2rem;
             display: flex;
             justify-content: center;
             align-items: stretch;
             scroll-snap-align: none;
+            scroll-margin-top: 5.5rem;
+            scroll-margin-bottom: 4.5rem;
             background: transparent !important;
             box-shadow: none !important;
         }
 
         .survey-track > div[id] > div:first-child {
             width: min(1320px, 100%);
-            height: auto;
-            max-height: none;
-            overflow: visible;
+            height: auto !important;
+            max-height: none !important;
+            overflow: visible !important;
             border-radius: 2rem;
             border: 1px solid rgba(255, 255, 255, 0.55);
             background: rgba(255, 255, 255, 0.94);
@@ -1468,7 +1479,7 @@
                             </label>
                         </div>
                         <div class="step-actions flex justify-between mt-3">
-                            <a type="button" onclick="window.location='#kedua'"
+                            <a type="button" onclick="goToSection('kedua')"
                                 class="flex items-center gap-2 cursor-pointer text-[#924c00] font-semibold text-sm hover:text-[#ff8800] transition-colors">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
                                     <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-4.28 9.22a.75.75 0 000 1.06l3 3a.75.75 0 101.06-1.06l-1.72-1.72h5.69a.75.75 0 000-1.5h-5.69l1.72-1.72a.75.75 0 00-1.06-1.06l-3 3z" clip-rule="evenodd" />
@@ -2104,6 +2115,30 @@
         window.location = '#identitas';
     }
 
+    function goToSection(sectionId) {
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+
+        const target = document.getElementById(sectionId);
+        if (!target) {
+            window.location.hash = '#' + sectionId;
+            return;
+        }
+
+        const y = Math.max(0, target.offsetTop - 12);
+        window.location.hash = '#' + sectionId;
+
+        setTimeout(function () {
+            window.scrollTo({ top: y, left: 0, behavior: 'auto' });
+            document.documentElement.scrollTop = y;
+            document.body.scrollTop = y;
+            if (document.scrollingElement) {
+                document.scrollingElement.scrollTop = y;
+            }
+        }, 0);
+    }
+
     function lanjutDariIdentitas(){
         // const nama = document.getElementById('nama');
         // const nohp = document.getElementById('nohp');
@@ -2129,7 +2164,24 @@
         //     return;
         // }
 
-        window.location.hash = '#kedua';
+        goToSection('kedua');
+    }
+
+    function syncViewportHeight() {
+        const vh = (window.visualViewport ? window.visualViewport.height : window.innerHeight) * 0.01;
+        document.documentElement.style.setProperty('--app-vh', `${vh}px`);
+    }
+
+    function ensureSectionVisible(sectionId) {
+        const target = document.getElementById(sectionId);
+        if (!target) return;
+
+        requestAnimationFrame(function () {
+            target.scrollIntoView({ behavior: 'auto', block: 'start' });
+            setTimeout(function () {
+                window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+            }, 30);
+        });
     }
 
     function resetSurveyForm(){
@@ -2158,7 +2210,10 @@
     });
 
     document.addEventListener('DOMContentLoaded', function () {
-        document.body.classList.add('is-ready');
+    if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+    }
+    document.body.classList.add('is-ready');
 
         // Tampilkan popup ucapan otomatis di awal (kecuali jika kita sengaja melewatinya)
         var popup = document.getElementById('popup');
@@ -2216,6 +2271,26 @@
         // Jalankan update saat halaman dimuat dan saat hash berubah
         updateStepFromHash();
         window.addEventListener('hashchange', updateStepFromHash);
+        window.addEventListener('hashchange', function () {
+            const hash = window.location.hash ? window.location.hash.replace('#', '') : 'identitas';
+            const target = document.getElementById(hash);
+            if (target && typeof target.scrollIntoView === 'function') {
+                setTimeout(function () {
+                    target.scrollIntoView({ behavior: 'auto', block: 'start' });
+                    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+                    document.documentElement.scrollTop = 0;
+                    document.body.scrollTop = 0;
+                }, 50);
+            }
+        });
+
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', syncViewportHeight, { passive: true });
+            window.visualViewport.addEventListener('scroll', syncViewportHeight, { passive: true });
+        }
+        window.addEventListener('resize', syncViewportHeight, { passive: true });
+        window.addEventListener('orientationchange', syncViewportHeight, { passive: true });
+        syncViewportHeight();
 
         // Jika kita mengganti #awal di head (skip awal), scroll ke identitas setelah update
         if (window.__skipInitialPopup) {
