@@ -63,6 +63,7 @@
             height: 100%;
             scroll-padding-top: 5.5rem;
             scroll-padding-bottom: 4.5rem;
+            -webkit-overflow-scrolling: touch;
         }
 
         body {
@@ -71,8 +72,11 @@
             height: auto;
             overflow-x: hidden;
             overflow-y: auto !important;
+            position: relative;
             color: #191c1d;
             background: linear-gradient(135deg, #ff8800 0%, #ff9e3d 52%, #ffb366 100%);
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior-y: auto;
         }
 
         body::before {
@@ -93,6 +97,8 @@
         .survey-shell {
             position: relative;
             z-index: 1;
+            min-height: 100vh;
+            overflow: visible;
         }
 
         .survey-header,
@@ -201,6 +207,7 @@
             touch-action: pan-y;
             -ms-overflow-style: none;
             scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
         }
 
         .survey-track::-webkit-scrollbar {
@@ -220,6 +227,7 @@
             scroll-margin-bottom: 4.5rem;
             background: transparent !important;
             box-shadow: none !important;
+            overflow: visible;
         }
 
         .survey-track > div[id] > div:first-child {
@@ -790,6 +798,7 @@
 
             .survey-shell {
                 min-height: 100vh;
+                overflow: visible;
             }
 
             .survey-header,
@@ -2118,6 +2127,15 @@
         window.location = '#identitas';
     }
 
+    function clearHashFromUrl() {
+        if (window.location.hash) {
+            try {
+                const cleanUrl = window.location.pathname + window.location.search;
+                history.replaceState(null, '', cleanUrl);
+            } catch (e) {}
+        }
+    }
+
     function goToSection(sectionId) {
         if ('scrollRestoration' in history) {
             history.scrollRestoration = 'manual';
@@ -2125,6 +2143,7 @@
 
         const target = document.getElementById(sectionId);
         if (!target) {
+            clearHashFromUrl();
             return;
         }
 
@@ -2137,12 +2156,7 @@
             if (document.scrollingElement) {
                 document.scrollingElement.scrollTop = y;
             }
-
-            // Tampilkan section target tanpa menyisakan #section di URL
-            try {
-                const cleanUrl = window.location.pathname + window.location.search;
-                history.replaceState(null, '', cleanUrl);
-            } catch (e) {}
+            clearHashFromUrl();
         }, 0);
     }
 
@@ -2283,11 +2297,17 @@
             const target = document.getElementById(hash);
             if (target && typeof target.scrollIntoView === 'function') {
                 setTimeout(function () {
-                    target.scrollIntoView({ behavior: 'auto', block: 'start' });
-                    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-                    document.documentElement.scrollTop = 0;
-                    document.body.scrollTop = 0;
+                    const y = Math.max(0, target.offsetTop - 12);
+                    window.scrollTo({ top: y, left: 0, behavior: 'auto' });
+                    document.documentElement.scrollTop = y;
+                    document.body.scrollTop = y;
+                    if (document.scrollingElement) {
+                        document.scrollingElement.scrollTop = y;
+                    }
+                    clearHashFromUrl();
                 }, 50);
+            } else {
+                clearHashFromUrl();
             }
         });
 

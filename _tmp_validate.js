@@ -155,6 +155,15 @@
         window.location = '#identitas';
     }
 
+    function clearHashFromUrl() {
+        if (window.location.hash) {
+            try {
+                const cleanUrl = window.location.pathname + window.location.search;
+                history.replaceState(null, '', cleanUrl);
+            } catch (e) {}
+        }
+    }
+
     function goToSection(sectionId) {
         if ('scrollRestoration' in history) {
             history.scrollRestoration = 'manual';
@@ -162,6 +171,7 @@
 
         const target = document.getElementById(sectionId);
         if (!target) {
+            clearHashFromUrl();
             return;
         }
 
@@ -174,12 +184,7 @@
             if (document.scrollingElement) {
                 document.scrollingElement.scrollTop = y;
             }
-
-            // Tampilkan section target tanpa menyisakan #section di URL
-            try {
-                const cleanUrl = window.location.pathname + window.location.search;
-                history.replaceState(null, '', cleanUrl);
-            } catch (e) {}
+            clearHashFromUrl();
         }, 0);
     }
 
@@ -320,11 +325,17 @@
             const target = document.getElementById(hash);
             if (target && typeof target.scrollIntoView === 'function') {
                 setTimeout(function () {
-                    target.scrollIntoView({ behavior: 'auto', block: 'start' });
-                    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-                    document.documentElement.scrollTop = 0;
-                    document.body.scrollTop = 0;
+                    const y = Math.max(0, target.offsetTop - 12);
+                    window.scrollTo({ top: y, left: 0, behavior: 'auto' });
+                    document.documentElement.scrollTop = y;
+                    document.body.scrollTop = y;
+                    if (document.scrollingElement) {
+                        document.scrollingElement.scrollTop = y;
+                    }
+                    clearHashFromUrl();
                 }, 50);
+            } else {
+                clearHashFromUrl();
             }
         });
 
