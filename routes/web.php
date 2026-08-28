@@ -87,7 +87,7 @@ Route::get('/survey/check-unique', [NilaiUnsurController::class, 'checkUnique'])
 // Endpoint to mark a redemption code as used (protected for merch team)
 Route::post('/survey/redeem/{group}/redeem', [SurveyCodeController::class, 'redeem'])->middleware('merch.session')->name('survey.redeem.confirm');
 
-// Merchandise team login + check UI
+// Merchandise team login + check UIs
 Route::get('/merch/login', [\App\Http\Controllers\MerchandiseController::class, 'showLogin']);
 Route::post('/merch/login', [\App\Http\Controllers\MerchandiseController::class, 'login']);
 Route::post('/merch/logout', [\App\Http\Controllers\MerchandiseController::class, 'logout']);
