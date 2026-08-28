@@ -191,9 +191,11 @@
             z-index: 10;
             min-height: 100vh;
             height: auto;
-            display: block;
+            display: block !important;
+            width: 100%;
             overflow: visible !important;
             overflow-y: visible !important;
+            overflow-x: hidden;
             scroll-snap-type: none;
             scroll-behavior: smooth;
             touch-action: pan-y;
@@ -210,7 +212,7 @@
             min-height: 100vh;
             height: auto !important;
             padding: 3.6rem 0.9rem 3.2rem;
-            display: flex;
+            display: block;
             justify-content: center;
             align-items: stretch;
             scroll-snap-align: none;
@@ -233,6 +235,7 @@
             scrollbar-width: thin;
             scrollbar-color: #ffb781 transparent;
             margin: 0 auto;
+            max-width: 100%;
         }
 
         .survey-track > div[id] > div:first-child > div {
@@ -1017,7 +1020,7 @@
             </div>
 
             <form action="http://127.0.0.1:8002/nilaiUnsur" method="POST" enctype="multipart/form-data"
-                class="survey-track h-screen flex">
+                class="survey-track">
                 <input type="hidden" name="_token" value="UTjzBVEoZyxwiFDCafRGhgbPh0btmqNlH0imwB8U" autocomplete="off">                <!-- <div id="awal"
                 class=" items-center relative isolate  min-w-full h-screen px-6 shadow-2xl sm:px-16 lg:px-24 bg-gradient-to-br from-[#18bdde] from-60%  to-[#fffb61] to-95%">
 
