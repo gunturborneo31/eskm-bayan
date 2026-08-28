@@ -101,6 +101,29 @@
             overflow: visible;
         }
 
+        .overflow-x-hidden.relative.z-10 {
+            overflow: visible !important;
+            height: auto !important;
+        }
+
+        .survey-track,
+        #awal,
+        #identitas,
+        #kedua,
+        #satu,
+        #dua,
+        #tiga,
+        #empat,
+        #lima,
+        #enam,
+        #tujuh,
+        #delapan,
+        #sembilan,
+        #saran {
+            height: auto !important;
+            min-height: 100vh !important;
+        }
+
         .survey-header,
         .survey-footer {
             position: fixed;
@@ -671,15 +694,15 @@
             }
 
             .survey-track > div[id] {
-                min-height: 100dvh;
-                height: 100dvh;
+                min-height: 100vh;
+                height: auto;
                 padding: 3.4rem 0.4rem 3rem;
                 align-items: center;
             }
 
             .survey-track > div[id] > div:first-child {
                 height: auto;
-                max-height: calc(100dvh - 6.6rem);
+                max-height: none;
                 padding: 0.8rem;
             }
 
@@ -1124,7 +1147,7 @@
                 
 
                 <div id="identitas"
-                class=" items-center relative isolate  min-w-full h-screen px-6 shadow-2xl sm:px-16 lg:px-24 bg-gradient-to-br from-[#18bdde] from-60%  to-[#fffb61] to-95%">
+                class=" items-center relative isolate  min-w-full px-6 shadow-2xl sm:px-16 lg:px-24 bg-gradient-to-br from-[#18bdde] from-60%  to-[#fffb61] to-95%">
 
                 <div class="text-left flex flex-col lg:py-14 lg:px-12 py-8 px-6 lg:text-left w-full justify-between">
                     <div class="identity-copy">
