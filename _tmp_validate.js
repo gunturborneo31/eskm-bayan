@@ -162,12 +162,10 @@
 
         const target = document.getElementById(sectionId);
         if (!target) {
-            window.location.hash = '#' + sectionId;
             return;
         }
 
         const y = Math.max(0, target.offsetTop - 12);
-        window.location.hash = '#' + sectionId;
 
         setTimeout(function () {
             window.scrollTo({ top: y, left: 0, behavior: 'auto' });
@@ -176,6 +174,12 @@
             if (document.scrollingElement) {
                 document.scrollingElement.scrollTop = y;
             }
+
+            // Tampilkan section target tanpa menyisakan #section di URL
+            try {
+                const cleanUrl = window.location.pathname + window.location.search;
+                history.replaceState(null, '', cleanUrl);
+            } catch (e) {}
         }, 0);
     }
 
