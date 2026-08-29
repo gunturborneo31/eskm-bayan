@@ -58,19 +58,7 @@
         </div>
     </div>
 
-    <!-- Countdown + Rolling Overlay -->
-    <div id="overlay" class="overlay" aria-hidden="true">
-      <div class="countdown-center">
-        <svg viewBox="0 0 220 220" width="280" height="280" aria-hidden="true">
-          <g id="ticks" transform="translate(110,110)"></g>
-          <circle cx="110" cy="110" r="90" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="3"/>
-          <circle id="progress" cx="110" cy="110" r="82" fill="none" stroke="#ffb000" stroke-width="6" stroke-linecap="round" transform="rotate(-90 110 110)" style="stroke-dasharray:0 9999"/>
-        </svg>
-        <div id="overlaySeconds" class="countdown-seconds">8</div>
-        <div class="roller-window"><div id="rollerName" class="roller-name">—</div></div>
-        <div style="margin-top:6px;color:#9aa6b2;letter-spacing:4px;font-size:12px">T-MINUS DETIK</div>
-      </div>
-    </div>
+    @include('partials.countdown')
 
     <script>
         const participants = @json($participants->values());
@@ -174,6 +162,7 @@
             }
         });
 
+        // Hook draw button to new centralized overlay if available
         drawButton.addEventListener('click', () => {
             const availableParticipants = participants.filter((participant) => !drawnParticipantIds.has(participant.id));
             if (!availableParticipants.length) {
@@ -184,147 +173,46 @@
 
             drawButton.disabled = true;
 
-            // Use full-screen overlay countdown with rolling names
-            const overlay = document.getElementById('overlay');
-            const overlaySeconds = document.getElementById('overlaySeconds');
-            const rollerName = document.getElementById('rollerName');
-            const progress = document.getElementById('progress');
-            const ticks = document.getElementById('ticks');
+            if (window.startDrawOverlay) {
+                // Use new overlay module; listen for completion
+                window.startDrawOverlay(availableParticipants, { seconds: 8, onFinish: (winner) => {
+                    if (winner) drawnParticipantIds.add(winner.id);
+                    renderResult('Pemenang', winner);
+                    drawButton.disabled = false;
+                    // also emit event for other listeners
+                }}).catch(() => {
+                    drawButton.disabled = false;
+                });
+            } else {
+                // Fallback to old inline behavior (simple scramble + timers)
+                const countdownContainer = document.getElementById('countdownContainer');
+                countdownContainer.replaceChildren();
+                const countdownEl = document.createElement('p');
+                countdownEl.id = 'countdownTimer';
+                countdownEl.className = 'text-6xl sm:text-8xl font-black text-amber-300';
+                countdownEl.textContent = '10';
+                countdownContainer.appendChild(countdownEl);
 
-            // helper: create ticks
-            function createTicks(groupEl, total = 60) {
-                groupEl.innerHTML = '';
-                const radius = 96;
-                for (let i = 0; i < total; i++) {
-                    const angle = (i / total) * Math.PI * 2;
-                    const inner = (i % 5 === 0) ? radius - 9 : radius - 5;
-                    const outer = radius;
-                    const x1 = Math.cos(angle) * inner;
-                    const y1 = Math.sin(angle) * inner;
-                    const x2 = Math.cos(angle) * outer;
-                    const y2 = Math.sin(angle) * outer;
-                    const line = document.createElementNS('http://www.w3.org/2000/svg','line');
-                    line.setAttribute('x1', x1);
-                    line.setAttribute('y1', y1);
-                    line.setAttribute('x2', x2);
-                    line.setAttribute('y2', y2);
-                    line.setAttribute('stroke', 'rgba(255,255,255,0.04)');
-                    line.setAttribute('stroke-width', i % 5 === 0 ? 2 : 1);
-                    groupEl.appendChild(line);
-                }
-            }
+                let secondsLeft = 10;
+                const scramble = setInterval(() => {
+                    const preview = availableParticipants[Math.floor(Math.random() * availableParticipants.length)];
+                    renderResult('Mengacak...', preview, true);
+                }, 100);
 
-            // roller helper
-            function createRoller(nameEl) {
-                let intervalId = null;
-                function startShuffle(names, speedMs = 60) {
-                    stop();
-                    if (!Array.isArray(names) || names.length === 0) {
-                        nameEl.textContent = '—';
-                        return;
+                const countdownInterval = setInterval(() => {
+                    secondsLeft -= 1;
+                    countdownEl.textContent = String(secondsLeft);
+                    if (secondsLeft <= 0) {
+                        clearInterval(countdownInterval);
+                        clearInterval(scramble);
+                        countdownContainer.replaceChildren();
+                        const winner = availableParticipants[Math.floor(Math.random() * availableParticipants.length)];
+                        drawnParticipantIds.add(winner.id);
+                        renderResult('Pemenang', winner);
+                        drawButton.disabled = false;
                     }
-                    intervalId = setInterval(() => {
-                        const n = names[Math.floor(Math.random() * names.length)];
-                        nameEl.textContent = n.name || n;
-                        nameEl.style.color = '#fff';
-                    }, speedMs);
-                }
-                function stop() {
-                    if (intervalId) {
-                        clearInterval(intervalId);
-                        intervalId = null;
-                    }
-                }
-                function decelerateToWinner(names, winner, steps = 12, startDelay = 80, factor = 1.35) {
-                    stop();
-                    if (!Array.isArray(names) || names.length === 0) {
-                        nameEl.textContent = '—';
-                        return Promise.resolve();
-                    }
-                    const seq = [];
-                    for (let i = 0; i < Math.max(steps - 1, 3); i++) {
-                        let candidate = names[Math.floor(Math.random() * names.length)];
-                        if (candidate.id === winner.id && names.length > 1) {
-                            const alt = names.filter(n => n.id !== winner.id);
-                            candidate = alt[Math.floor(Math.random() * alt.length)];
-                        }
-                        seq.push(candidate);
-                    }
-                    seq.push(winner);
-
-                    return new Promise((resolve) => {
-                        let idx = 0;
-                        let delay = startDelay;
-                        function step() {
-                            const item = seq[idx];
-                            nameEl.textContent = item.name || item;
-                            nameEl.style.transform = 'translateY(-4px)';
-                            setTimeout(()=> nameEl.style.transform = 'translateY(0)', Math.min(80, delay/2));
-                            idx++;
-                            if (idx < seq.length) {
-                                setTimeout(step, delay);
-                                delay = Math.min(1200, delay * factor);
-                            } else {
-                                nameEl.style.color = '#ffb000';
-                                resolve();
-                            }
-                        }
-                        step();
-                    });
-                }
-                return { startShuffle, stop, decelerateToWinner };
+                }, 1000);
             }
-
-            if (!ticks.hasChildNodes()) createTicks(ticks, 60);
-            const radius = 82;
-            const circumference = 2 * Math.PI * radius;
-            progress.style.strokeDasharray = `${circumference} ${circumference}`;
-            progress.style.strokeDashoffset = `${circumference}`;
-
-            overlay.style.display = 'flex';
-            overlay.setAttribute('aria-hidden','false');
-
-            const roller = createRoller(rollerName);
-            roller.startShuffle(availableParticipants, 60);
-
-            const seconds = 8; // countdown seconds
-            overlaySeconds.textContent = String(seconds);
-            const start = performance.now();
-            let animFrame = null;
-
-            function setProgress(ft) {
-                const offset = circumference * (1 - ft);
-                progress.style.transition = 'stroke-dashoffset 0.25s linear';
-                progress.style.strokeDashoffset = offset;
-            }
-            setProgress(1);
-
-            function tick(now) {
-                const elapsed = (now - start) / 1000;
-                const t = Math.min(1, elapsed / seconds);
-                const ft = 1 - t;
-                const current = Math.ceil(seconds * ft);
-                overlaySeconds.textContent = current >= 0 ? current : 0;
-                setProgress(1 - t);
-                if (elapsed < seconds) {
-                    animFrame = requestAnimationFrame(tick);
-                } else {
-                    // finish: choose winner and decelerate
-                    const winner = availableParticipants[Math.floor(Math.random() * availableParticipants.length)];
-                    roller.decelerateToWinner(availableParticipants, winner, 12, 80, 1.35).then(() => {
-                        // hide overlay after a short pause
-                        setTimeout(() => {
-                            overlay.style.display = 'none';
-                            overlay.setAttribute('aria-hidden','true');
-                            // mark and render
-                            drawnParticipantIds.add(winner.id);
-                            renderResult('Pemenang', winner);
-                            drawButton.disabled = false;
-                        }, 300);
-                    });
-                }
-            }
-            animFrame = requestAnimationFrame(tick);
         });
     </script>
 </body>
