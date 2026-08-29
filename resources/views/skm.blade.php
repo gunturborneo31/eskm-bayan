@@ -53,16 +53,22 @@
         html {
             scroll-behavior: smooth;
             overflow-x: hidden;
-            overflow-y: auto;
-            /* Ensure browser scrolls account for fixed header when using fragment/hash */
+            overflow-y: auto !important;
+            height: auto !important;
+            min-height: 100% !important;
+            overscroll-behavior-y: auto;
+            -webkit-overflow-scrolling: touch;
             scroll-padding-top: calc(var(--survey-header-height) + 3rem);
         }
 
         body {
             font-family: 'Manrope', sans-serif;
             min-height: 100vh;
+            height: auto !important;
             overflow-x: hidden;
-            overflow-y: auto;
+            overflow-y: auto !important;
+            overscroll-behavior-y: auto;
+            -webkit-overflow-scrolling: touch;
             color: #191c1d;
             background: linear-gradient(135deg, #ff8800 0%, #ff9e3d 52%, #ffb366 100%);
         }
@@ -258,6 +264,24 @@
             touch-action: auto;
             -ms-overflow-style: none;
             scrollbar-width: none;
+        }
+
+        .survey-track,
+        #awal,
+        #identitas,
+        #kedua,
+        #satu,
+        #dua,
+        #tiga,
+        #empat,
+        #lima,
+        #enam,
+        #tujuh,
+        #delapan,
+        #sembilan,
+        #saran {
+            height: auto !important;
+            min-height: 100vh !important;
         }
 
         .survey-track::-webkit-scrollbar {
@@ -637,7 +661,7 @@
             border-top: 1px solid #e7e8e9;
         }
 
-        .survey-track a[onclick*="window.location='#"],
+        .survey-track .step-actions a,
         .survey-track a[onclick="lanjutKeBiodata()"] {
             display: inline-flex;
             align-items: center;
@@ -656,22 +680,22 @@
             transition: transform 0.18s ease, box-shadow 0.18s ease;
         }
 
-        .survey-track a[onclick*="window.location='#"]:hover,
+        .survey-track .step-actions a:hover,
         .survey-track a[onclick="lanjutKeBiodata()"]:hover {
             transform: translateY(-1px);
             box-shadow: 0 14px 28px rgba(146, 76, 0, 0.14);
         }
 
-        .survey-track a[onclick*="window.location='#"]:last-child,
+        .survey-track .step-actions a:last-child,
         .survey-track a[onclick="lanjutKeBiodata()"] {
             background: linear-gradient(135deg, #ff8800 0%, #ff9e3d 100%);
             border-color: #ff8800;
             color: #ffffff !important;
         }
 
-        .survey-track a[onclick*="window.location='#"] label,
+        .survey-track .step-actions a label,
         .survey-track a[onclick="lanjutKeBiodata()"] label,
-        .survey-track a[onclick*="window.location='#"] svg,
+        .survey-track .step-actions a svg,
         .survey-track a[onclick="lanjutKeBiodata()"] svg {
             color: inherit !important;
         }
@@ -868,7 +892,7 @@
                 gap: 0.8rem;
             }
 
-            .survey-track a[onclick*="window.location='#"],
+            .survey-track .step-actions a,
             .survey-track a[onclick="lanjutKeBiodata()"],
             .survey-track button[type='submit'] {
                 width: 100%;
@@ -1023,7 +1047,7 @@
                 padding-top: 0.3rem !important;
             }
 
-            .survey-track a[onclick*="window.location='#"],
+            .survey-track .step-actions a,
             .survey-track a[onclick="lanjutKeBiodata()"],
             .survey-track button[type='submit'] {
                 width: auto !important;
@@ -1342,7 +1366,7 @@ if (empty($bagianList)) {
                                 </table>
                             </div>
                             <div class="step-actions flex justify-between items-center px-4 py-3">
-                                <button type="button" onclick="window.location='#awal'; closePopup()" class="px-4 py-2 bg-gray-800 text-white text-sm lg:text-base font-medium rounded-md shadow-sm hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-300">
+                                <button type="button" onclick="goToSection('awal'); closePopup()" class="px-4 py-2 bg-gray-800 text-white text-sm lg:text-base font-medium rounded-md shadow-sm hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-300">
                                     SEBELUM
                                 </button>
                                 <button type="button" onclick="closePopup()" id="ok-btn" class="px-4 py-2 bg-gray-800 text-white text-sm lg:text-base font-medium rounded-md shadow-sm hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-300">
@@ -1355,7 +1379,7 @@ if (empty($bagianList)) {
             </div>
 
             <form action="{{ route('nilaiUnsur.store') }}" method="POST" enctype="multipart/form-data"
-                class="survey-track h-screen flex">
+                class="survey-track">
                 @csrf
                 <!-- <div id="awal"
                 class="items-start relative isolate min-w-full min-h-screen overflow-auto px-6 shadow-2xl sm:px-16 lg:px-24 bg-gradient-to-br from-[#18bdde] from-60%  to-[#fffb61] to-95%">
@@ -1394,7 +1418,7 @@ if (empty($bagianList)) {
                         </ul>
                     </div>
                     <div class="step-actions flex justify-end mt-5">
-                        <a type="button" onclick="window.location='#identitas'"
+                        <a type="button" onclick="goToSection('identitas')"
                             class="flex items-center gap-2 cursor-pointer drop-shadow-[0_3px_3px_rgba(0,0,0,0.3)]">
                             <label class="text-gray-900 font-medium lg:text-xl text-4xl cursor-pointer ">LANJUT</label>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
@@ -1420,7 +1444,7 @@ if (empty($bagianList)) {
                             <ul id="jenisContainer" class="grid w-full gap-2 lg:grid-cols-2 grid-cols-1"></ul>
                         </div>
                         <div class="step-actions flex justify-between mt-5">
-                            <a type="button" onclick="window.location='#awal'"
+                            <a type="button" onclick="goToSection('awal')"
                                 class="flex items-center gap-2 cursor-pointer drop-shadow-[0_3px_3px_rgba(0,0,0,0.3)]">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                     class="w-8 h-8 text-gray-900">
@@ -1764,7 +1788,7 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                             </ul>
                         </div>
                         <div class="step-actions col-span-2 flex justify-between mt-5 w-full">
-                            <a type="button" onclick="window.location='#identitas'"
+                            <a type="button" onclick="goToSection('identitas')"
                                 class="flex items-center gap-2 cursor-pointer drop-shadow-[0_3px_3px_rgba(0,0,0,0.3)]">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                     class="w-8 h-8 text-gray-900">
@@ -1775,7 +1799,7 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                                 <label
                                     class="text-gray-900 font-medium lg:text-xl text-4xl cursor-pointer">SEBELUM</label>
                             </a>
-                            <a type="button" onclick="window.location='#satu'"
+                            <a type="button" onclick="goToSection('satu')"
                                 class="flex items-center gap-2 cursor-pointer drop-shadow-[0_3px_3px_rgba(0,0,0,0.3)]">
                                 <label
                                     class="text-gray-900 font-medium lg:text-xl text-4xl cursor-pointer">LANJUT</label>
@@ -1789,7 +1813,7 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                         </div>
                     </div>
                 </div>
-                <div id="satu" class="items-center relative isolate min-w-full h-screen px-4 sm:px-6 lg:px-16
+                <div id="satu" class="items-center relative isolate min-w-full min-h-screen px-4 sm:px-6 lg:px-16
                 bg-gradient-to-br from-[#fff5e6] via-[#ffecd6] to-[#ffd9b0]">
                     <div
                         class="flex flex-col items-stretch gap-4 w-full h-full py-[72px] max-w-2xl mx-auto justify-center">
@@ -1829,7 +1853,7 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                                 </label>
                             </div>
                             <div class="step-actions flex justify-between mt-3">
-                                <a type="button" onclick="window.location='#kedua'"
+                                <a type="button" onclick="goToSection('kedua')"
                                     class="flex items-center gap-2 cursor-pointer text-[#924c00] font-semibold text-sm hover:text-[#ff8800] transition-colors">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                         class="w-6 h-6">
@@ -1839,7 +1863,7 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                                     </svg>
                                     Kembali
                                 </a>
-                                <a type="button" onclick="window.location='#dua'"
+                                <a type="button" onclick="goToSection('dua')"
                                     class="flex items-center gap-2 cursor-pointer bg-[#ff8800] text-white px-5 py-2 rounded-xl font-semibold text-sm hover:bg-[#e07200] transition-colors shadow-md">
                                     Lanjut
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
@@ -1853,7 +1877,7 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                         </div>
                     </div>
                 </div>
-                <div id="dua" class="items-center relative isolate min-w-full h-screen px-4 sm:px-6 lg:px-16
+                <div id="dua" class="items-center relative isolate min-w-full min-h-screen px-4 sm:px-6 lg:px-16
                 bg-gradient-to-br from-[#fff5e6] via-[#ffecd6] to-[#ffd9b0]">
                     <div
                         class="flex flex-col items-stretch gap-4 w-full h-full py-[72px] max-w-2xl mx-auto justify-center">
@@ -1894,7 +1918,7 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                                 </label>
                             </div>
                             <div class="step-actions flex justify-between mt-3">
-                                <a type="button" onclick="window.location='#satu'"
+                                <a type="button" onclick="goToSection('satu')"
                                     class="flex items-center gap-2 cursor-pointer text-[#924c00] font-semibold text-sm hover:text-[#ff8800] transition-colors">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                         class="w-6 h-6">
@@ -1904,7 +1928,7 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                                     </svg>
                                     Kembali
                                 </a>
-                                <a type="button" onclick="window.location='#tiga'"
+                                <a type="button" onclick="goToSection('tiga')"
                                     class="flex items-center gap-2 cursor-pointer bg-[#ff8800] text-white px-5 py-2 rounded-xl font-semibold text-sm hover:bg-[#e07200] transition-colors shadow-md">
                                     Lanjut
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
@@ -1918,7 +1942,7 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                         </div>
                     </div>
                 </div>
-                <div id="tiga" class="items-center relative isolate min-w-full h-screen px-4 sm:px-6 lg:px-16
+                <div id="tiga" class="items-center relative isolate min-w-full min-h-screen px-4 sm:px-6 lg:px-16
                 bg-gradient-to-br from-[#fff5e6] via-[#ffecd6] to-[#ffd9b0]">
                     <div
                         class="flex flex-col items-stretch gap-4 w-full h-full py-[72px] max-w-2xl mx-auto justify-center">
@@ -1958,7 +1982,7 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                                 </label>
                             </div>
                             <div class="step-actions flex justify-between mt-3">
-                                <a type="button" onclick="window.location='#dua'"
+                                <a type="button" onclick="goToSection('dua')"
                                     class="flex items-center gap-2 cursor-pointer text-[#924c00] font-semibold text-sm hover:text-[#ff8800] transition-colors">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                         class="w-6 h-6">
@@ -1968,7 +1992,7 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                                     </svg>
                                     Kembali
                                 </a>
-                                <a type="button" onclick="window.location='#empat'"
+                                <a type="button" onclick="goToSection('empat')"
                                     class="flex items-center gap-2 cursor-pointer bg-[#ff8800] text-white px-5 py-2 rounded-xl font-semibold text-sm hover:bg-[#e07200] transition-colors shadow-md">
                                     Lanjut
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
@@ -1982,7 +2006,7 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                         </div>
                     </div>
                 </div>
-                <div id="empat" class="items-center relative isolate min-w-full h-screen px-4 sm:px-6 lg:px-16
+                <div id="empat" class="items-center relative isolate min-w-full min-h-screen px-4 sm:px-6 lg:px-16
                 bg-gradient-to-br from-[#fff5e6] via-[#ffecd6] to-[#ffd9b0]">
                     <div
                         class="flex flex-col items-stretch gap-4 w-full h-full py-[72px] max-w-2xl mx-auto justify-center">
@@ -2023,7 +2047,7 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                                 </label>
                             </div>
                             <div class="step-actions flex justify-between mt-3">
-                                <a type="button" onclick="window.location='#tiga'"
+                                <a type="button" onclick="goToSection('tiga')"
                                     class="flex items-center gap-2 cursor-pointer text-[#924c00] font-semibold text-sm hover:text-[#ff8800] transition-colors">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                         class="w-6 h-6">
@@ -2033,7 +2057,7 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                                     </svg>
                                     Kembali
                                 </a>
-                                <a type="button" onclick="window.location='#lima'"
+                                <a type="button" onclick="goToSection('lima')"
                                     class="flex items-center gap-2 cursor-pointer bg-[#ff8800] text-white px-5 py-2 rounded-xl font-semibold text-sm hover:bg-[#e07200] transition-colors shadow-md">
                                     Lanjut
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
@@ -2047,7 +2071,7 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                         </div>
                     </div>
                 </div>
-                <div id="lima" class="items-center relative isolate min-w-full h-screen px-4 sm:px-6 lg:px-16
+                <div id="lima" class="items-center relative isolate min-w-full min-h-screen px-4 sm:px-6 lg:px-16
                 bg-gradient-to-br from-[#fff5e6] via-[#ffecd6] to-[#ffd9b0]">
                     <div
                         class="flex flex-col items-stretch gap-4 w-full h-full py-[72px] max-w-2xl mx-auto justify-center">
@@ -2088,7 +2112,7 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                                 </label>
                             </div>
                             <div class="step-actions flex justify-between mt-3">
-                                <a type="button" onclick="window.location='#empat'"
+                                <a type="button" onclick="goToSection('empat')"
                                     class="flex items-center gap-2 cursor-pointer text-[#924c00] font-semibold text-sm hover:text-[#ff8800] transition-colors">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                         class="w-6 h-6">
@@ -2098,7 +2122,7 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                                     </svg>
                                     Kembali
                                 </a>
-                                <a type="button" onclick="window.location='#enam'"
+                                <a type="button" onclick="goToSection('enam')"
                                     class="flex items-center gap-2 cursor-pointer bg-[#ff8800] text-white px-5 py-2 rounded-xl font-semibold text-sm hover:bg-[#e07200] transition-colors shadow-md">
                                     Lanjut
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
@@ -2112,7 +2136,7 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                         </div>
                     </div>
                 </div>
-                <div id="enam" class="items-center relative isolate min-w-full h-screen px-4 sm:px-6 lg:px-16
+                <div id="enam" class="items-center relative isolate min-w-full min-h-screen px-4 sm:px-6 lg:px-16
                 bg-gradient-to-br from-[#fff5e6] via-[#ffecd6] to-[#ffd9b0]">
                     <div
                         class="flex flex-col items-stretch gap-4 w-full h-full py-[72px] max-w-2xl mx-auto justify-center">
@@ -2152,7 +2176,7 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                                 </label>
                             </div>
                             <div class="step-actions flex justify-between mt-3">
-                                <a type="button" onclick="window.location='#lima'"
+                                <a type="button" onclick="goToSection('lima')"
                                     class="flex items-center gap-2 cursor-pointer text-[#924c00] font-semibold text-sm hover:text-[#ff8800] transition-colors">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                         class="w-6 h-6">
@@ -2162,7 +2186,7 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                                     </svg>
                                     Kembali
                                 </a>
-                                <a type="button" onclick="window.location='#tujuh'"
+                                <a type="button" onclick="goToSection('tujuh')"
                                     class="flex items-center gap-2 cursor-pointer bg-[#ff8800] text-white px-5 py-2 rounded-xl font-semibold text-sm hover:bg-[#e07200] transition-colors shadow-md">
                                     Lanjut
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
@@ -2176,7 +2200,7 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                         </div>
                     </div>
                 </div>
-                <div id="tujuh" class="items-center relative isolate min-w-full h-screen px-4 sm:px-6 lg:px-16
+                <div id="tujuh" class="items-center relative isolate min-w-full min-h-screen px-4 sm:px-6 lg:px-16
                 bg-gradient-to-br from-[#fff5e6] via-[#ffecd6] to-[#ffd9b0]">
                     <div
                         class="flex flex-col items-stretch gap-4 w-full h-full py-[72px] max-w-2xl mx-auto justify-center">
@@ -2216,7 +2240,7 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                                 </label>
                             </div>
                             <div class="step-actions flex justify-between mt-3">
-                                <a type="button" onclick="window.location='#enam'"
+                                <a type="button" onclick="goToSection('enam')"
                                     class="flex items-center gap-2 cursor-pointer text-[#924c00] font-semibold text-sm hover:text-[#ff8800] transition-colors">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                         class="w-6 h-6">
@@ -2226,7 +2250,7 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                                     </svg>
                                     Kembali
                                 </a>
-                                <a type="button" onclick="window.location='#delapan'"
+                                <a type="button" onclick="goToSection('delapan')"
                                     class="flex items-center gap-2 cursor-pointer bg-[#ff8800] text-white px-5 py-2 rounded-xl font-semibold text-sm hover:bg-[#e07200] transition-colors shadow-md">
                                     Lanjut
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
@@ -2240,7 +2264,7 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                         </div>
                     </div>
                 </div>
-                <div id="delapan" class="items-center relative isolate min-w-full h-screen px-4 sm:px-6 lg:px-16
+                <div id="delapan" class="items-center relative isolate min-w-full min-h-screen px-4 sm:px-6 lg:px-16
                 bg-gradient-to-br from-[#fff5e6] via-[#ffecd6] to-[#ffd9b0]">
                     <div
                         class="flex flex-col items-stretch gap-4 w-full h-full py-[72px] max-w-2xl mx-auto justify-center">
@@ -2281,7 +2305,7 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                                 </label>
                             </div>
                             <div class="step-actions flex justify-between mt-3">
-                                <a type="button" onclick="window.location='#tujuh'"
+                                <a type="button" onclick="goToSection('tujuh')"
                                     class="flex items-center gap-2 cursor-pointer text-[#924c00] font-semibold text-sm hover:text-[#ff8800] transition-colors">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                         class="w-6 h-6">
@@ -2291,7 +2315,7 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                                     </svg>
                                     Kembali
                                 </a>
-                                <a type="button" onclick="window.location='#sembilan'"
+                                <a type="button" onclick="goToSection('sembilan')"
                                     class="flex items-center gap-2 cursor-pointer bg-[#ff8800] text-white px-5 py-2 rounded-xl font-semibold text-sm hover:bg-[#e07200] transition-colors shadow-md">
                                     Lanjut
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
@@ -2305,7 +2329,7 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                         </div>
                     </div>
                 </div>
-                <div id="sembilan" class="items-center relative isolate min-w-full h-screen px-4 sm:px-6 lg:px-16
+                <div id="sembilan" class="items-center relative isolate min-w-full min-h-screen px-4 sm:px-6 lg:px-16
                 bg-gradient-to-br from-[#fff5e6] via-[#ffecd6] to-[#ffd9b0]">
                     <div
                         class="flex flex-col items-stretch gap-4 w-full h-full py-[72px] max-w-2xl mx-auto justify-center">
@@ -2345,7 +2369,7 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                                 </label>
                             </div>
                             <div class="step-actions flex justify-between mt-3">
-                                <a type="button" onclick="window.location='#delapan'"
+                                <a type="button" onclick="goToSection('delapan')"
                                     class="flex items-center gap-2 cursor-pointer text-[#924c00] font-semibold text-sm hover:text-[#ff8800] transition-colors">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                         class="w-6 h-6">
@@ -2355,7 +2379,7 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                                     </svg>
                                     Kembali
                                 </a>
-                                <a type="button" onclick="window.location='#saran'"
+                                <a type="button" onclick="goToSection('saran')"
                                     class="flex items-center gap-2 cursor-pointer bg-[#ff8800] text-white px-5 py-2 rounded-xl font-semibold text-sm hover:bg-[#e07200] transition-colors shadow-md">
                                     Lanjut
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
@@ -2370,7 +2394,7 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                     </div>
                 </div>
 
-                <div id="saran" class="lg:pt-0 pt-16 items-center relative isolate overflow-hidden min-w-full h-screen
+                <div id="saran" class="lg:pt-0 pt-16 items-center relative isolate overflow-hidden min-w-full min-h-screen
                 px-6 shadow-2xl sm:px-16 lg:flex lg:px-24 bg-[#92e0f0] " style="background-image:
                     radial-gradient(at -10% -10%, #18bdde, transparent 35%),
                     radial-gradient(at 110% 110%, #18bdde, transparent 35%);">
@@ -2380,7 +2404,7 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                         <textarea type="text" id="saran" name="saran"
                             class="block w-full p-4 pl-10 text-xl text-gray-900 border border-2 border-white rounded-lg bg-white focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-900 dark:placeholder-gray-400 dark:text-gray-900 dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-6"></textarea>
                         <div class="step-actions flex justify-between mt-5">
-                            <a type="button" onclick="window.location='#sembilan'"
+                            <a type="button" onclick="goToSection('sembilan')"
                                 class="flex items-center gap-2 cursor-pointer">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                     class="w-8 h-8 text-gray-900">
@@ -2516,10 +2540,89 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                 });
         }
 
+        function goToSection(sectionId) {
+            const target = document.getElementById(sectionId);
+            if (!target) {
+                window.location.hash = '#' + sectionId;
+                return;
+            }
+
+            const performScroll = () => {
+                const header = document.querySelector('.survey-header');
+                const offset = header ? header.offsetHeight + 16 : 16;
+                const y = Math.max(0, target.getBoundingClientRect().top + window.scrollY - offset);
+
+                window.scrollTo({
+                    top: y,
+                    left: 0,
+                    behavior: 'auto'
+                });
+
+                if (window.history && window.history.replaceState) {
+                    const cleanUrl = window.location.pathname + window.location.search;
+                    window.history.replaceState(null, '', cleanUrl);
+                }
+            };
+
+            // If visualViewport exists and appears reduced (keyboard open), wait until it settles.
+            try {
+                if (window.visualViewport) {
+                    const vv = window.visualViewport;
+                    // Heuristic: keyboard is likely open if visualViewport.height is significantly less than innerHeight
+                    if (vv.height < window.innerHeight - 120) {
+                        // Blur active element to encourage keyboard to hide
+                        try {
+                            const active = document.activeElement;
+                            if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable)) {
+                                active.blur();
+                            }
+                        } catch (e) { }
+
+                        let settled = false;
+                        let timeoutId = null;
+
+                        const onResize = () => {
+                            clearTimeout(timeoutId);
+                            // Wait for 150ms of no resize events (stable)
+                            timeoutId = setTimeout(() => {
+                                if (!settled) {
+                                    settled = true;
+                                    try { vv.removeEventListener('resize', onResize); } catch (e) { }
+                                    performScroll();
+                                }
+                            }, 150);
+                        };
+
+                        try {
+                            vv.addEventListener('resize', onResize);
+                        } catch (e) {
+                            // Some older browsers may not support addEventListener on visualViewport
+                        }
+
+                        // Fallback: ensure scroll happens after 600ms even if no resize fires
+                        setTimeout(() => {
+                            if (!settled) {
+                                settled = true;
+                                try { vv.removeEventListener('resize', onResize); } catch (e) { }
+                                performScroll();
+                            }
+                        }, 600);
+
+                        return;
+                    }
+                }
+            } catch (e) {
+                // ignore visualViewport errors and proceed to immediate scroll
+            }
+
+            // Default: scroll immediately
+            performScroll();
+        }
+
         function lanjutKeBiodata() {
             // Jika tidak ada jenis layanan, langsung lanjut
             if (!hasSubJenis) {
-                window.location = '#identitas';
+                goToSection('identitas');
                 return;
             }
             // Jika ada jenis layanan, wajib pilih salah satu
@@ -2528,12 +2631,12 @@ class="  relative isolate  min-w-full min-h-screen px-6 shadow-2xl sm:px-16 lg:p
                 alert('Silakan pilih pelayanan atau sub pelayanan terlebih dahulu.');
                 return;
             }
-            window.location = '#identitas';
+            goToSection('identitas');
         }
 
         function lanjutDariIdentitas() {
             
-            window.location.hash = '#kedua';
+            goToSection('kedua');
             // const nama = document.getElementById('nama');
             // const nohp = document.getElementById('nohp');
             // const alamat = document.getElementById('alamat');
