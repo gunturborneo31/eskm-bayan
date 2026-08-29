@@ -200,21 +200,6 @@
 
   window.startDrawOverlay = startDrawOverlay;
 
-  document.addEventListener('DOMContentLoaded', () => {
-    const drawBtn = document.getElementById('drawButton');
-    if (drawBtn && window.drawParticipants) {
-      drawBtn.addEventListener('click', () => {
-        const availableParticipants = window.drawParticipants.filter(p => !(window.__drawnIds && window.__drawnIds.has(p.id)));
-        if (!availableParticipants.length) return;
-        drawBtn.disabled = true;
-        startDrawOverlay(availableParticipants, { seconds: 8, onFinish: (winner) => {
-          window.__drawnIds = window.__drawnIds || new Set();
-          if (winner && winner.id) window.__drawnIds.add(winner.id);
-          const ev = new CustomEvent('drawOverlayFinished', { detail: { winner } });
-          document.dispatchEvent(ev);
-          drawBtn.disabled = false;
-        }});
-      });
-    }
-  });
+  // No auto-attach in public fallback; pages should call startDrawOverlay explicitly to avoid duplicate handlers
+  document.addEventListener('DOMContentLoaded', () => {});
 })();

@@ -207,28 +207,6 @@ function startDrawOverlay(availableParticipants = [], options = {}) {
 // expose globally
 window.startDrawOverlay = startDrawOverlay;
 
-// auto-attach if page defines window.drawParticipants and button exists
-document.addEventListener('DOMContentLoaded', () => {
-  const drawBtn = document.getElementById('drawButton');
-  if (drawBtn && window.drawParticipants) {
-    drawBtn.addEventListener('click', () => {
-      const availableParticipants = window.drawParticipants.filter(p => !(window.__drawnIds && window.__drawnIds.has(p.id)));
-      if (!availableParticipants.length) {
-        // nothing
-        return;
-      }
-      drawBtn.disabled = true;
-      startDrawOverlay(availableParticipants, { seconds: 8, onFinish: (winner) => {
-        // record drawn ids globally so page script can use
-        window.__drawnIds = window.__drawnIds || new Set();
-        if (winner && winner.id) window.__drawnIds.add(winner.id);
-        // trigger custom event so page can react (e.g., renderResult)
-        const ev = new CustomEvent('drawOverlayFinished', { detail: { winner } });
-        document.dispatchEvent(ev);
-        drawBtn.disabled = false;
-      }});
-    });
-  }
-});
-
+// No auto-attach: pages should call startDrawOverlay explicitly to avoid duplicate handlers
+// export is kept for ESM bundlers
 export {};
