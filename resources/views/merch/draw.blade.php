@@ -59,9 +59,12 @@
     </div>
 
     @include('partials.countdown')
+    <script src="/js/countdown.js" defer></script>
 
     <script>
         const participants = @json($participants->values());
+        // expose to global so public fallback script can auto-attach
+        window.drawParticipants = participants;
         const drawButton = document.getElementById('drawButton');
         const drawResult = document.getElementById('drawResult');
         const drawnParticipantIds = new Set();
