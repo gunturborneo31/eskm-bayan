@@ -108,7 +108,7 @@ function fireConfetti(duration = 3000, particleCount = 80) {
       color: colors[Math.floor(Math.random() * colors.length)],
       rot: Math.random() * 360,
       vr: (Math.random() - 0.5) * 10
-n    });
+    });
   }
 
   const start = performance.now();
